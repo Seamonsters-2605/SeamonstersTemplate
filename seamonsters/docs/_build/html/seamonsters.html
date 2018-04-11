@@ -1064,7 +1064,12 @@ drive mode max velocities have already been included in this.</p>
 <dl class="function">
 <dt id="seamonsters.deadZone">
 <code class="descclassname">seamonsters.</code><code class="descname">deadZone</code><span class="sig-paren">(</span><em>value</em>, <em>deadZone=0.08</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.deadZone" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Add a dead-zone to the number
+:param value: the number
+:param deadZone: the minimum value
+:return: zero if the number is less than the dead zone, otherwise the
+original number</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="seamonsters.direction">

@@ -47,9 +47,16 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;seamonsters&quot;</span>
 
 <span class="k">def</span> <span class="nf">deadZone</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">deadZone</span> <span class="o">=</span> <span class="mf">0.08</span><span class="p">):</span>
-   <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">deadZone</span><span class="p">:</span>
-       <span class="k">return</span> <span class="mf">0.0</span>
-   <span class="k">return</span> <span class="n">value</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a dead-zone to the number</span>
+<span class="sd">    :param value: the number</span>
+<span class="sd">    :param deadZone: the minimum value</span>
+<span class="sd">    :return: zero if the number is less than the dead zone, otherwise the</span>
+<span class="sd">    original number</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">deadZone</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">value</span>
 
 <span class="k">def</span> <span class="nf">whileButtonPressed</span><span class="p">(</span><span class="n">joystick</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
