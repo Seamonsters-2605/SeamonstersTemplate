@@ -70,13 +70,13 @@ refer either to Voltage or PercentVbus mode on CANTalons. Also, some classes use
 <td>Wraps another drive interface, and provides acceleration filtering.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.DashboardCommandReader" title="seamonsters.DashboardCommandReader"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.DashboardCommandReader</span></code></a>()</td>
-<td></td>
+<td>Allows reading data entered in the Command box on the dashboard.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.DriveInterface" title="seamonsters.DriveInterface"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.DriveInterface</span></code></a></td>
 <td>A generic, abstract interface for driving a robot.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.DynamicAxis" title="seamonsters.DynamicAxis"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.DynamicAxis</span></code></a>([exponent,&nbsp;...])</td>
-<td></td>
+<td>Makes values from a joystick axis go higher if you push them faster.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.DynamicPIDDrive" title="seamonsters.DynamicPIDDrive"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.DynamicPIDDrive</span></code></a>(interface,&nbsp;...)</td>
 <td>Wraps another drive interface.</td>
@@ -88,7 +88,7 @@ refer either to Voltage or PercentVbus mode on CANTalons. Also, some classes use
 <td>An extended Joystick specifically designed for Logitech gamepads.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.GeneratorBot" title="seamonsters.GeneratorBot"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.GeneratorBot</span></code></a>()</td>
-<td></td>
+<td>A robot which runs generators throughout the cycles of autonomous, teleop, and test mode.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.HolonomicDrive" title="seamonsters.HolonomicDrive"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.HolonomicDrive</span></code></a>(fl,&nbsp;fr,&nbsp;bl,&nbsp;br)</td>
 <td>An implementation of the DriveInterface for holonomic drive.</td>
@@ -124,7 +124,7 @@ refer either to Voltage or PercentVbus mode on CANTalons. Also, some classes use
 <td>A wheel controller controlling two CANTalons.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.TestDriveInterface" title="seamonsters.TestDriveInterface"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.TestDriveInterface</span></code></a></td>
-<td></td>
+<td>A DriveInterface which does nothing but log the magnitude/direction/turn values it receives.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.TestWheelController" title="seamonsters.TestWheelController"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.TestWheelController</span></code></a>(number)</td>
 <td>A wheel controller that logs all events and does nothing else.</td>
@@ -163,22 +163,22 @@ refer either to Voltage or PercentVbus mode on CANTalons. Also, some classes use
 <td>Run a group of iterables in parallel.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.readPoints" title="seamonsters.readPoints"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.readPoints</span></code></a>(filePath,&nbsp;...)</td>
-<td></td>
+<td>Given an SVG with a path created in GIMP, read all the points in the path and return a list of points.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.returnValue" title="seamonsters.returnValue"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.returnValue</span></code></a>(iterable,&nbsp;value)</td>
 <td>Run an iterable but change the return value.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.sendLogStates" title="seamonsters.sendLogStates"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.sendLogStates</span></code></a>()</td>
-<td></td>
+<td>Send all LogStates that have been updated to the dashboard</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.sequence" title="seamonsters.sequence"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.sequence</span></code></a>(\*iterables)</td>
-<td></td>
+<td>Run a set of iterables sequentially</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.setActiveCameraURL" title="seamonsters.setActiveCameraURL"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.setActiveCameraURL</span></code></a>(url)</td>
-<td></td>
+<td>Set the URL of the camera stream to display in the dashboard</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.talonModeToString" title="seamonsters.talonModeToString"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.talonModeToString</span></code></a>(mode)</td>
-<td></td>
+<td>Get a readable name from a <code class="docutils literal"><span class="pre">ctre.ControlMode</span></code> constant</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.test_swervedrive_forward" title="seamonsters.test_swervedrive_forward"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.test_swervedrive_forward</span></code></a>()</td>
 <td></td>
@@ -187,7 +187,7 @@ refer either to Voltage or PercentVbus mode on CANTalons. Also, some classes use
 <td>Run the iterable until it finishes or the given time limit has passed.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.untilButtonPressed" title="seamonsters.untilButtonPressed"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.untilButtonPressed</span></code></a>(joystick,&nbsp;button)</td>
-<td></td>
+<td>A generator which runs until the joystick button is pressed, then exits.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.untilTrue" title="seamonsters.untilTrue"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.untilTrue</span></code></a>(iterable)</td>
 <td>Run the iterable until it yields True, then stop.</td>
@@ -199,7 +199,7 @@ refer either to Voltage or PercentVbus mode on CANTalons. Also, some classes use
 <td>Run a group of iterables in parallel.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.whileButtonPressed" title="seamonsters.whileButtonPressed"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.whileButtonPressed</span></code></a>(joystick,&nbsp;button)</td>
-<td></td>
+<td>A generator which runs while the joystick button is pressed, then exits.</td>
 </tr>
 </tbody>
 </table>

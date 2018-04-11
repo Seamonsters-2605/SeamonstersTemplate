@@ -65,21 +65,35 @@
     <span class="k">return</span> <span class="n">switchValues</span><span class="p">[</span><span class="n">switchNames</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
 
 <span class="k">def</span> <span class="nf">setActiveCameraURL</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the URL of the camera stream to display in the dashboard</span>
+<span class="sd">    :param url: URL string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">table</span> <span class="o">=</span> <span class="n">networktables</span><span class="o">.</span><span class="n">NetworkTables</span><span class="o">.</span><span class="n">getTable</span><span class="p">(</span><span class="s1">&#39;dashboard&#39;</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">putString</span><span class="p">(</span><span class="s1">&#39;cam&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">DashboardCommandReader</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Allows reading data entered in the Command box on the dashboard.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DashboardCommandReader.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.DashboardCommandReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commandTable</span> <span class="o">=</span> <span class="n">networktables</span><span class="o">.</span><span class="n">NetworkTables</span><span class="o">.</span><span class="n">getTable</span><span class="p">(</span><span class="s1">&#39;commands&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DashboardCommandReader.reset"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.DashboardCommandReader.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset the connection, forget existing commands.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lastCommandId</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commandTable</span><span class="o">.</span><span class="n">putString</span><span class="p">(</span><span class="s1">&#39;command&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commandTable</span><span class="o">.</span><span class="n">putNumber</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DashboardCommandReader.getCommand"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.DashboardCommandReader.getCommand">[docs]</a>    <span class="k">def</span> <span class="nf">getCommand</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the command entered in the box.</span>
+<span class="sd">        :return: a command string, or None if no command</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">commandId</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commandTable</span><span class="o">.</span><span class="n">getNumber</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">commandId</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastCommandId</span><span class="p">:</span>

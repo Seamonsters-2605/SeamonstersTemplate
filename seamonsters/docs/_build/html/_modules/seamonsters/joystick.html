@@ -52,16 +52,29 @@
    <span class="k">return</span> <span class="n">value</span>
 
 <span class="k">def</span> <span class="nf">whileButtonPressed</span><span class="p">(</span><span class="n">joystick</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A generator which runs while the joystick button is pressed, then exits.</span>
+<span class="sd">    :param joystick: a ``wpilib.Joystick``</span>
+<span class="sd">    :param button: a button number</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">yield</span>
     <span class="k">while</span> <span class="n">joystick</span><span class="o">.</span><span class="n">getRawButton</span><span class="p">(</span><span class="n">button</span><span class="p">):</span>
         <span class="k">yield</span>
 
 <span class="k">def</span> <span class="nf">untilButtonPressed</span><span class="p">(</span><span class="n">joystick</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A generator which runs until the joystick button is pressed, then exits.</span>
+<span class="sd">    :param joystick: a ``wpilib.Joystick``</span>
+<span class="sd">    :param button: a button number</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">yield</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">joystick</span><span class="o">.</span><span class="n">getRawButton</span><span class="p">(</span><span class="n">button</span><span class="p">):</span>
         <span class="k">yield</span>
 
 <span class="k">class</span> <span class="nc">DynamicAxis</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Makes values from a joystick axis go higher if you push them faster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># try 2.0, 4.0, 0.5?</span>
 <div class="viewcode-block" id="DynamicAxis.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.DynamicAxis.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exponent</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">speedScaleFactor</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
@@ -80,6 +93,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="mf">1.0</span></div>
 
 <div class="viewcode-block" id="DynamicAxis.update"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.DynamicAxis.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the value of the axis</span>
+<span class="sd">        :param value: the raw axis value from the joystick</span>
+<span class="sd">        :return: the adjusted value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deadZone</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">deadZone</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span>

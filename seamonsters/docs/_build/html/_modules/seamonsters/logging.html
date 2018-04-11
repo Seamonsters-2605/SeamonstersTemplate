@@ -49,6 +49,10 @@
 <span class="n">logStates</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
 
 <span class="k">def</span> <span class="nf">sendLogStates</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Send all LogStates that have been updated to the dashboard</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">logStates</span>
     <span class="n">logStateNames</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">logStates</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
     <span class="n">logStateValues</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">logStates</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>

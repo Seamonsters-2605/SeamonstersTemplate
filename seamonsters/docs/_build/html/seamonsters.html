@@ -82,6 +82,7 @@ seconds).</p>
 <dt id="seamonsters.DashboardCommandReader">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">DashboardCommandReader</code><a class="headerlink" href="#seamonsters.DashboardCommandReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Allows reading data entered in the Command box on the dashboard.</p>
 <dl class="method">
 <dt id="seamonsters.DashboardCommandReader.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#DashboardCommandReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.DashboardCommandReader.__init__" title="Permalink to this definition">¶</a></dt>
@@ -90,12 +91,15 @@ seconds).</p>
 <dl class="method">
 <dt id="seamonsters.DashboardCommandReader.getCommand">
 <code class="descname">getCommand</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#DashboardCommandReader.getCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.DashboardCommandReader.getCommand" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the command entered in the box.
+:return: a command string, or None if no command</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.DashboardCommandReader.reset">
 <code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#DashboardCommandReader.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.DashboardCommandReader.reset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Reset the connection, forget existing commands.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -119,6 +123,7 @@ seconds).</p>
 <dt id="seamonsters.DynamicAxis">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">DynamicAxis</code><span class="sig-paren">(</span><em>exponent=1.0</em>, <em>speedScaleFactor=0.0</em>, <em>speedScaleExponent=0.0</em>, <em>deadZone=None</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.DynamicAxis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Makes values from a joystick axis go higher if you push them faster.</p>
 <dl class="method">
 <dt id="seamonsters.DynamicAxis.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>exponent=1.0</em>, <em>speedScaleFactor=0.0</em>, <em>speedScaleExponent=0.0</em>, <em>deadZone=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/joystick.html#DynamicAxis.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.DynamicAxis.__init__" title="Permalink to this definition">¶</a></dt>
@@ -130,7 +135,10 @@ seconds).</p>
 <dl class="method">
 <dt id="seamonsters.DynamicAxis.update">
 <code class="descname">update</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/joystick.html#DynamicAxis.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.DynamicAxis.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Update the value of the axis
+:param value: the raw axis value from the joystick
+:return: the adjusted value</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -424,6 +432,9 @@ Return a boolean value.</p>
 <dt id="seamonsters.GeneratorBot">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">GeneratorBot</code><a class="headerlink" href="#seamonsters.GeneratorBot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wpilib.robotbase.RobotBase</span></code></p>
+<p>A robot which runs generators throughout the cycles of autonomous, teleop,
+and test mode. The generators are iterated 50 times per second, synchronized
+with the rate that data is received from Driver Station.</p>
 <dl class="method">
 <dt id="seamonsters.GeneratorBot.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/bot.html#GeneratorBot.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.GeneratorBot.__init__" title="Permalink to this definition">¶</a></dt>
@@ -920,6 +931,8 @@ second). Speed mode behaves similarly, but since wpilib uses units of
 <dt id="seamonsters.TestDriveInterface">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">TestDriveInterface</code><a class="headerlink" href="#seamonsters.TestDriveInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.DriveInterface" title="seamonsters.DriveInterface"><code class="xref py py-class docutils literal"><span class="pre">seamonsters.DriveInterface</span></code></a></p>
+<p>A DriveInterface which does nothing but log the magnitude/direction/turn
+values it receives.</p>
 <dl class="method">
 <dt id="seamonsters.TestDriveInterface.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#TestDriveInterface.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.TestDriveInterface.drive" title="Permalink to this definition">¶</a></dt>
@@ -1098,7 +1111,15 @@ iterables.</p>
 <dl class="function">
 <dt id="seamonsters.readPoints">
 <code class="descclassname">seamonsters.</code><code class="descname">readPoints</code><span class="sig-paren">(</span><em>filePath</em>, <em>pixelsPerUnit</em>, <em>leftMargin</em>, <em>bottomMargin</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.readPoints" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given an SVG with a path created in GIMP, read all the points in the path
+and return a list of points.
+:param filePath: string path to the SVG file
+:param pixelsPerUnit: number of pixels for a single unit
+:param leftMargin: units (not pixels) of margin at the left side of the
+image
+:param bottomMargin: units (not pixels) of margin at the bottom of the image
+:return: a list of tuples (x, y)</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="seamonsters.returnValue">
@@ -1110,22 +1131,30 @@ iterables.</p>
 <dl class="function">
 <dt id="seamonsters.sendLogStates">
 <code class="descclassname">seamonsters.</code><code class="descname">sendLogStates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.sendLogStates" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send all LogStates that have been updated to the dashboard
+:return:</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="seamonsters.sequence">
 <code class="descclassname">seamonsters.</code><code class="descname">sequence</code><span class="sig-paren">(</span><em>*iterables</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.sequence" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run a set of iterables sequentially</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="seamonsters.setActiveCameraURL">
 <code class="descclassname">seamonsters.</code><code class="descname">setActiveCameraURL</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.setActiveCameraURL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Set the URL of the camera stream to display in the dashboard
+:param url: URL string</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="seamonsters.talonModeToString">
 <code class="descclassname">seamonsters.</code><code class="descname">talonModeToString</code><span class="sig-paren">(</span><em>mode</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.talonModeToString" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get a readable name from a <code class="docutils literal"><span class="pre">ctre.ControlMode</span></code> constant
+:param mode: a constant from <code class="docutils literal"><span class="pre">ctre.ControlMode</span></code>
+:return: a string name</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="seamonsters.test_swervedrive_forward">
@@ -1142,7 +1171,10 @@ Return the value of the iterable if it ends early, None otherwise.</p>
 <dl class="function">
 <dt id="seamonsters.untilButtonPressed">
 <code class="descclassname">seamonsters.</code><code class="descname">untilButtonPressed</code><span class="sig-paren">(</span><em>joystick</em>, <em>button</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.untilButtonPressed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A generator which runs until the joystick button is pressed, then exits.
+:param joystick: a <code class="docutils literal"><span class="pre">wpilib.Joystick</span></code>
+:param button: a button number</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="seamonsters.untilTrue">
@@ -1168,7 +1200,10 @@ iterables.</p>
 <dl class="function">
 <dt id="seamonsters.whileButtonPressed">
 <code class="descclassname">seamonsters.</code><code class="descname">whileButtonPressed</code><span class="sig-paren">(</span><em>joystick</em>, <em>button</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.whileButtonPressed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A generator which runs while the joystick button is pressed, then exits.
+:param joystick: a <code class="docutils literal"><span class="pre">wpilib.Joystick</span></code>
+:param button: a button number</p>
+</dd></dl>
 
 </div>
 

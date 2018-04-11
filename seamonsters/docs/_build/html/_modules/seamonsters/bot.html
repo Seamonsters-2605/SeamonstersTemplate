@@ -51,6 +51,11 @@
 <span class="kn">from</span> <span class="nn">wpilib.smartdashboard</span> <span class="k">import</span> <span class="n">SmartDashboard</span>
 
 <span class="k">class</span> <span class="nc">GeneratorBot</span><span class="p">(</span><span class="n">RobotBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A robot which runs generators throughout the cycles of autonomous, teleop,</span>
+<span class="sd">    and test mode. The generators are iterated 50 times per second, synchronized</span>
+<span class="sd">    with the rate that data is received from Driver Station.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="GeneratorBot.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">RobotBase</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
