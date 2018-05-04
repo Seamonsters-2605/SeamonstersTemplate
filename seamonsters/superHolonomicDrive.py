@@ -15,6 +15,17 @@ class Wheel:
         self.x = float(x)
         self.y = float(y)
 
+    def limitMagnitude(self, magnitude, direction):
+        """
+        Return the scaling factor necessary to keep the wheel speed within its
+        limits.
+        :param magnitude: speed in feet per second
+        :param direction: radians
+        :return: 1.0 if wheel speed is within it limits, otherwise a value
+        between 0 and 1 to scale the wheel down to its maximum speed.
+        """
+        return 1.0
+
     def drive(self, magnitude, direction):
         """
         Spin the wheel. This should be called 50 times per second.
@@ -59,6 +70,12 @@ class AngledWheel(Wheel):
         self._motorState = None
         self._positionTarget = 0
         self._errorCheckCount = 0
+
+    def limitMagnitude(self, magnitude, direction):
+        magnitude *= math.cos(direction - self.angle)
+        if abs(magnitude) > self.maxVoltageVelocity:
+            return self.maxVoltageVelocity / abs(magnitude)
+        return 1.0
 
     def drive(self, magnitude, direction):
         magnitude *= math.cos(direction - self.angle)
@@ -117,17 +134,31 @@ class SuperHolonomicDrive:
         :param magnitude: feet per second
         :param direction: radians
         :param turn: radians per second
+        :return: the scale of the actual output speed, as a fraction of the
+        input magnitude and turn components
         """
 
         moveX = math.cos(direction) * magnitude
         moveY = math.sin(direction) * magnitude
+
+        wheelMagnitudes = []
+        wheelDirections = []
+        wheelLimitScales = []
 
         for wheel in self.wheels:
             wheelVectorX = moveX - wheel.y * turn
             wheelVectorY = moveY + wheel.x * turn
             wheelMag = math.sqrt(wheelVectorX ** 2.0 + wheelVectorY ** 2.0)
             wheelDir = math.atan2(wheelVectorY, wheelVectorX)
-            wheel.drive(wheelMag, wheelDir)
+            wheelMagnitudes.append(wheelMag)
+            wheelDirections.append(wheelDir)
+            wheelLimitScales.append(wheel.limitMagnitude(wheelMag, wheelDir))
+
+        minWheelScale = min(wheelLimitScales)
+        for i in range(len(self.wheels)):
+            self.wheels[i].drive(wheelMagnitudes[i] * minWheelScale,
+                                 wheelDirections[i])
+        return minWheelScale
 
 
 if __name__ == "__main__":
