@@ -121,6 +121,17 @@ class AngledWheel(Wheel):
             self.motor.set(self.driveMode, self._positionTarget)
 
 
+class MecanumWheel(AngledWheel):
+
+    SQRT_2 = math.sqrt(2)
+
+    def limitMagnitude(self, magnitude, direction):
+        return super().limitMagnitude(magnitude * MecanumWheel.SQRT_2, direction)
+
+    def drive(self, magnitude, direction):
+        return super().drive(magnitude * MecanumWheel.SQRT_2, direction)
+
+
 class SuperHolonomicDrive:
 
     def __init__(self):
