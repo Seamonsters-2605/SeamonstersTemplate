@@ -72,6 +72,8 @@ class AngledWheel(Wheel):
         self._errorCheckCount = 0
 
     def limitMagnitude(self, magnitude, direction):
+        # TODO: check position error in this function instead, and factor it
+        # into the scale
         magnitude *= math.cos(direction - self.angle)
         if abs(magnitude) > self.maxVoltageVelocity:
             return self.maxVoltageVelocity / abs(magnitude)
@@ -130,6 +132,54 @@ class MecanumWheel(AngledWheel):
 
     def drive(self, magnitude, direction):
         return super().drive(magnitude * MecanumWheel.SQRT_2, direction)
+
+
+class SwerveWheel(Wheel):
+
+    def __init__(self, angledWheel, steerMotor, encoderCountsPerRev,
+                 reverseSteerMotor=False):
+        super().__init__(angledWheel.x, angledWheel.y)
+        self.angledWheel = angledWheel
+        self.steerMotor = steerMotor
+        self.encoderCountsPerRev = encoderCountsPerRev
+        self.reverseSteerMotor = reverseSteerMotor
+        self.zeroSteering()
+
+    def zeroSteering(self):
+        self._steerOrigin = self.steerMotor.getSelectedSensorPosition(0)
+
+    def limitMagnitude(self, magnitude, direction):
+        return self.angledWheel.limitMagnitude(magnitude, direction)
+
+    def _getCurrentSteeringAngle(self):
+        offset = self.steerMotor.getSelectedSensorPosition(0) \
+                 - self._steerOrigin
+        if self.reverseSteerMotor:
+            offset = -offset
+        return offset * 2 * math.pi / self.encoderCountsPerRev
+
+    def _setSteering(self, direction):
+        pos = direction * self.encoderCountsPerRev / math.pi / 2
+        if self.reverseSteerMotor:
+            pos = -pos
+        self.steerMotor.set(ctre.ControlMode.Position, pos + self._steerOrigin)
+
+    def drive(self, magnitude, direction):
+        print("Wheel", math.degrees(direction))
+        currentAngle = self._getCurrentSteeringAngle()
+        if magnitude != 0:
+            angleDiff = direction - currentAngle
+            # steering should never rotate more than 90 degrees from any position
+            while angleDiff > math.pi / 2:
+                angleDiff -= math.pi
+            while angleDiff < -math.pi / 2:
+                angleDiff += math.pi
+            print("Target", math.degrees(currentAngle + angleDiff))
+            #print(math.degrees(currentAngle), math.degrees(currentAngle + angleDiff))
+            self._setSteering(currentAngle + angleDiff)
+
+        self.angledWheel.angle = currentAngle
+        self.angledWheel.drive(magnitude, direction)
 
 
 class SuperHolonomicDrive:
