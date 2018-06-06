@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>seamonsters.superHolonomicDrive &#8212; seamonsters 0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for seamonsters.superHolonomicDrive</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">ctre</span>
+
+<span class="k">class</span> <span class="nc">Wheel</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interface for wheels. A Wheel has a location and can put out force in a</span>
+<span class="sd">    direction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Wheel.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Wheel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param x: X offset from origin in feet</span>
+<span class="sd">        :param y: Y offset from origin in feet</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Wheel.limitMagnitude"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Wheel.limitMagnitude">[docs]</a>    <span class="k">def</span> <span class="nf">limitMagnitude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the scaling factor necessary to keep the wheel speed within its</span>
+<span class="sd">        limits.</span>
+<span class="sd">        :param magnitude: speed in feet per second</span>
+<span class="sd">        :param direction: radians</span>
+<span class="sd">        :return: 1.0 if wheel speed is within it limits, otherwise a value</span>
+<span class="sd">        between 0 and 1 to scale the wheel down to its maximum speed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">1.0</span></div>
+
+<div class="viewcode-block" id="Wheel.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Wheel.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Spin the wheel. This should be called 50 times per second.</span>
+<span class="sd">        :param magnitude: speed in feet per second.</span>
+<span class="sd">        :param direction: radians</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<span class="k">class</span> <span class="nc">TestWheel</span><span class="p">(</span><span class="n">Wheel</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestWheel.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.TestWheel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
+
+<div class="viewcode-block" id="TestWheel.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.TestWheel.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;Mag:&quot;</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="s2">&quot;Dir:&quot;</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">direction</span><span class="p">))</span></div>
+
+
+<span class="k">class</span> <span class="nc">AngledWheel</span><span class="p">(</span><span class="n">Wheel</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AngledWheel.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.AngledWheel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">motor</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">encoderCountsPerFoot</span><span class="p">,</span>
+                 <span class="n">maxVoltageVelocity</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param motor: a TalonSRX</span>
+<span class="sd">        :param x: X position in feet</span>
+<span class="sd">        :param y: Y position in feet</span>
+<span class="sd">        :param angle: radians, direction of force</span>
+<span class="sd">        :param encoderCountsPerFoot: number of encoder counts to travel 1 foot</span>
+<span class="sd">        :param maxVoltageVelocity: velocity at 100% in voltage mode, in feet</span>
+<span class="sd">        per second</span>
+<span class="sd">        :param reverse: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">motor</span> <span class="o">=</span> <span class="n">motor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="n">angle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerFoot</span> <span class="o">=</span> <span class="n">encoderCountsPerFoot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxVoltageVelocity</span> <span class="o">=</span> <span class="n">maxVoltageVelocity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="n">reverse</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">=</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">PercentOutput</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_errorCheckCount</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="AngledWheel.limitMagnitude"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.AngledWheel.limitMagnitude">[docs]</a>    <span class="k">def</span> <span class="nf">limitMagnitude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="c1"># TODO: check position error in this function instead, and factor it</span>
+        <span class="c1"># into the scale</span>
+        <span class="n">magnitude</span> <span class="o">*=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">direction</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">magnitude</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxVoltageVelocity</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxVoltageVelocity</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">1.0</span></div>
+
+<div class="viewcode-block" id="AngledWheel.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.AngledWheel.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="n">magnitude</span> <span class="o">*=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">direction</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
+            <span class="n">magnitude</span> <span class="o">=</span> <span class="o">-</span><span class="n">magnitude</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">Disabled</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">motor</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">PercentOutput</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">motor</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">,</span> <span class="n">magnitude</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxVoltageVelocity</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">Velocity</span><span class="p">:</span>
+            <span class="n">encoderCountsPerSecond</span> <span class="o">=</span> <span class="n">magnitude</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerFoot</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">motor</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">,</span> <span class="n">encoderCountsPerSecond</span> <span class="o">/</span> <span class="mf">10.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">Position</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">motor</span><span class="o">.</span><span class="n">getSelectedSensorPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_errorCheckCount</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">encoderCountsPerSecond</span> <span class="o">=</span> <span class="n">magnitude</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerFoot</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span> <span class="o">+=</span> <span class="n">encoderCountsPerSecond</span> <span class="o">/</span> <span class="mf">50.0</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_errorCheckCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_errorCheckCount</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># getSelectedSensorPosition is slow so only check a few times</span>
+                <span class="c1"># per second</span>
+                <span class="n">currentPos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">motor</span><span class="o">.</span><span class="n">getSelectedSensorPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="c1"># TODO: this is arbitrary</span>
+                <span class="n">maxError</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxVoltageVelocity</span> \
+                           <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerFoot</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">currentPos</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span><span class="p">)</span> \
+                        <span class="o">&gt;</span> <span class="n">maxError</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Incremental position error!&quot;</span><span class="p">,</span> <span class="n">currentPos</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span> <span class="o">=</span> <span class="n">currentPos</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">motor</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">MecanumWheel</span><span class="p">(</span><span class="n">AngledWheel</span><span class="p">):</span>
+
+    <span class="n">SQRT_2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MecanumWheel.limitMagnitude"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.MecanumWheel.limitMagnitude">[docs]</a>    <span class="k">def</span> <span class="nf">limitMagnitude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">limitMagnitude</span><span class="p">(</span><span class="n">magnitude</span> <span class="o">*</span> <span class="n">MecanumWheel</span><span class="o">.</span><span class="n">SQRT_2</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MecanumWheel.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.MecanumWheel.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span> <span class="o">*</span> <span class="n">MecanumWheel</span><span class="o">.</span><span class="n">SQRT_2</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">SwerveWheel</span><span class="p">(</span><span class="n">Wheel</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SwerveWheel.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angledWheel</span><span class="p">,</span> <span class="n">steerMotor</span><span class="p">,</span> <span class="n">encoderCountsPerRev</span><span class="p">,</span>
+                 <span class="n">reverseSteerMotor</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">angledWheel</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span> <span class="o">=</span> <span class="n">angledWheel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span> <span class="o">=</span> <span class="n">steerMotor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerRev</span> <span class="o">=</span> <span class="n">encoderCountsPerRev</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reverseSteerMotor</span> <span class="o">=</span> <span class="n">reverseSteerMotor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zeroSteering</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SwerveWheel.zeroSteering"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.zeroSteering">[docs]</a>    <span class="k">def</span> <span class="nf">zeroSteering</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_steerOrigin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span><span class="o">.</span><span class="n">getSelectedSensorPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SwerveWheel.limitMagnitude"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.limitMagnitude">[docs]</a>    <span class="k">def</span> <span class="nf">limitMagnitude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">limitMagnitude</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_getCurrentSteeringAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span><span class="o">.</span><span class="n">getSelectedSensorPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> \
+                 <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steerOrigin</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverseSteerMotor</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="n">offset</span>
+        <span class="k">return</span> <span class="n">offset</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerRev</span>
+
+    <span class="k">def</span> <span class="nf">_setSteering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">direction</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerRev</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverseSteerMotor</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="o">-</span><span class="n">pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">Position</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steerOrigin</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SwerveWheel.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wheel&quot;</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">direction</span><span class="p">))</span>
+        <span class="n">currentAngle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getCurrentSteeringAngle</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">magnitude</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">angleDiff</span> <span class="o">=</span> <span class="n">direction</span> <span class="o">-</span> <span class="n">currentAngle</span>
+            <span class="c1"># steering should never rotate more than 90 degrees from any position</span>
+            <span class="k">while</span> <span class="n">angleDiff</span> <span class="o">&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">angleDiff</span> <span class="o">-=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+            <span class="k">while</span> <span class="n">angleDiff</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">angleDiff</span> <span class="o">+=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Target&quot;</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">currentAngle</span> <span class="o">+</span> <span class="n">angleDiff</span><span class="p">))</span>
+            <span class="c1">#print(math.degrees(currentAngle), math.degrees(currentAngle + angleDiff))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setSteering</span><span class="p">(</span><span class="n">currentAngle</span> <span class="o">+</span> <span class="n">angleDiff</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="n">currentAngle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">SuperHolonomicDrive</span><span class="p">:</span>
+
+<div class="viewcode-block" id="SuperHolonomicDrive.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="SuperHolonomicDrive.addWheel"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.addWheel">[docs]</a>    <span class="k">def</span> <span class="nf">addWheel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wheel</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheel</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SuperHolonomicDrive.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param magnitude: feet per second</span>
+<span class="sd">        :param direction: radians</span>
+<span class="sd">        :param turn: radians per second</span>
+<span class="sd">        :return: the scale of the actual output speed, as a fraction of the</span>
+<span class="sd">        input magnitude and turn components</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">moveX</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span> <span class="o">*</span> <span class="n">magnitude</span>
+        <span class="n">moveY</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span> <span class="o">*</span> <span class="n">magnitude</span>
+
+        <span class="n">wheelMagnitudes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">wheelDirections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">wheelLimitScales</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">wheel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">:</span>
+            <span class="n">wheelVectorX</span> <span class="o">=</span> <span class="n">moveX</span> <span class="o">-</span> <span class="n">wheel</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">turn</span>
+            <span class="n">wheelVectorY</span> <span class="o">=</span> <span class="n">moveY</span> <span class="o">+</span> <span class="n">wheel</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">turn</span>
+            <span class="n">wheelMag</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">wheelVectorX</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">wheelVectorY</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="n">wheelDir</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">wheelVectorY</span><span class="p">,</span> <span class="n">wheelVectorX</span><span class="p">)</span>
+            <span class="n">wheelMagnitudes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheelMag</span><span class="p">)</span>
+            <span class="n">wheelDirections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheelDir</span><span class="p">)</span>
+            <span class="n">wheelLimitScales</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheel</span><span class="o">.</span><span class="n">limitMagnitude</span><span class="p">(</span><span class="n">wheelMag</span><span class="p">,</span> <span class="n">wheelDir</span><span class="p">))</span>
+
+        <span class="n">minWheelScale</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">wheelLimitScales</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">wheelMagnitudes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">minWheelScale</span><span class="p">,</span>
+                                 <span class="n">wheelDirections</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">minWheelScale</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">drive</span> <span class="o">=</span> <span class="n">SuperHolonomicDrive</span><span class="p">()</span>
+    <span class="n">drive</span><span class="o">.</span><span class="n">addWheel</span><span class="p">(</span><span class="n">TestWheel</span><span class="p">(</span><span class="s2">&quot;Wheel A&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">drive</span><span class="o">.</span><span class="n">addWheel</span><span class="p">(</span><span class="n">TestWheel</span><span class="p">(</span><span class="s2">&quot;Wheel B&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">drive</span><span class="o">.</span><span class="n">addWheel</span><span class="p">(</span><span class="n">TestWheel</span><span class="p">(</span><span class="s2">&quot;Wheel C&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">drive</span><span class="o">.</span><span class="n">addWheel</span><span class="p">(</span><span class="n">TestWheel</span><span class="p">(</span><span class="s2">&quot;Wheel D&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">testDrive</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">turn</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Drive mag:&quot;</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="s2">&quot;dir:&quot;</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="nb">dir</span><span class="p">),</span> <span class="s2">&quot;turn:&quot;</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
+        <span class="n">drive</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
+
+    <span class="n">testDrive</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">90</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">testDrive</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">46</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">testDrive</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../seamonsters.html">seamonsters</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Sehome Seamonsters.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

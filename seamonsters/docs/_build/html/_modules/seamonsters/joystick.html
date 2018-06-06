@@ -46,17 +46,28 @@
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;seamonsters&quot;</span>
 
-<span class="k">def</span> <span class="nf">deadZone</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">deadZone</span> <span class="o">=</span> <span class="mf">0.08</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">deadZone</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">deadZone</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">maxValue</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Add a dead-zone to the number</span>
-<span class="sd">    :param value: the number</span>
-<span class="sd">    :param deadZone: the minimum value</span>
-<span class="sd">    :return: zero if the number is less than the dead zone, otherwise the</span>
-<span class="sd">    original number</span>
+<span class="sd">    Add a dead-zone to the number. Any input from ``deadZone`` to ``maxValue``</span>
+<span class="sd">    is mapped to the range 0 to ``maxValue``. Negative numbers are also mapped.</span>
+<span class="sd">    Any input between ``deadZone`` and ``-deadZone`` is mapped to 0.</span>
+<span class="sd">    :param value: input number</span>
+<span class="sd">    :param deadZone: the minimum &quot;dead zone&quot; value</span>
+<span class="sd">    :param maxValue: the maximum value</span>
+<span class="sd">    :return: the number, constrained to the minimum/maximum values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">deadZone</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">deadZone</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">deadZone</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">maxValue</span> <span class="o">-</span> <span class="n">deadZone</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">maxValue</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">maxValue</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">elif</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">deadZone</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">+</span> <span class="n">deadZone</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">maxValue</span> <span class="o">-</span> <span class="n">deadZone</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">maxValue</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">maxValue</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">0.0</span>
-    <span class="k">return</span> <span class="n">value</span>
 
 <span class="k">def</span> <span class="nf">whileButtonPressed</span><span class="p">(</span><span class="n">joystick</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
