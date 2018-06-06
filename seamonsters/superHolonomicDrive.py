@@ -22,7 +22,7 @@ class Wheel:
         :param magnitude: speed in feet per second
         :param direction: radians. 0 is right, positive counter-clockwise
         :return: 1.0 if wheel speed is within it limits, otherwise a value
-            between 0 and 1 to scale the wheel down to its maximum speed.
+        between 0 and 1 to scale the wheel down to its maximum speed.
         """
         return 1.0
 
@@ -239,7 +239,7 @@ class SuperHolonomicDrive:
         :param direction: radians
         :param turn: radians per second
         :return: the scale of the actual output speed, as a fraction of the
-            input magnitude and turn components
+        input magnitude and turn components
         """
 
         moveX = math.cos(direction) * magnitude
