@@ -20,9 +20,9 @@ class Wheel:
         Return the scaling factor necessary to keep the wheel speed within its
         limits.
         :param magnitude: speed in feet per second
-        :param direction: radians
+        :param direction: radians. 0 is right, positive counter-clockwise
         :return: 1.0 if wheel speed is within it limits, otherwise a value
-        between 0 and 1 to scale the wheel down to its maximum speed.
+            between 0 and 1 to scale the wheel down to its maximum speed.
         """
         return 1.0
 
@@ -30,13 +30,21 @@ class Wheel:
         """
         Spin the wheel. This should be called 50 times per second.
         :param magnitude: speed in feet per second.
-        :param direction: radians
+        :param direction: radians. 0 is right, positive counter-clockwise
         """
 
 
 class TestWheel(Wheel):
+    """
+    Logs parameters for drive(), for testing.
+    """
 
     def __init__(self, name, x, y):
+        """
+        :param name: Name to include when logging parameters.
+        :param x: X offset from origin in feet
+        :param y: Y offset from origin in feet
+        """
         super().__init__(x, y)
         self.name = name
 
@@ -45,6 +53,10 @@ class TestWheel(Wheel):
 
 
 class AngledWheel(Wheel):
+    """
+    An AngledWheel is a wheel oriented in a fixed direction, which it can't
+    change on its own. It uses a TalonSRX to drive.
+    """
 
     def __init__(self, motor, x, y, angle, encoderCountsPerFoot,
                  maxVoltageVelocity, reverse=False):
@@ -52,11 +64,12 @@ class AngledWheel(Wheel):
         :param motor: a TalonSRX
         :param x: X position in feet
         :param y: Y position in feet
-        :param angle: radians, direction of force
+        :param angle: radians, direction of force. 0 is right, positive
+            counter-clockwise
         :param encoderCountsPerFoot: number of encoder counts to travel 1 foot
         :param maxVoltageVelocity: velocity at 100% in voltage mode, in feet
-        per second
-        :param reverse: boolean
+            per second
+        :param reverse: boolean, optional
         """
         super().__init__(x, y)
         self.motor = motor
@@ -124,6 +137,11 @@ class AngledWheel(Wheel):
 
 
 class MecanumWheel(AngledWheel):
+    """
+    An angled Mecanum wheel. The velocity of the wheel is scaled up to
+    compensate for the effect of the rollers. For the angle of the wheel, use
+    the diagonal direction of force in the diamond pattern.
+    """
 
     SQRT_2 = math.sqrt(2)
 
@@ -135,9 +153,25 @@ class MecanumWheel(AngledWheel):
 
 
 class SwerveWheel(Wheel):
+    """
+    A wheel which can rotate. A SwerveWheel drives using an AngledWheel, and
+    rotates using a TalonSRX.
+    """
 
     def __init__(self, angledWheel, steerMotor, encoderCountsPerRev,
                  reverseSteerMotor=False):
+        """
+        ``zeroSteering()`` is called in __init__.
+
+        :param angledWheel: an AngledWheel for driving. Its angle will be
+            updated as the swerve wheel rotates. The SwerveWheel will borrow its
+            X/Y position when it's initialized.
+        :param steerMotor: a TalonSRX for rotating the swerve wheel. It should
+            have a feedback sensor set for position mode.
+        :param encoderCountsPerRev: number of encoder counts in a full rotation
+            of the steer motor
+        :param reverseSteerMotor: boolean, optional
+        """
         super().__init__(angledWheel.x, angledWheel.y)
         self.angledWheel = angledWheel
         self.steerMotor = steerMotor
@@ -146,6 +180,10 @@ class SwerveWheel(Wheel):
         self.zeroSteering()
 
     def zeroSteering(self):
+        """
+        Reset the origin (rotation of wheel when facing right) to the current
+        position of the steer motor.
+        """
         self._steerOrigin = self.steerMotor.getSelectedSensorPosition(0)
 
     def limitMagnitude(self, magnitude, direction):
@@ -188,15 +226,20 @@ class SuperHolonomicDrive:
         self.wheels = []
 
     def addWheel(self, wheel):
+        """
+        Add a wheel to the set of drivetrain wheels.
+        :param wheel: a ``Wheel``
+        """
         self.wheels.append(wheel)
 
     def drive(self, magnitude, direction, turn):
         """
+        Drive the robot. This should be called 50 times per second.
         :param magnitude: feet per second
         :param direction: radians
         :param turn: radians per second
         :return: the scale of the actual output speed, as a fraction of the
-        input magnitude and turn components
+            input magnitude and turn components
         """
 
         moveX = math.cos(direction) * magnitude
