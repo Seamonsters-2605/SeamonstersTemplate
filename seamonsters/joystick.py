@@ -2,17 +2,28 @@ import wpilib
 
 __author__ = "seamonsters"
 
-def deadZone(value, deadZone = 0.08):
+def deadZone(value, deadZone=0.1, maxValue=1.0):
     """
-    Add a dead-zone to the number
-    :param value: the number
-    :param deadZone: the minimum value
-    :return: zero if the number is less than the dead zone, otherwise the
-    original number
+    Add a dead-zone to the number. Any input from ``deadZone`` to ``maxValue``
+    is mapped to the range 0 to ``maxValue``. Negative numbers are also mapped.
+    Any input between ``deadZone`` and ``-deadZone`` is mapped to 0.
+    :param value: input number
+    :param deadZone: the minimum "dead zone" value
+    :param maxValue: the maximum value
+    :return: the number, constrained to the minimum/maximum values
     """
-    if abs(value) < deadZone:
+    if value > deadZone:
+        value = (value - deadZone) / (maxValue - deadZone)
+        if value > maxValue:
+            return maxValue
+        return value
+    elif value < -deadZone:
+        value = (value + deadZone) / (maxValue - deadZone)
+        if value < -maxValue:
+            return -maxValue
+        return value
+    else:
         return 0.0
-    return value
 
 def whileButtonPressed(joystick, button):
     """
