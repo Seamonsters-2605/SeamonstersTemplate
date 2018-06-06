@@ -65,7 +65,7 @@ refer either to Voltage or PercentVbus mode on CANTalons. Also, some classes use
 <td>Wraps another drive interface, and provides acceleration filtering.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.AngledWheel" title="seamonsters.AngledWheel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.AngledWheel</span></code></a>(motor,&nbsp;x,&nbsp;y,&nbsp;angle,&nbsp;...)</td>
-<td></td>
+<td>An AngledWheel is a wheel oriented in a fixed direction, which it can&#8217;t change on its own.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.DashboardCommandReader" title="seamonsters.DashboardCommandReader"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.DashboardCommandReader</span></code></a>()</td>
 <td>Allows reading data entered in the Command box on the dashboard.</td>
@@ -95,7 +95,7 @@ refer either to Voltage or PercentVbus mode on CANTalons. Also, some classes use
 <td>Represents a value important to the user that is constantly changing.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.MecanumWheel" title="seamonsters.MecanumWheel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.MecanumWheel</span></code></a>(motor,&nbsp;x,&nbsp;y,&nbsp;angle,&nbsp;...)</td>
-<td></td>
+<td>An angled Mecanum wheel.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.MultiDrive" title="seamonsters.MultiDrive"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.MultiDrive</span></code></a>(interface)</td>
 <td>Wraps another DriveInterface, and allows <code class="docutils literal"><span class="pre">drive()</span></code> to be called multiple times in a loop.</td>
@@ -104,13 +104,13 @@ refer either to Voltage or PercentVbus mode on CANTalons. Also, some classes use
 <td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.SwerveWheel" title="seamonsters.SwerveWheel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.SwerveWheel</span></code></a>(angledWheel,&nbsp;...[,&nbsp;...])</td>
-<td></td>
+<td>A wheel which can rotate.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.TestDriveInterface" title="seamonsters.TestDriveInterface"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.TestDriveInterface</span></code></a></td>
 <td>A DriveInterface which does nothing but log the magnitude/direction/turn values it receives.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.TestWheel" title="seamonsters.TestWheel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.TestWheel</span></code></a>(name,&nbsp;x,&nbsp;y)</td>
-<td></td>
+<td>Logs parameters for drive(), for testing.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.Wheel</span></code></a>(x,&nbsp;y)</td>
 <td>Interface for wheels.</td>

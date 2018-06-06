@@ -64,7 +64,7 @@
 <span class="sd">        Return the scaling factor necessary to keep the wheel speed within its</span>
 <span class="sd">        limits.</span>
 <span class="sd">        :param magnitude: speed in feet per second</span>
-<span class="sd">        :param direction: radians</span>
+<span class="sd">        :param direction: radians. 0 is right, positive counter-clockwise</span>
 <span class="sd">        :return: 1.0 if wheel speed is within it limits, otherwise a value</span>
 <span class="sd">        between 0 and 1 to scale the wheel down to its maximum speed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -74,13 +74,21 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Spin the wheel. This should be called 50 times per second.</span>
 <span class="sd">        :param magnitude: speed in feet per second.</span>
-<span class="sd">        :param direction: radians</span>
+<span class="sd">        :param direction: radians. 0 is right, positive counter-clockwise</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
 
 <span class="k">class</span> <span class="nc">TestWheel</span><span class="p">(</span><span class="n">Wheel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Logs parameters for drive(), for testing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="TestWheel.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.TestWheel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param name: Name to include when logging parameters.</span>
+<span class="sd">        :param x: X offset from origin in feet</span>
+<span class="sd">        :param y: Y offset from origin in feet</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
 
@@ -89,6 +97,10 @@
 
 
 <span class="k">class</span> <span class="nc">AngledWheel</span><span class="p">(</span><span class="n">Wheel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An AngledWheel is a wheel oriented in a fixed direction, which it can&#39;t</span>
+<span class="sd">    change on its own. It uses a TalonSRX to drive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="AngledWheel.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.AngledWheel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">motor</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">encoderCountsPerFoot</span><span class="p">,</span>
                  <span class="n">maxVoltageVelocity</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -96,11 +108,12 @@
 <span class="sd">        :param motor: a TalonSRX</span>
 <span class="sd">        :param x: X position in feet</span>
 <span class="sd">        :param y: Y position in feet</span>
-<span class="sd">        :param angle: radians, direction of force</span>
+<span class="sd">        :param angle: radians, direction of force. 0 is right, positive</span>
+<span class="sd">            counter-clockwise</span>
 <span class="sd">        :param encoderCountsPerFoot: number of encoder counts to travel 1 foot</span>
 <span class="sd">        :param maxVoltageVelocity: velocity at 100% in voltage mode, in feet</span>
-<span class="sd">        per second</span>
-<span class="sd">        :param reverse: boolean</span>
+<span class="sd">            per second</span>
+<span class="sd">        :param reverse: boolean, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">motor</span> <span class="o">=</span> <span class="n">motor</span>
@@ -168,6 +181,11 @@
 
 
 <span class="k">class</span> <span class="nc">MecanumWheel</span><span class="p">(</span><span class="n">AngledWheel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An angled Mecanum wheel. The velocity of the wheel is scaled up to</span>
+<span class="sd">    compensate for the effect of the rollers. For the angle of the wheel, use</span>
+<span class="sd">    the diagonal direction of force in the diamond pattern.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">SQRT_2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
@@ -179,9 +197,25 @@
 
 
 <span class="k">class</span> <span class="nc">SwerveWheel</span><span class="p">(</span><span class="n">Wheel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A wheel which can rotate. A SwerveWheel drives using an AngledWheel, and</span>
+<span class="sd">    rotates using a TalonSRX.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SwerveWheel.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angledWheel</span><span class="p">,</span> <span class="n">steerMotor</span><span class="p">,</span> <span class="n">encoderCountsPerRev</span><span class="p">,</span>
                  <span class="n">reverseSteerMotor</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ``zeroSteering()`` is called in __init__.</span>
+
+<span class="sd">        :param angledWheel: an AngledWheel for driving. Its angle will be</span>
+<span class="sd">            updated as the swerve wheel rotates. The SwerveWheel will borrow its</span>
+<span class="sd">            X/Y position when it&#39;s initialized.</span>
+<span class="sd">        :param steerMotor: a TalonSRX for rotating the swerve wheel. It should</span>
+<span class="sd">            have a feedback sensor set for position mode.</span>
+<span class="sd">        :param encoderCountsPerRev: number of encoder counts in a full rotation</span>
+<span class="sd">            of the steer motor</span>
+<span class="sd">        :param reverseSteerMotor: boolean, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">angledWheel</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span> <span class="o">=</span> <span class="n">angledWheel</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span> <span class="o">=</span> <span class="n">steerMotor</span>
@@ -190,6 +224,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">zeroSteering</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SwerveWheel.zeroSteering"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.zeroSteering">[docs]</a>    <span class="k">def</span> <span class="nf">zeroSteering</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset the origin (rotation of wheel when facing right) to the current</span>
+<span class="sd">        position of the steer motor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_steerOrigin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span><span class="o">.</span><span class="n">getSelectedSensorPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SwerveWheel.limitMagnitude"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.limitMagnitude">[docs]</a>    <span class="k">def</span> <span class="nf">limitMagnitude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
@@ -232,10 +270,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span> <span class="o">=</span> <span class="p">[]</span></div>
 
 <div class="viewcode-block" id="SuperHolonomicDrive.addWheel"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.addWheel">[docs]</a>    <span class="k">def</span> <span class="nf">addWheel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wheel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a wheel to the set of drivetrain wheels.</span>
+<span class="sd">        :param wheel: a ``Wheel``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheel</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SuperHolonomicDrive.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Drive the robot. This should be called 50 times per second.</span>
 <span class="sd">        :param magnitude: feet per second</span>
 <span class="sd">        :param direction: radians</span>
 <span class="sd">        :param turn: radians per second</span>

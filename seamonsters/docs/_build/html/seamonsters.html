@@ -82,6 +82,8 @@ seconds).</p>
 <dt id="seamonsters.AngledWheel">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">AngledWheel</code><span class="sig-paren">(</span><em>motor</em>, <em>x</em>, <em>y</em>, <em>angle</em>, <em>encoderCountsPerFoot</em>, <em>maxVoltageVelocity</em>, <em>reverse=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.AngledWheel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-class docutils literal"><span class="pre">seamonsters.Wheel</span></code></a></p>
+<p>An AngledWheel is a wheel oriented in a fixed direction, which it can&#8217;t
+change on its own. It uses a TalonSRX to drive.</p>
 <dl class="method">
 <dt id="seamonsters.AngledWheel.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>motor</em>, <em>x</em>, <em>y</em>, <em>angle</em>, <em>encoderCountsPerFoot</em>, <em>maxVoltageVelocity</em>, <em>reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.__init__" title="Permalink to this definition">¶</a></dt>
@@ -93,16 +95,17 @@ seconds).</p>
 <li><strong>motor</strong> &#8211; a TalonSRX</li>
 <li><strong>x</strong> &#8211; X position in feet</li>
 <li><strong>y</strong> &#8211; Y position in feet</li>
-<li><strong>angle</strong> &#8211; radians, direction of force</li>
+<li><strong>angle</strong> &#8211; radians, direction of force. 0 is right, positive
+counter-clockwise</li>
 <li><strong>encoderCountsPerFoot</strong> &#8211; number of encoder counts to travel 1 foot</li>
-<li><strong>maxVoltageVelocity</strong> &#8211; velocity at 100% in voltage mode, in feet</li>
+<li><strong>maxVoltageVelocity</strong> &#8211; velocity at 100% in voltage mode, in feet
+per second</li>
+<li><strong>reverse</strong> &#8211; boolean, optional</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>per second
-:param reverse: boolean</p>
 </dd></dl>
 
 <dl class="method">
@@ -569,6 +572,9 @@ determine if the value has changed.</p>
 <dt id="seamonsters.MecanumWheel">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">MecanumWheel</code><span class="sig-paren">(</span><em>motor</em>, <em>x</em>, <em>y</em>, <em>angle</em>, <em>encoderCountsPerFoot</em>, <em>maxVoltageVelocity</em>, <em>reverse=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.MecanumWheel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.AngledWheel" title="seamonsters.AngledWheel"><code class="xref py py-class docutils literal"><span class="pre">seamonsters.AngledWheel</span></code></a></p>
+<p>An angled Mecanum wheel. The velocity of the wheel is scaled up to
+compensate for the effect of the rollers. For the angle of the wheel, use
+the diagonal direction of force in the diamond pattern.</p>
 <dl class="attribute">
 <dt id="seamonsters.MecanumWheel.SQRT_2">
 <code class="descname">SQRT_2</code><em class="property"> = 1.4142135623730951</em><a class="headerlink" href="#seamonsters.MecanumWheel.SQRT_2" title="Permalink to this definition">¶</a></dt>
@@ -622,28 +628,19 @@ and sent to the wrapped interface when <code class="docutils literal"><span clas
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.addWheel">
 <code class="descname">addWheel</code><span class="sig-paren">(</span><em>wheel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.addWheel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.addWheel" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Add a wheel to the set of drivetrain wheels.
+:param wheel: a <code class="docutils literal"><span class="pre">Wheel</span></code></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.drive" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>magnitude</strong> &#8211; feet per second</li>
-<li><strong>direction</strong> &#8211; radians</li>
-<li><strong>turn</strong> &#8211; radians per second</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>input magnitude and turn components</p>
+<dd><p>Drive the robot. This should be called 50 times per second.
+:param magnitude: feet per second
+:param direction: radians
+:param turn: radians per second
+:return: the scale of the actual output speed, as a fraction of the
+input magnitude and turn components</p>
 </dd></dl>
 
 </dd></dl>
@@ -652,10 +649,31 @@ and sent to the wrapped interface when <code class="docutils literal"><span clas
 <dt id="seamonsters.SwerveWheel">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">SwerveWheel</code><span class="sig-paren">(</span><em>angledWheel</em>, <em>steerMotor</em>, <em>encoderCountsPerRev</em>, <em>reverseSteerMotor=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.SwerveWheel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-class docutils literal"><span class="pre">seamonsters.Wheel</span></code></a></p>
+<p>A wheel which can rotate. A SwerveWheel drives using an AngledWheel, and
+rotates using a TalonSRX.</p>
 <dl class="method">
 <dt id="seamonsters.SwerveWheel.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>angledWheel</em>, <em>steerMotor</em>, <em>encoderCountsPerRev</em>, <em>reverseSteerMotor=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><code class="docutils literal"><span class="pre">zeroSteering()</span></code> is called in __init__.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>angledWheel</strong> &#8211; an AngledWheel for driving. Its angle will be
+updated as the swerve wheel rotates. The SwerveWheel will borrow its
+X/Y position when it&#8217;s initialized.</li>
+<li><strong>steerMotor</strong> &#8211; a TalonSRX for rotating the swerve wheel. It should
+have a feedback sensor set for position mode.</li>
+<li><strong>encoderCountsPerRev</strong> &#8211; number of encoder counts in a full rotation
+of the steer motor</li>
+<li><strong>reverseSteerMotor</strong> &#8211; boolean, optional</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.SwerveWheel.drive">
@@ -670,7 +688,9 @@ and sent to the wrapped interface when <code class="docutils literal"><span clas
 <dl class="method">
 <dt id="seamonsters.SwerveWheel.zeroSteering">
 <code class="descname">zeroSteering</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.zeroSteering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.zeroSteering" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Reset the origin (rotation of wheel when facing right) to the current
+position of the steer motor.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -691,10 +711,24 @@ values it receives.</p>
 <dt id="seamonsters.TestWheel">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">TestWheel</code><span class="sig-paren">(</span><em>name</em>, <em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.TestWheel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-class docutils literal"><span class="pre">seamonsters.Wheel</span></code></a></p>
+<p>Logs parameters for drive(), for testing.</p>
 <dl class="method">
 <dt id="seamonsters.TestWheel.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#TestWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.TestWheel.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; Name to include when logging parameters.</li>
+<li><strong>x</strong> &#8211; X offset from origin in feet</li>
+<li><strong>y</strong> &#8211; Y offset from origin in feet</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.TestWheel.drive">
@@ -731,7 +765,7 @@ direction.</p>
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.drive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spin the wheel. This should be called 50 times per second.
 :param magnitude: speed in feet per second.
-:param direction: radians</p>
+:param direction: radians. 0 is right, positive counter-clockwise</p>
 </dd></dl>
 
 <dl class="method">
@@ -740,7 +774,7 @@ direction.</p>
 <dd><p>Return the scaling factor necessary to keep the wheel speed within its
 limits.
 :param magnitude: speed in feet per second
-:param direction: radians
+:param direction: radians. 0 is right, positive counter-clockwise
 :return: 1.0 if wheel speed is within it limits, otherwise a value
 between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </dd></dl>
