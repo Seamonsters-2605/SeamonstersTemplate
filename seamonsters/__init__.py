@@ -14,23 +14,17 @@ from .dashboard import *
 from .drive import *
 from .gamepad import *
 from .generators import *
-from .holonomicDrive import *
 from .joystick import *
 from .logging import *
-from .motorControl import *
 from .path import *
 from .superHolonomicDrive import *
-from .swerveDrive import *
 
 _changeModule(bot)
 _changeModule(dashboard)
 _changeModule(drive)
 _changeModule(gamepad)
 _changeModule(generators)
-_changeModule(holonomicDrive)
 _changeModule(joystick)
 _changeModule(logging)
-_changeModule(motorControl)
 _changeModule(path)
 _changeModule(superHolonomicDrive)
-_changeModule(swerveDrive)
