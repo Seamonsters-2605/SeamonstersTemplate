@@ -1,5 +1,6 @@
 import math
 import ctre
+import seamonsters.drive
 
 class Wheel:
     """
@@ -220,7 +221,7 @@ class SwerveWheel(Wheel):
         self.angledWheel.drive(magnitude, direction)
 
 
-class SuperHolonomicDrive:
+class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
 
     def __init__(self):
         self.wheels = []
@@ -233,15 +234,6 @@ class SuperHolonomicDrive:
         self.wheels.append(wheel)
 
     def drive(self, magnitude, direction, turn):
-        """
-        Drive the robot. This should be called 50 times per second.
-        :param magnitude: feet per second
-        :param direction: radians
-        :param turn: radians per second
-        :return: the scale of the actual output speed, as a fraction of the
-        input magnitude and turn components
-        """
-
         moveX = math.cos(direction) * magnitude
         moveY = math.sin(direction) * magnitude
 
