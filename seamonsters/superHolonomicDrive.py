@@ -204,7 +204,7 @@ class SwerveWheel(Wheel):
         self.steerMotor.set(ctre.ControlMode.Position, pos + self._steerOrigin)
 
     def drive(self, magnitude, direction):
-        print("Wheel", math.degrees(direction))
+        #print("Wheel", math.degrees(direction))
         currentAngle = self._getCurrentSteeringAngle()
         if magnitude != 0:
             angleDiff = direction - currentAngle
@@ -213,7 +213,7 @@ class SwerveWheel(Wheel):
                 angleDiff -= math.pi
             while angleDiff < -math.pi / 2:
                 angleDiff += math.pi
-            print("Target", math.degrees(currentAngle + angleDiff))
+            #print("Target", math.degrees(currentAngle + angleDiff))
             #print(math.degrees(currentAngle), math.degrees(currentAngle + angleDiff))
             self._setSteering(currentAngle + angleDiff)
 
