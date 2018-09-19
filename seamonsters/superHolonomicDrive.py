@@ -34,6 +34,18 @@ class Wheel:
         :param direction: radians. 0 is right, positive counter-clockwise
         """
 
+    def getMovementDirection(self):
+        """
+        :return: the current direction the wheel is moving in radians. This may be based on sensors.
+        """
+        return 0
+
+    def getMovementMagnitude(self):
+        """
+        :return: the current velocity of the wheel in feet per second, based on sensors.
+        """
+        return 0
+
 
 class TestWheel(Wheel):
     """
@@ -136,6 +148,13 @@ class AngledWheel(Wheel):
 
             self.motor.set(self.driveMode, self._positionTarget)
 
+    def getMovementDirection(self):
+        return self.angle
+
+    def getMovementMagnitude(self):
+        sensorVel = self.motor.getSelectedSensorVelocity(0)
+        return sensorVel * 10.0 / self.encoderCountsPerFoot
+
 
 class MecanumWheel(AngledWheel):
     """
@@ -151,6 +170,9 @@ class MecanumWheel(AngledWheel):
 
     def drive(self, magnitude, direction):
         return super().drive(magnitude * MecanumWheel.SQRT_2, direction)
+
+    def getMovementMagnitude(self):
+        return super().getMovementMagnitude() / MecanumWheel.SQRT_2
 
 
 class SwerveWheel(Wheel):
@@ -219,6 +241,12 @@ class SwerveWheel(Wheel):
 
         self.angledWheel.angle = currentAngle
         self.angledWheel.drive(magnitude, direction)
+
+    def getMovementDirection(self):
+        return self.angledWheel.getMovementDirection()
+
+    def getMovementMagnitude(self):
+        return self.angledWheel.getMovementMagnitude()
 
 
 class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
