@@ -1,63 +1,70 @@
-import networktables
-import traceback
+import sys
+import queue
+import threading
+import remi
+import remi.gui as gui
 
-def getSwitch(name, defaultValue):
-    """
-    Get whether a switch on the dashboard is enabled.
-    """
-    table = networktables.NetworkTables.getTable('dashboard')
-    try:
-        switchNames = table.getStringArray('switchnames', [])
-        switchValues = table.getBooleanArray('switchvalues', [])
-    except BaseException as e:
-        print("Exception while getting switch", e)
-        return defaultValue
-    if not name in switchNames:
-        #print("Couldn't find switch name", name)
-        return defaultValue
-    if len(switchNames) != len(switchValues):
-        print("Invalid switch data!")
-        return defaultValue
-    return switchValues[switchNames.index(name)]
+DASHBOARD_PORT = 5805
 
-def setActiveCameraURL(url):
-    """
-    Set the URL of the camera stream to display in the dashboard
-    :param url: URL string
-    """
-    table = networktables.NetworkTables.getTable('dashboard')
-    table.putString('cam', url)
+def hBoxWith(*args, **kwargs):
+    box = gui.HBox(**kwargs)
+    for widget in args:
+        box.append(widget)
+    return box
 
-class DashboardCommandReader:
-    """
-    Allows reading data entered in the Command box on the dashboard.
-    """
+def vBoxWith(*args, **kwargs):
+    box = gui.VBox(**kwargs)
+    for widget in args:
+        box.append(widget)
+    return box
 
-    def __init__(self):
-        self.commandTable = networktables.NetworkTables.getTable('commands')
-        self.reset()
+def startDashboard(robot, dashboardClass):
+    appHolder = [None]
 
-    def reset(self):
-        """
-        Reset the connection, forget existing commands.
-        """
-        self.lastCommandId = 0
-        self.commandTable.putString('command', "")
-        self.commandTable.putNumber('id', 0)
+    appReadyEvent = threading.Event()
+    def appCallback(app):
+        appHolder[0] = app
+        appReadyEvent.set()
 
-    def getCommand(self):
-        """
-        Get the command entered in the box.
-        :return: a command string, or None if no command
-        """
-        try:
-            commandId = self.commandTable.getNumber('id', 0)
-            if commandId != self.lastCommandId:
-                command = self.commandTable.getString('command', '')
-                command = command.strip()
-                self.lastCommandId = commandId
-                if command != "":
-                    return command
-        except:
-            traceback.print_exc()
-        return None
+    def startDashboardThread(robot, appCallback):
+        if sys.argv[1] == 'sim':
+            remi.start(dashboardClass, port=DASHBOARD_PORT, userdata=(robot, appCallback,))
+        elif sys.argv[1] == 'depoly':
+            pass
+        elif sys.argv[1] == 'run': # run on robot
+            remi.start(dashboardClass, start_browser=False,
+                address='10.26.5.2', port=DASHBOARD_PORT, userdata=(robot, appCallback,))
+
+    thread = threading.Thread(target=startDashboardThread,
+                                args=(robot, appCallback))
+    thread.daemon = True
+    thread.start()
+    print("Waiting for app to start...")
+    appReadyEvent.wait()
+    print("App started!")
+
+    return appHolder[0]
+
+
+class Dashboard(remi.App):
+
+    def __init__(self, *args):
+        self.eventQueue = queue.Queue()
+        super(Dashboard, self).__init__(*args)
+
+    def queuedEvent(self, eventF):
+        def queueTheEvent(*args, **kwargs):
+            def doTheEvent():
+                print("Event:", eventF.__name__)
+                eventF(*args, **kwargs)
+            self.eventQueue.put(doTheEvent)
+        return queueTheEvent
+
+    def clearEvents(self):
+        while not self.eventQueue.empty():
+            self.eventQueue.get()
+
+    def doEvents(self):
+        while not self.eventQueue.empty():
+            event = self.eventQueue.get()
+            event()
