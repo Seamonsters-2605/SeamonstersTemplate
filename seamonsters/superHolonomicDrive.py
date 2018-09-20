@@ -62,7 +62,15 @@ class TestWheel(Wheel):
         self.name = name
 
     def drive(self, magnitude, direction):
+        self._storedMagnitude = magnitude
+        self._storedDirection = direction
         print(self.name, "Mag:", magnitude, "Dir:", math.degrees(direction))
+
+    def getMovementDirection(self):
+        return self._storedDirection
+
+    def getMovementMagnitude(self):
+        return self._storedMagnitude
 
 
 class AngledWheel(Wheel):
@@ -284,6 +292,33 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
                                  wheelDirections[i])
         return minWheelScale
 
+    def getRobotMovement(self):
+        """
+        Get the movement of the robot as a whole, based on wheel sensors.
+        :return: (magnitude, direction, turn). Magnitude in feet per second,
+        direction in radians, turn in radians per second.
+        """
+        totalX = 0
+        totalY = 0
+        totalR = 0
+        for wheel in self.wheels:
+            wheelMag = wheel.getMovementMagnitude()
+            wheelDir = wheel.getMovementDirection()
+            # linear velocity
+            totalX += wheelMag * math.cos(wheelDir)
+            totalY += wheelMag * math.sin(wheelDir)
+            # angular velocity
+            totalR += wheelMag * math.sin(wheelDir - math.atan2(wheel.y, wheel.x)) \
+                / math.sqrt(wheel.x ** 2 + wheel.y ** 2)
+
+        numWheels = len(self.wheels)
+        totalX /= numWheels
+        totalY /= numWheels
+        totalR /= numWheels
+
+        magnitude = math.sqrt(totalX ** 2 + totalY ** 2)
+        direction = math.atan2(totalY, totalX)
+        return (magnitude, direction, totalR)
 
 if __name__ == "__main__":
     drive = SuperHolonomicDrive()
@@ -293,9 +328,13 @@ if __name__ == "__main__":
     drive.addWheel(TestWheel("Wheel D", -1, -1))
 
     def testDrive(mag, dir, turn):
-        print("Drive mag:", mag, "dir:", math.degrees(dir), "turn:", turn)
+        print("Drive Input mag:", mag, "dir:", math.degrees(dir), "turn:", turn)
         drive.drive(mag, dir, turn)
+        magOut, dirOut, turnOut = drive.getRobotMovement()
+        print("Drive Output mag:", magOut, "dir:", math.degrees(dirOut), "turn:", turnOut)
 
+    testDrive(0, 0, 0)
     testDrive(4, math.radians(90), 0)
     testDrive(-5, math.radians(46), 0)
     testDrive(0, 0, 1)
+    testDrive(-5, math.radians(46), 3)
