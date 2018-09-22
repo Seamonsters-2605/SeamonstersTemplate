@@ -1,4 +1,4 @@
-__author__ = "jacobvanthoog"
+__author__ = "seamonsters"
 import math
 import wpilib
 import inspect, os
@@ -36,16 +36,19 @@ class SimulatedTalon:
                     value = -1.0
                 if value > 1:
                     value = 1.0
+                talonData['quad_velocity'] = int(value * maxVel) # update encoder
                 return value * self.inv
             elif controlMode == ctre.ControlMode.Position:
                 targetPos = talonData['pid0_target']
                 diff = targetPos - self.lastPosition
                 self.lastPosition = targetPos
-                talonData['quad_position'] = targetPos # update encoders
+                talonData['quad_position'] = targetPos # update encoder
+                talonData['quad_velocity'] = 0
                 return diff / maxVel * 5 * self.inv
             elif controlMode == ctre.ControlMode.Velocity:
                 targetVel = talonData['pid0_target']
-                talonData['quad_position'] += int(targetVel/5) # update encoders
+                talonData['quad_position'] += int(targetVel/5) # update encoder
+                talonData['quad_velocity'] = int(targetVel)
                 return targetVel / maxVel * self.inv
             else:
                 return 0.0
