@@ -47,7 +47,24 @@ class Wheel:
         return 0
 
 
-class TestWheel(Wheel):
+class CasterWheel(Wheel):
+    """
+    Doesn't drive a motor, only stores its drive parameters and echoes them
+    back for getMovementDirection and getMovementMagnitude.
+    """
+
+    def drive(self, magnitude, direction):
+        self._storedMagnitude = magnitude
+        self._storedDirection = direction
+
+    def getMovementDirection(self):
+        return self._storedDirection
+
+    def getMovementMagnitude(self):
+        return self._storedMagnitude
+
+
+class TestWheel(CasterWheel):
     """
     Logs parameters for drive(), for testing.
     """
@@ -62,15 +79,8 @@ class TestWheel(Wheel):
         self.name = name
 
     def drive(self, magnitude, direction):
-        self._storedMagnitude = magnitude
-        self._storedDirection = direction
+        super().drive(magnitude, direction)
         print(self.name, "Mag:", magnitude, "Dir:", math.degrees(direction))
-
-    def getMovementDirection(self):
-        return self._storedDirection
-
-    def getMovementMagnitude(self):
-        return self._storedMagnitude
 
 
 class AngledWheel(Wheel):
