@@ -15,7 +15,6 @@ from .drive import *
 from .gamepad import *
 from .generators import *
 from .joystick import *
-from .logging import *
 from .path import *
 from .superHolonomicDrive import *
 
@@ -25,6 +24,5 @@ _changeModule(drive)
 _changeModule(gamepad)
 _changeModule(generators)
 _changeModule(joystick)
-_changeModule(logging)
 _changeModule(path)
 _changeModule(superHolonomicDrive)
