@@ -36,6 +36,7 @@ class SimulatedTalon:
                     value = -1.0
                 if value > 1:
                     value = 1.0
+                talonData['quad_position'] += int(value * maxVel / 5)
                 talonData['quad_velocity'] = int(value * maxVel) # update encoder
                 return value * self.inv
             elif controlMode == ctre.ControlMode.Position:
@@ -43,11 +44,11 @@ class SimulatedTalon:
                 diff = targetPos - self.lastPosition
                 self.lastPosition = targetPos
                 talonData['quad_position'] = targetPos # update encoder
-                talonData['quad_velocity'] = 0
+                talonData['quad_velocity'] = int(diff * 5)
                 return diff / maxVel * 5 * self.inv
             elif controlMode == ctre.ControlMode.Velocity:
                 targetVel = talonData['pid0_target']
-                talonData['quad_position'] += int(targetVel/5) # update encoder
+                talonData['quad_position'] += int(targetVel / 5) # update encoder
                 talonData['quad_velocity'] = int(targetVel)
                 return targetVel / maxVel * self.inv
             else:
