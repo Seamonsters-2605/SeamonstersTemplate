@@ -19,12 +19,11 @@ def vBoxWith(*args, **kwargs):
     return box
 
 def startDashboard(robot, dashboardClass):
-    appHolder = [None]
+    robot.app = None
 
-    appReadyEvent = threading.Event()
     def appCallback(app):
-        appHolder[0] = app
-        appReadyEvent.set()
+        print("Dashboard started")
+        robot.app = app
 
     def startDashboardThread(robot, appCallback):
         if sys.argv[1] == 'sim':
@@ -39,18 +38,13 @@ def startDashboard(robot, dashboardClass):
                                 args=(robot, appCallback))
     thread.daemon = True
     thread.start()
-    print("Waiting for app to start...")
-    appReadyEvent.wait()
-    print("App started!")
-
-    return appHolder[0]
 
 
 class Dashboard(remi.App):
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         self.eventQueue = queue.Queue()
-        super(Dashboard, self).__init__(*args)
+        super(Dashboard, self).__init__(*args, **kwargs)
 
     def queuedEvent(self, eventF):
         def queueTheEvent(*args, **kwargs):
