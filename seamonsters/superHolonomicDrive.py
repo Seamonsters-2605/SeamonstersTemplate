@@ -308,27 +308,71 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
         :return: (magnitude, direction, turn). Magnitude in feet per second,
         direction in radians, turn in radians per second.
         """
-        totalX = 0
-        totalY = 0
-        totalR = 0
-        for wheel in self.wheels:
-            wheelMag = wheel.getMovementMagnitude()
-            wheelDir = wheel.getMovementDirection()
-            # linear velocity
-            totalX += wheelMag * math.cos(wheelDir)
-            totalY += wheelMag * math.sin(wheelDir)
-            # angular velocity
-            totalR += wheelMag * math.sin(wheelDir - math.atan2(wheel.y, wheel.x)) \
-                / math.sqrt(wheel.x ** 2 + wheel.y ** 2)
+        wheelDirs = [(wheel, self._constrainAngle(wheel.getMovementDirection())) for wheel in self.wheels]
+        rotationCenterX = 0
+        rotationCenterY = 0
+        numCentersAdded = 0
+        for (wheelA, dirA), (wheelB, dirB) in self._iteratePairs(wheelDirs):
+            if math.isclose(dirA % math.pi, dirB % math.pi):
+                continue # no intersection, lines are parallel
+            # find intersection of lines perpendicular to wheel direction
+            # this is the center of rotation
+            aDx, aDy = self._directionUnitVector(dirA + math.pi / 2)
+            bDx, bDy = self._directionUnitVector(dirB + math.pi / 2)
+            intersectX, intersectY = self._intersect(wheelA.x, wheelA.y, aDx, aDy,
+                                                     wheelB.x, wheelB.y, bDx, bDy)
+            rotationCenterX += intersectX
+            rotationCenterY += intersectY
+            numCentersAdded += 1
 
-        numWheels = len(self.wheels)
-        totalX /= numWheels
-        totalY /= numWheels
-        totalR /= numWheels
+        if numCentersAdded == 0:
+            # special case, the robot is moving in a straight line
+            averageMag = 0
+            averageDir = 0
+            for wheel in self.wheels:
+                averageMag += wheel.getMovementMagnitude()
+            for wheel, d in wheelDirs:
+                averageDir += d
+            averageMag /= len(self.wheels)
+            averageDir /= len(self.wheels)
+            return averageMag, averageDir, 0.0
+        else:
+            # find average point for center of rotation
+            rotationCenterX /= numCentersAdded
+            rotationCenterY /= numCentersAdded
+            # calculate average angular velocity of wheels about center of rotation
+            angularVelocity = 0
+            for wheel in self.wheels:
+                angularVelocity += wheel.getMovementMagnitude() / math.sqrt(
+                    (wheel.x - rotationCenterX) ** 2 + (wheel.y - rotationCenterY) ** 2 )
+            angularVelocity /= len(self.wheels) # average
+            # calculate motion of origin about center of rotation
+            magnitude = math.sqrt(rotationCenterX**2 + rotationCenterY**2) * angularVelocity
+            direction = math.atan2(rotationCenterY, rotationCenterX) - math.pi / 2
+            return magnitude, direction, angularVelocity
 
-        magnitude = math.sqrt(totalX ** 2 + totalY ** 2)
-        direction = math.atan2(totalY, totalX)
-        return (magnitude, direction, totalR)
+    # utility functions for getRobotMovement:
+
+    def _directionUnitVector(self, dir):
+        return math.cos(dir), math.sin(dir)
+
+    # return equivalent angle between 0 and 2pi
+    def _constrainAngle(self, a):
+        if a < 0:
+            a += math.pi * 2 * math.ceil(-a / (math.pi * 2))
+        else:
+            a %= math.pi * 2
+        return a
+
+    def _iteratePairs(self, list):
+        for i in range(0, len(list) - 1):
+            for j in range(i + 1, len(list)):
+                yield list[i], list[j]
+
+    def _intersect(self, x0a, y0a, dxa, dya, x0b, y0b, dxb, dyb):
+        # https://stackoverflow.com/a/41798064
+        t = (dyb*(x0b-x0a)-dxb*(y0b-y0a))/(dxa*dyb-dxb*dya)
+        return x0a+dxa*t, y0a+dya*t
 
 if __name__ == "__main__":
     drive = SuperHolonomicDrive()
