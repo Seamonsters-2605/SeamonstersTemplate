@@ -308,13 +308,21 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
         :return: (magnitude, direction, turn). Magnitude in feet per second,
         direction in radians, turn in radians per second.
         """
-        wheelDirs = [(wheel, self._constrainAngle(wheel.getMovementDirection())) for wheel in self.wheels]
+        wheelValues = []
+        for wheel in self.wheels:
+            wheelMag = wheel.getMovementMagnitude()
+            wheelDir = wheel.getMovementDirection()
+            if wheelMag < 0:
+                wheelDir += math.pi
+            wheelValues.append((wheel, abs(wheelMag), self._constrainAngle(wheelDir)))
         rotationCenterX = 0
         rotationCenterY = 0
         numCentersAdded = 0
-        for (wheelA, dirA), (wheelB, dirB) in self._iteratePairs(wheelDirs):
+        for (wheelA, magA, dirA), (wheelB, magB, dirB) in self._iteratePairs(wheelValues):
             if math.isclose(dirA % math.pi, dirB % math.pi):
                 continue # no intersection, lines are parallel
+            if abs(magA) < 1e-6 or abs(magB) < 1e-6:
+                continue
             # find intersection of lines perpendicular to wheel direction
             # this is the center of rotation
             aDx, aDy = self._directionUnitVector(dirA + math.pi / 2)
@@ -329,12 +337,11 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
             # special case, the robot is moving in a straight line
             averageMag = 0
             averageDir = 0
-            for wheel in self.wheels:
-                averageMag += wheel.getMovementMagnitude()
-            for wheel, d in wheelDirs:
-                averageDir += d
-            averageMag /= len(self.wheels)
-            averageDir /= len(self.wheels)
+            for wheel, mag, direction in wheelValues:
+                averageMag += mag
+                averageDir += direction
+            averageMag /= len(wheelValues)
+            averageDir /= len(wheelValues)
             return averageMag, averageDir, 0.0
         else:
             # find average point for center of rotation
@@ -342,10 +349,17 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
             rotationCenterY /= numCentersAdded
             # calculate average angular velocity of wheels about center of rotation
             angularVelocity = 0
-            for wheel in self.wheels:
-                angularVelocity += wheel.getMovementMagnitude() / math.sqrt(
-                    (wheel.x - rotationCenterX) ** 2 + (wheel.y - rotationCenterY) ** 2 )
-            angularVelocity /= len(self.wheels) # average
+            angularVelocityCount = 0
+            for wheel, wheelMag, wheelDir in wheelValues:
+                xOffset = wheel.x - rotationCenterX
+                yOffset = wheel.y - rotationCenterY
+                distanceToRotationCenter = math.sqrt(xOffset ** 2 + yOffset ** 2)
+                if distanceToRotationCenter < 1e-6:
+                    continue
+                angularVelocity += wheelMag * math.sin(wheelDir - math.atan2(yOffset, xOffset))\
+                    / distanceToRotationCenter
+                angularVelocityCount += 1
+            angularVelocity /= angularVelocityCount # average
             # calculate motion of origin about center of rotation
             magnitude = math.sqrt(rotationCenterX**2 + rotationCenterY**2) * angularVelocity
             direction = math.atan2(rotationCenterY, rotationCenterX) - math.pi / 2
