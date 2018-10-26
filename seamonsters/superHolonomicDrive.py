@@ -119,7 +119,7 @@ class AngledWheel(Wheel):
     An AngledWheel is a wheel oriented in a fixed direction, which it can't
     change on its own. It uses a TalonSRX to drive.
     """
-
+    
     def __init__(self, motor, x, y, angle, encoderCountsPerFoot,
                  maxVoltageVelocity, reverse=False):
         """
@@ -139,6 +139,10 @@ class AngledWheel(Wheel):
         self.encoderCountsPerFoot = encoderCountsPerFoot
         self.maxVoltageVelocity = maxVoltageVelocity
         self.reverse = reverse
+        self.oldPosition = 0
+        self.positionOccurence = 0    
+        self.time = 0
+        self.encoderWorking = True
 
         self.driveMode = ctre.ControlMode.PercentOutput
 
@@ -153,6 +157,21 @@ class AngledWheel(Wheel):
         if abs(magnitude) > self.maxVoltageVelocity:
             return self.maxVoltageVelocity / abs(magnitude)
         return 1.0
+
+    def encoderCheck(self):
+        newPosition = self.motor.getSelectedSensorPosition(0)
+        print(newPosition)
+        print(self.oldPosition)
+        if abs(newPosition - self.oldPosition) <= 1:
+            self.positionOccurence += 1
+        else:
+            self.positionOccurence = 0
+            self.encoderWorking = True
+        self.oldPosition = newPosition
+        
+        if self.positionOccurence >= 5:
+            self.encoderWorking = False
+
 
     def drive(self, magnitude, direction):
         magnitude *= math.cos(direction - self.angle)
@@ -196,6 +215,10 @@ class AngledWheel(Wheel):
                     self._positionTarget = currentPos
 
             self.motor.set(self.driveMode, self._positionTarget)
+        if abs(magnitude - 0.1) > 0:
+            if self.time % 25 == 0:
+                self.encoderCheck() 
+            self.time += 1
 
     def getMovementDirection(self):
         return self.angle
