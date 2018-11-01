@@ -162,8 +162,8 @@ class AngledWheel(Wheel):
 
     def encoderCheck(self):
         newPosition = self.motor.getSelectedSensorPosition(0)
-        print(newPosition)
-        print(self.oldPosition)
+        #print(newPosition)
+        #print(self.oldPosition)
         if abs(newPosition - self.oldPosition) <= 1:
             self.positionOccurence += 1
         else:
