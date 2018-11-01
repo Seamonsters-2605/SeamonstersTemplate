@@ -5,12 +5,45 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "wpilib simulate",
+            "name": "Simulate",
             "type": "python",
             "request": "launch",
             "program": "${file}",
             "args": [
                 "sim"
+            ]
+        },
+        {
+            "name": "Test",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "args": [
+                "test"
+            ]
+        },
+        {
+            "name": "Deploy",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "args": [
+                "deploy",
+                "--builtin",
+                "--nonstandard"
+            ]
+        },
+        {
+            "name": "Fast deploy (skip tests)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "args": [
+                "deploy",
+                "--builtin",
+                "--nonstandard",
+                "--skip-tests",
+                "--no-version-check"
             ]
         }
     ]
