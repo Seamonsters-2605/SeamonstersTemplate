@@ -217,7 +217,7 @@ class AngledWheel(Wheel):
                     self._positionTarget = currentPos
 
             self.motor.set(self.driveMode, self._positionTarget)
-        if abs(magnitude - 0.1) > 0:
+        if abs(magnitude - 0.1) > 0.1:
             if self.time %  CHECK_ENCODER_CYCLE == 0:
                 self.encoderCheck() 
             self.time += 1
