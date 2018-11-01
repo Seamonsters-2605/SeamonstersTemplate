@@ -2,6 +2,8 @@ import math
 import ctre
 import seamonsters.drive
 
+MAX_POSITION_OCCURENCE = 10
+CHECK_ENCODER_CYCLE = 10
 # if circle = math.pi*2, returns the smallest angle between two directions
 # on a circle
 def _circleDistance(a, b, circle):
@@ -38,7 +40,7 @@ class Wheel:
     Interface for wheels. A Wheel has a location and can put out force in a
     direction.
     """
-
+    
     def __init__(self, x, y):
         """
         :param x: X offset from origin in feet
@@ -167,9 +169,9 @@ class AngledWheel(Wheel):
         else:
             self.positionOccurence = 0
             self.encoderWorking = True
-        self.oldPosition = newPosition
+            self.oldPosition = newPosition
         
-        if self.positionOccurence >= 5:
+        if self.positionOccurence >= MAX_POSITION_OCCURENCE:
             self.encoderWorking = False
 
 
@@ -216,10 +218,12 @@ class AngledWheel(Wheel):
 
             self.motor.set(self.driveMode, self._positionTarget)
         if abs(magnitude - 0.1) > 0:
-            if self.time % 25 == 0:
+            if self.time %  CHECK_ENCODER_CYCLE == 0:
                 self.encoderCheck() 
             self.time += 1
-
+        else:
+            self.positionOccurence = 0
+            
     def getMovementDirection(self):
         return self.angle
 
