@@ -173,6 +173,13 @@ class AngledWheel(Wheel):
         if self._positionOccurence >= MAX_POSITION_OCCURENCE:
             self.encoderWorking = False
 
+        if self.driveMode == ctre.ControlMode.Position:
+            # TODO: this is arbitrary
+            maxError = self.maxVoltageVelocity * self.encoderCountsPerFoot / 2
+            if abs(newPosition - self._positionTarget) > maxError:
+                print("Incremental position error!", self.motor.getDeviceId())
+                self._positionTarget = newPosition
+
     def drive(self, magnitude, direction):
         magnitude *= math.cos(direction - self.angle)
         if self.reverse:
@@ -199,23 +206,12 @@ class AngledWheel(Wheel):
 
             encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot
             self._positionTarget += encoderCountsPerSecond / 50.0
-
-            if self._encoderCheckCount % 20 == 0:
-                # getSelectedSensorPosition is slow so only check a few times
-                # per second
-                currentPos = self.motor.getSelectedSensorPosition(0)
-                # TODO: this is arbitrary
-                maxError = self.maxVoltageVelocity \
-                           * self.encoderCountsPerFoot / 2
-                if abs(currentPos - self._positionTarget) \
-                        > maxError:
-                    print("Incremental position error!", currentPos)
-                    self._positionTarget = currentPos
-
             self.motor.set(self.driveMode, self._positionTarget)
 
         if abs(magnitude) > 0.1:
-            if self._encoderCheckCount %  CHECK_ENCODER_CYCLE == 0:
+            if self._encoderCheckCount % CHECK_ENCODER_CYCLE == 0:
+                # getSelectedSensorPosition is slow so only check a few times
+                # per second
                 self._encoderCheck()
         else:
             self._positionOccurence = 0
