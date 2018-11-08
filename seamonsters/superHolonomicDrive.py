@@ -40,7 +40,7 @@ class Wheel:
     Interface for wheels. A Wheel has a location and can put out force in a
     direction.
     """
-    
+
     def __init__(self, x, y):
         """
         :param x: X offset from origin in feet
@@ -121,7 +121,7 @@ class AngledWheel(Wheel):
     An AngledWheel is a wheel oriented in a fixed direction, which it can't
     change on its own. It uses a TalonSRX to drive.
     """
-    
+
     def __init__(self, motor, x, y, angle, encoderCountsPerFoot,
                  maxVoltageVelocity, reverse=False):
         """
