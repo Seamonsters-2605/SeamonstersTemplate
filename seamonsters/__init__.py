@@ -10,19 +10,28 @@ def _changeModule(module):
                 item.__module__ = "seamonsters"
 
 from .bot import *
-from .dashboard import *
-from .drive import *
-from .gamepad import *
-from .generators import *
-from .joystick import *
-from .path import *
-from .superHolonomicDrive import *
-
 _changeModule(bot)
-_changeModule(dashboard)
+
+try:
+    from .dashboard import *
+    _changeModule(dashboard)
+except ModuleNotFoundError:
+    pass
+
+from .drive import *
 _changeModule(drive)
+
+from .gamepad import *
 _changeModule(gamepad)
+
+from .generators import *
 _changeModule(generators)
+
+from .joystick import *
 _changeModule(joystick)
+
+from .path import *
 _changeModule(path)
+
+from .superHolonomicDrive import *
 _changeModule(superHolonomicDrive)
