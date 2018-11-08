@@ -17,11 +17,6 @@ def _iteratePairs(list):
         for j in range(i + 1, len(list)):
             yield list[i], list[j]
 
-def _intersect(x0a, y0a, dxa, dya, x0b, y0b, dxb, dyb):
-    # https://stackoverflow.com/a/41798064
-    t = (dyb*(x0b-x0a)-dxb*(y0b-y0a))/(dxa*dyb-dxb*dya)
-    return x0a+dxa*t, y0a+dya*t
-
 
 class Wheel:
     """
