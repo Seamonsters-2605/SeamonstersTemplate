@@ -7,6 +7,7 @@ def deadZone(value, deadZone=0.1, maxValue=1.0):
     Add a dead-zone to the number. Any input from ``deadZone`` to ``maxValue``
     is mapped to the range 0 to ``maxValue``. Negative numbers are also mapped.
     Any input between ``deadZone`` and ``-deadZone`` is mapped to 0.
+
     :param value: input number
     :param deadZone: the minimum "dead zone" value
     :param maxValue: the maximum value
@@ -28,6 +29,7 @@ def deadZone(value, deadZone=0.1, maxValue=1.0):
 def whileButtonPressed(joystick, button):
     """
     A generator which runs while the joystick button is pressed, then exits.
+
     :param joystick: a ``wpilib.Joystick``
     :param button: a button number
     """
@@ -38,6 +40,7 @@ def whileButtonPressed(joystick, button):
 def untilButtonPressed(joystick, button):
     """
     A generator which runs until the joystick button is pressed, then exits.
+
     :param joystick: a ``wpilib.Joystick``
     :param button: a button number
     """
@@ -69,6 +72,7 @@ class DynamicAxis:
     def update(self, value):
         """
         Update the value of the axis
+
         :param value: the raw axis value from the joystick
         :return: the adjusted value
         """

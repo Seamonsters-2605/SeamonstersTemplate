@@ -7,6 +7,7 @@ import math
 def talonModeToString(mode):
     """
     Get a readable name from a ``ctre.ControlMode`` constant
+
     :param mode: a constant from ``ctre.ControlMode``
     :return: a string name
     """
@@ -36,6 +37,7 @@ class DriveInterface:
     def drive(self, magnitude, direction, turn):
         """
         Drive the robot. This should be called 50 times per second.
+
         :param magnitude: feet per second
         :param direction: radians. 0 is right, positive counter-clockwise
         :param turn: radians per second. positive counter-clockwise
