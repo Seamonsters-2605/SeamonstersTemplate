@@ -10,7 +10,7 @@ def readPoints(filePath, pixelsPerUnit, leftMargin, bottomMargin):
     :param filePath: string path to the SVG file
     :param pixelsPerUnit: number of pixels for a single unit
     :param leftMargin: units (not pixels) of margin at the left side of the
-    image
+        image
     :param bottomMargin: units (not pixels) of margin at the bottom of the image
     :return: a list of tuples (x, y)
     """

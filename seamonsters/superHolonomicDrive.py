@@ -40,7 +40,7 @@ class Wheel:
         :param magnitude: speed in feet per second
         :param direction: radians. 0 is right, positive counter-clockwise
         :return: 1.0 if wheel speed is within it limits, otherwise a value
-        between 0 and 1 to scale the wheel down to its maximum speed.
+            between 0 and 1 to scale the wheel down to its maximum speed.
         """
         return 1.0
 
