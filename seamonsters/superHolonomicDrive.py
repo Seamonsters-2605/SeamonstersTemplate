@@ -14,25 +14,10 @@ def _circleDistance(a, b, circle):
         diff += circle
     return diff
 
-# return equivalent angle between 0 and 2pi
-def _constrainAngle(a):
-    if a < 0:
-        return a + (math.pi * 2) * math.ceil(-a / (math.pi * 2))
-    else:
-        return a % (math.pi * 2)
-
-def _directionUnitVector(dir):
-    return math.cos(dir), math.sin(dir)
-
 def _iteratePairs(list):
     for i in range(0, len(list) - 1):
         for j in range(i + 1, len(list)):
             yield list[i], list[j]
-
-def _intersect(x0a, y0a, dxa, dya, x0b, y0b, dxb, dyb):
-    # https://stackoverflow.com/a/41798064
-    t = (dyb*(x0b-x0a)-dxb*(y0b-y0a))/(dxa*dyb-dxb*dya)
-    return x0a+dxa*t, y0a+dya*t
 
 
 class Wheel:
@@ -53,16 +38,18 @@ class Wheel:
         """
         Return the scaling factor necessary to keep the wheel speed within its
         limits.
+
         :param magnitude: speed in feet per second
         :param direction: radians. 0 is right, positive counter-clockwise
         :return: 1.0 if wheel speed is within it limits, otherwise a value
-        between 0 and 1 to scale the wheel down to its maximum speed.
+            between 0 and 1 to scale the wheel down to its maximum speed.
         """
         return 1.0
 
     def drive(self, magnitude, direction):
         """
         Spin the wheel. This should be called 50 times per second.
+
         :param magnitude: speed in feet per second.
         :param direction: radians. 0 is right, positive counter-clockwise
         """
@@ -222,6 +209,8 @@ class AngledWheel(Wheel):
 
     def getMovementMagnitude(self):
         sensorVel = self.motor.getSelectedSensorVelocity(0)
+        if self.reverse:
+            sensorVel = -sensorVel
         return sensorVel * 10.0 / self.encoderCountsPerFoot
 
 
@@ -352,6 +341,7 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
     def getRobotMovement(self):
         """
         Get the movement of the robot as a whole, based on wheel sensors.
+
         :return: (magnitude, direction, turn). Magnitude in feet per second,
         direction in radians, turn in radians per second.
         """
@@ -359,63 +349,35 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
         for wheel in self.wheels:
             wheelMag = wheel.getMovementMagnitude()
             wheelDir = wheel.getMovementDirection()
-            if wheelMag < 0:
-                wheelDir += math.pi
-            wheelValues.append((wheel, abs(wheelMag), _constrainAngle(wheelDir)))
-        rotationCenterX = 0
-        rotationCenterY = 0
-        numCentersAdded = 0
-        for (wheelA, magA, dirA), (wheelB, magB, dirB) in _iteratePairs(wheelValues):
-            if abs(_circleDistance(dirA, dirB, math.pi)) < 0.01:
-                continue # no intersection, lines are parallel
-            if abs(magA) < 0.01 or abs(magB) < 0.01:
-                continue
-            # find intersection of lines perpendicular to wheel direction
-            # this is the center of rotation
-            aDx, aDy = _directionUnitVector(dirA + math.pi / 2)
-            bDx, bDy = _directionUnitVector(dirB + math.pi / 2)
-            try:
-                intersectX, intersectY = _intersect(wheelA.x, wheelA.y, aDx, aDy,
-                                                    wheelB.x, wheelB.y, bDx, bDy)
-            except ZeroDivisionError:
-                continue # lines are parallel
-            rotationCenterX += intersectX
-            rotationCenterY += intersectY
-            numCentersAdded += 1
+            dx = wheelMag * math.cos(wheelDir)
+            dy = wheelMag * math.sin(wheelDir)
+            wheelValues.append((wheel, dx, dy))
 
-        if numCentersAdded == 0:
-            # special case, the robot is moving in a straight line
-            xTotal = 0
-            yTotal = 0
-            for wheel, mag, direction in wheelValues:
-                xTotal += mag * math.cos(direction)
-                yTotal += mag * math.sin(direction)
-            xTotal /= len(wheelValues)
-            yTotal /= len(wheelValues)
-            return math.sqrt(xTotal**2 + yTotal**2), math.atan2(yTotal, xTotal), 0.0
-        else:
-            # find average point for center of rotation
-            rotationCenterX /= numCentersAdded
-            rotationCenterY /= numCentersAdded
-            # calculate average angular velocity of wheels about center of rotation
-            angularVelocity = 0
-            angularVelocityCount = 0
-            for wheel, wheelMag, wheelDir in wheelValues:
-                xOffset = wheel.x - rotationCenterX
-                yOffset = wheel.y - rotationCenterY
-                distanceToRotationCenter = math.sqrt(xOffset ** 2 + yOffset ** 2)
-                if distanceToRotationCenter < 0.01:
-                    continue
-                angularVelocity += wheelMag * math.sin(wheelDir - math.atan2(yOffset, xOffset))\
-                    / distanceToRotationCenter
-                angularVelocityCount += 1
-            angularVelocity /= angularVelocityCount # average
-            # calculate motion of origin about center of rotation
-            magnitude = math.sqrt(rotationCenterX**2 + rotationCenterY**2) * angularVelocity
-            direction = math.atan2(rotationCenterY, rotationCenterX) - math.pi / 2
-            return magnitude, direction, angularVelocity
+        totalX = 0
+        totalY = 0
+        totalA = 0
+        pairCount = 0
+        for (wheelA, aDx, aDy), (wheelB, bDx, bDy) in _iteratePairs(wheelValues):
+            # calc wheel b relative to wheel a
+            relPosX = wheelB.x - wheelA.x
+            relPosY = wheelB.y - wheelA.y
+            relPosMag = math.sqrt(relPosX ** 2 + relPosY ** 2)
+            relPosDir = math.atan2(relPosY, relPosX)
+            relVelX = bDx - aDx
+            relVelY = bDy - aDy
+            relVelDir = math.atan2(relVelY, relVelX)
+            relVelMag = math.sqrt(relVelX ** 2 + relVelY ** 2)
 
-    # utility functions for getRobotMovement:
+            totalX += (aDx + bDx) / 2
+            totalY += (aDy + bDy) / 2
+            totalA += relVelMag * math.sin(relVelDir - relPosDir) / relPosMag
+            pairCount += 1
+        totalX /= pairCount
+        totalY /= pairCount
+        totalA /= pairCount
+
+        return math.sqrt(totalX ** 2 + totalY ** 2), math.atan2(totalY, totalX), totalA
+
 
 if __name__ == "__main__":
     drive = SuperHolonomicDrive()

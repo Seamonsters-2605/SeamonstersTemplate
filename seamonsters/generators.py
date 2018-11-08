@@ -97,6 +97,7 @@ def ensureTrue(iterable, requiredCount):
 def returnValue(iterable, value):
     """
     Run an iterable but change the return value.
+
     :return: value
     """
     yield from iterable
