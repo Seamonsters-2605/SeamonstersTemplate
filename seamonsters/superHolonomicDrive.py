@@ -164,7 +164,7 @@ class AngledWheel(Wheel):
             # TODO: this is arbitrary
             maxError = self.maxVoltageVelocity * self.encoderCountsPerFoot / 2
             if abs(newPosition - self._positionTarget) > maxError:
-                print("Incremental position error!", self.motor.getDeviceId())
+                print("Incremental position error!", self.motor.getDeviceID())
                 self._positionTarget = newPosition
 
     def drive(self, magnitude, direction):
