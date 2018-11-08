@@ -69,6 +69,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the scaling factor necessary to keep the wheel speed within its</span>
 <span class="sd">        limits.</span>
+
 <span class="sd">        :param magnitude: speed in feet per second</span>
 <span class="sd">        :param direction: radians. 0 is right, positive counter-clockwise</span>
 <span class="sd">        :return: 1.0 if wheel speed is within it limits, otherwise a value</span>
@@ -79,6 +80,7 @@
 <div class="viewcode-block" id="Wheel.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Wheel.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Spin the wheel. This should be called 50 times per second.</span>
+
 <span class="sd">        :param magnitude: speed in feet per second.</span>
 <span class="sd">        :param direction: radians. 0 is right, positive counter-clockwise</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
@@ -352,6 +354,7 @@
 <div class="viewcode-block" id="SuperHolonomicDrive.getRobotMovement"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.getRobotMovement">[docs]</a>    <span class="k">def</span> <span class="nf">getRobotMovement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the movement of the robot as a whole, based on wheel sensors.</span>
+
 <span class="sd">        :return: (magnitude, direction, turn). Magnitude in feet per second,</span>
 <span class="sd">        direction in radians, turn in radians per second.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

@@ -48,12 +48,24 @@ seconds).</p>
 <dl class="method">
 <dt id="seamonsters.AccelerationFilterDrive.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#AccelerationFilterDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AccelerationFilterDrive.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.
-:param magnitude: feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:param turn: radians per second. positive counter-clockwise
-:return: the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
+<dd><p>Drive the robot. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>input magnitude and turn components</p>
 </dd></dl>
 
 <dl class="method">
@@ -106,9 +118,19 @@ per second</li>
 <dl class="method">
 <dt id="seamonsters.AngledWheel.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Spin the wheel. This should be called 50 times per second.
-:param magnitude: speed in feet per second.
-:param direction: radians. 0 is right, positive counter-clockwise</p>
+<dd><p>Spin the wheel. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -141,11 +163,23 @@ per second</li>
 <dt id="seamonsters.AngledWheel.limitMagnitude">
 <code class="descname">limitMagnitude</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.limitMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.limitMagnitude" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the scaling factor necessary to keep the wheel speed within its
-limits.
-:param magnitude: speed in feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:return: 1.0 if wheel speed is within it limits, otherwise a value
-between 0 and 1 to scale the wheel down to its maximum speed.</p>
+limits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – speed in feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1.0 if wheel speed is within it limits, otherwise a value</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </dd></dl>
 
 </dd></dl>
@@ -159,9 +193,19 @@ back for getMovementDirection and getMovementMagnitude.</p>
 <dl class="method">
 <dt id="seamonsters.CasterWheel.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Spin the wheel. This should be called 50 times per second.
-:param magnitude: speed in feet per second.
-:param direction: radians. 0 is right, positive counter-clockwise</p>
+<dd><p>Spin the wheel. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -227,12 +271,24 @@ back for getMovementDirection and getMovementMagnitude.</p>
 <dl class="method">
 <dt id="seamonsters.DriveInterface.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#DriveInterface.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.DriveInterface.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.
-:param magnitude: feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:param turn: radians per second. positive counter-clockwise
-:return: the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
+<dd><p>Drive the robot. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>input magnitude and turn components</p>
 </dd></dl>
 
 </dd></dl>
@@ -253,9 +309,17 @@ input magnitude and turn components</p>
 <dl class="method">
 <dt id="seamonsters.DynamicAxis.update">
 <code class="descname">update</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/joystick.html#DynamicAxis.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.DynamicAxis.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the value of the axis
-:param value: the raw axis value from the joystick
-:return: the adjusted value</p>
+<dd><p>Update the value of the axis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> – the raw axis value from the joystick</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the adjusted value</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -278,12 +342,24 @@ between, the P/I/D/F values are interpolated.</p>
 <dl class="method">
 <dt id="seamonsters.DynamicPIDDrive.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#DynamicPIDDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.DynamicPIDDrive.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.
-:param magnitude: feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:param turn: radians per second. positive counter-clockwise
-:return: the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
+<dd><p>Drive the robot. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>input magnitude and turn components</p>
 </dd></dl>
 
 </dd></dl>
@@ -304,12 +380,24 @@ value in radians to add to all direction inputs.</p>
 <dl class="method">
 <dt id="seamonsters.FieldOrientedDrive.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#FieldOrientedDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.FieldOrientedDrive.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.
-:param magnitude: feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:param turn: radians per second. positive counter-clockwise
-:return: the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
+<dd><p>Drive the robot. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>input magnitude and turn components</p>
 </dd></dl>
 
 <dl class="method">
@@ -672,9 +760,19 @@ the diagonal direction of force in the diamond pattern.</p>
 <dl class="method">
 <dt id="seamonsters.MecanumWheel.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#MecanumWheel.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.MecanumWheel.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Spin the wheel. This should be called 50 times per second.
-:param magnitude: speed in feet per second.
-:param direction: radians. 0 is right, positive counter-clockwise</p>
+<dd><p>Spin the wheel. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -694,11 +792,23 @@ the diagonal direction of force in the diamond pattern.</p>
 <dt id="seamonsters.MecanumWheel.limitMagnitude">
 <code class="descname">limitMagnitude</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#MecanumWheel.limitMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.MecanumWheel.limitMagnitude" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the scaling factor necessary to keep the wheel speed within its
-limits.
-:param magnitude: speed in feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:return: 1.0 if wheel speed is within it limits, otherwise a value
-between 0 and 1 to scale the wheel down to its maximum speed.</p>
+limits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – speed in feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1.0 if wheel speed is within it limits, otherwise a value</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </dd></dl>
 
 </dd></dl>
@@ -719,12 +829,24 @@ and sent to the wrapped interface when <code class="docutils literal notranslate
 <dl class="method">
 <dt id="seamonsters.MultiDrive.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#MultiDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.MultiDrive.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.
-:param magnitude: feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:param turn: radians per second. positive counter-clockwise
-:return: the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
+<dd><p>Drive the robot. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>input magnitude and turn components</p>
 </dd></dl>
 
 <dl class="method">
@@ -754,20 +876,39 @@ input magnitude and turn components</p>
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.
-:param magnitude: feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:param turn: radians per second. positive counter-clockwise
-:return: the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
+<dd><p>Drive the robot. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>input magnitude and turn components</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.getRobotMovement">
 <code class="descname">getRobotMovement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.getRobotMovement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.getRobotMovement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the movement of the robot as a whole, based on wheel sensors.
-:return: (magnitude, direction, turn). Magnitude in feet per second,
-direction in radians, turn in radians per second.</p>
+<dd><p>Get the movement of the robot as a whole, based on wheel sensors.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(magnitude, direction, turn). Magnitude in feet per second,</td>
+</tr>
+</tbody>
+</table>
+<p>direction in radians, turn in radians per second.</p>
 </dd></dl>
 
 </dd></dl>
@@ -805,9 +946,19 @@ of the steer motor</li>
 <dl class="method">
 <dt id="seamonsters.SwerveWheel.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Spin the wheel. This should be called 50 times per second.
-:param magnitude: speed in feet per second.
-:param direction: radians. 0 is right, positive counter-clockwise</p>
+<dd><p>Spin the wheel. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -840,11 +991,23 @@ of the steer motor</li>
 <dt id="seamonsters.SwerveWheel.limitMagnitude">
 <code class="descname">limitMagnitude</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.limitMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.limitMagnitude" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the scaling factor necessary to keep the wheel speed within its
-limits.
-:param magnitude: speed in feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:return: 1.0 if wheel speed is within it limits, otherwise a value
-between 0 and 1 to scale the wheel down to its maximum speed.</p>
+limits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – speed in feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1.0 if wheel speed is within it limits, otherwise a value</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </dd></dl>
 
 <dl class="method">
@@ -865,12 +1028,24 @@ values it receives.</p>
 <dl class="method">
 <dt id="seamonsters.TestDriveInterface.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#TestDriveInterface.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.TestDriveInterface.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.
-:param magnitude: feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:param turn: radians per second. positive counter-clockwise
-:return: the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
+<dd><p>Drive the robot. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>input magnitude and turn components</p>
 </dd></dl>
 
 </dd></dl>
@@ -901,9 +1076,19 @@ input magnitude and turn components</p>
 <dl class="method">
 <dt id="seamonsters.TestWheel.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#TestWheel.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.TestWheel.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Spin the wheel. This should be called 50 times per second.
-:param magnitude: speed in feet per second.
-:param direction: radians. 0 is right, positive counter-clockwise</p>
+<dd><p>Spin the wheel. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -965,9 +1150,19 @@ direction.</p>
 <dl class="method">
 <dt id="seamonsters.Wheel.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Spin the wheel. This should be called 50 times per second.
-:param magnitude: speed in feet per second.
-:param direction: radians. 0 is right, positive counter-clockwise</p>
+<dd><p>Spin the wheel. This should be called 50 times per second.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -1000,11 +1195,23 @@ direction.</p>
 <dt id="seamonsters.Wheel.limitMagnitude">
 <code class="descname">limitMagnitude</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.limitMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.limitMagnitude" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the scaling factor necessary to keep the wheel speed within its
-limits.
-:param magnitude: speed in feet per second
-:param direction: radians. 0 is right, positive counter-clockwise
-:return: 1.0 if wheel speed is within it limits, otherwise a value
-between 0 and 1 to scale the wheel down to its maximum speed.</p>
+limits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>magnitude</strong> – speed in feet per second</li>
+<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1.0 if wheel speed is within it limits, otherwise a value</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1014,11 +1221,23 @@ between 0 and 1 to scale the wheel down to its maximum speed.</p>
 <code class="descclassname">seamonsters.</code><code class="descname">deadZone</code><span class="sig-paren">(</span><em>value</em>, <em>deadZone=0.1</em>, <em>maxValue=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.deadZone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a dead-zone to the number. Any input from <code class="docutils literal notranslate"><span class="pre">deadZone</span></code> to <code class="docutils literal notranslate"><span class="pre">maxValue</span></code>
 is mapped to the range 0 to <code class="docutils literal notranslate"><span class="pre">maxValue</span></code>. Negative numbers are also mapped.
-Any input between <code class="docutils literal notranslate"><span class="pre">deadZone</span></code> and <code class="docutils literal notranslate"><span class="pre">-deadZone</span></code> is mapped to 0.
-:param value: input number
-:param deadZone: the minimum “dead zone” value
-:param maxValue: the maximum value
-:return: the number, constrained to the minimum/maximum values</p>
+Any input between <code class="docutils literal notranslate"><span class="pre">deadZone</span></code> and <code class="docutils literal notranslate"><span class="pre">-deadZone</span></code> is mapped to 0.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> – input number</li>
+<li><strong>deadZone</strong> – the minimum “dead zone” value</li>
+<li><strong>maxValue</strong> – the maximum value</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number, constrained to the minimum/maximum values</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -1051,11 +1270,21 @@ iterables.</p>
 <dt id="seamonsters.readPoints">
 <code class="descclassname">seamonsters.</code><code class="descname">readPoints</code><span class="sig-paren">(</span><em>filePath</em>, <em>pixelsPerUnit</em>, <em>leftMargin</em>, <em>bottomMargin</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.readPoints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given an SVG with a path created in GIMP, read all the points in the path
-and return a list of points.
-:param filePath: string path to the SVG file
-:param pixelsPerUnit: number of pixels for a single unit
-:param leftMargin: units (not pixels) of margin at the left side of the
-image
+and return a list of points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filePath</strong> – string path to the SVG file</li>
+<li><strong>pixelsPerUnit</strong> – number of pixels for a single unit</li>
+<li><strong>leftMargin</strong> – units (not pixels) of margin at the left side of the</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>image
 :param bottomMargin: units (not pixels) of margin at the bottom of the image
 :return: a list of tuples (x, y)</p>
 </dd></dl>
@@ -1063,8 +1292,15 @@ image
 <dl class="function">
 <dt id="seamonsters.returnValue">
 <code class="descclassname">seamonsters.</code><code class="descname">returnValue</code><span class="sig-paren">(</span><em>iterable</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.returnValue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run an iterable but change the return value.
-:return: value</p>
+<dd><p>Run an iterable but change the return value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">value</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -1081,9 +1317,17 @@ image
 <dl class="function">
 <dt id="seamonsters.talonModeToString">
 <code class="descclassname">seamonsters.</code><code class="descname">talonModeToString</code><span class="sig-paren">(</span><em>mode</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.talonModeToString" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a readable name from a <code class="docutils literal notranslate"><span class="pre">ctre.ControlMode</span></code> constant
-:param mode: a constant from <code class="docutils literal notranslate"><span class="pre">ctre.ControlMode</span></code>
-:return: a string name</p>
+<dd><p>Get a readable name from a <code class="docutils literal notranslate"><span class="pre">ctre.ControlMode</span></code> constant</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> – a constant from <code class="docutils literal notranslate"><span class="pre">ctre.ControlMode</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a string name</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -1096,9 +1340,19 @@ Return the value of the iterable if it ends early, None otherwise.</p>
 <dl class="function">
 <dt id="seamonsters.untilButtonPressed">
 <code class="descclassname">seamonsters.</code><code class="descname">untilButtonPressed</code><span class="sig-paren">(</span><em>joystick</em>, <em>button</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.untilButtonPressed" title="Permalink to this definition">¶</a></dt>
-<dd><p>A generator which runs until the joystick button is pressed, then exits.
-:param joystick: a <code class="docutils literal notranslate"><span class="pre">wpilib.Joystick</span></code>
-:param button: a button number</p>
+<dd><p>A generator which runs until the joystick button is pressed, then exits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>joystick</strong> – a <code class="docutils literal notranslate"><span class="pre">wpilib.Joystick</span></code></li>
+<li><strong>button</strong> – a button number</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -1130,9 +1384,19 @@ iterables.</p>
 <dl class="function">
 <dt id="seamonsters.whileButtonPressed">
 <code class="descclassname">seamonsters.</code><code class="descname">whileButtonPressed</code><span class="sig-paren">(</span><em>joystick</em>, <em>button</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.whileButtonPressed" title="Permalink to this definition">¶</a></dt>
-<dd><p>A generator which runs while the joystick button is pressed, then exits.
-:param joystick: a <code class="docutils literal notranslate"><span class="pre">wpilib.Joystick</span></code>
-:param button: a button number</p>
+<dd><p>A generator which runs while the joystick button is pressed, then exits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>joystick</strong> – a <code class="docutils literal notranslate"><span class="pre">wpilib.Joystick</span></code></li>
+<li><strong>button</strong> – a button number</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

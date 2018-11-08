@@ -40,6 +40,7 @@
 <span class="sd">    Add a dead-zone to the number. Any input from ``deadZone`` to ``maxValue``</span>
 <span class="sd">    is mapped to the range 0 to ``maxValue``. Negative numbers are also mapped.</span>
 <span class="sd">    Any input between ``deadZone`` and ``-deadZone`` is mapped to 0.</span>
+
 <span class="sd">    :param value: input number</span>
 <span class="sd">    :param deadZone: the minimum &quot;dead zone&quot; value</span>
 <span class="sd">    :param maxValue: the maximum value</span>
@@ -61,6 +62,7 @@
 <span class="k">def</span> <span class="nf">whileButtonPressed</span><span class="p">(</span><span class="n">joystick</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A generator which runs while the joystick button is pressed, then exits.</span>
+
 <span class="sd">    :param joystick: a ``wpilib.Joystick``</span>
 <span class="sd">    :param button: a button number</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -71,6 +73,7 @@
 <span class="k">def</span> <span class="nf">untilButtonPressed</span><span class="p">(</span><span class="n">joystick</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A generator which runs until the joystick button is pressed, then exits.</span>
+
 <span class="sd">    :param joystick: a ``wpilib.Joystick``</span>
 <span class="sd">    :param button: a button number</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -102,6 +105,7 @@
 <div class="viewcode-block" id="DynamicAxis.update"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.DynamicAxis.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the value of the axis</span>
+
 <span class="sd">        :param value: the raw axis value from the joystick</span>
 <span class="sd">        :return: the adjusted value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
