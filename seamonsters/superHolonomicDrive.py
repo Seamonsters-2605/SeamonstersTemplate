@@ -141,16 +141,15 @@ class AngledWheel(Wheel):
         self.encoderCountsPerFoot = encoderCountsPerFoot
         self.maxVoltageVelocity = maxVoltageVelocity
         self.reverse = reverse
-        self.oldPosition = 0
-        self.positionOccurence = 0    
-        self.time = 0
-        self.encoderWorking = True
 
         self.driveMode = ctre.ControlMode.PercentOutput
+        self.encoderWorking = True
 
         self._motorState = None
         self._positionTarget = 0
-        self._errorCheckCount = 0
+        self._encoderCheckCount = 0
+        self._oldPosition = 0
+        self._positionOccurence = 0
 
     def limitMagnitude(self, magnitude, direction):
         # TODO: check position error in this function instead, and factor it
@@ -160,20 +159,19 @@ class AngledWheel(Wheel):
             return self.maxVoltageVelocity / abs(magnitude)
         return 1.0
 
-    def encoderCheck(self):
+    def _encoderCheck(self):
         newPosition = self.motor.getSelectedSensorPosition(0)
         #print(newPosition)
         #print(self.oldPosition)
-        if abs(newPosition - self.oldPosition) <= 1:
-            self.positionOccurence += 1
+        if abs(newPosition - self._oldPosition) <= 1:
+            self._positionOccurence += 1
         else:
-            self.positionOccurence = 0
+            self._positionOccurence = 0
             self.encoderWorking = True
-            self.oldPosition = newPosition
-        
-        if self.positionOccurence >= MAX_POSITION_OCCURENCE:
-            self.encoderWorking = False
+            self._oldPosition = newPosition
 
+        if self._positionOccurence >= MAX_POSITION_OCCURENCE:
+            self.encoderWorking = False
 
     def drive(self, magnitude, direction):
         magnitude *= math.cos(direction - self.angle)
@@ -198,13 +196,11 @@ class AngledWheel(Wheel):
             if self._motorState != self.driveMode:
                 self._positionTarget = self.motor.getSelectedSensorPosition(0)
                 self._motorState = self.driveMode
-                self._errorCheckCount = 0
 
             encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot
             self._positionTarget += encoderCountsPerSecond / 50.0
 
-            self._errorCheckCount += 1
-            if self._errorCheckCount % 20 == 0:
+            if self._encoderCheckCount % 20 == 0:
                 # getSelectedSensorPosition is slow so only check a few times
                 # per second
                 currentPos = self.motor.getSelectedSensorPosition(0)
@@ -217,12 +213,13 @@ class AngledWheel(Wheel):
                     self._positionTarget = currentPos
 
             self.motor.set(self.driveMode, self._positionTarget)
+
         if abs(magnitude) > 0.1:
-            if self.time %  CHECK_ENCODER_CYCLE == 0:
-                self.encoderCheck() 
-            self.time += 1
+            if self._encoderCheckCount %  CHECK_ENCODER_CYCLE == 0:
+                self._encoderCheck()
         else:
-            self.positionOccurence = 0
+            self._positionOccurence = 0
+        self._encoderCheckCount += 1
             
     def getMovementDirection(self):
         return self.angle
