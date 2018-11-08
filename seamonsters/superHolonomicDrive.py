@@ -187,6 +187,8 @@ class AngledWheel(Wheel):
 
     def getMovementMagnitude(self):
         sensorVel = self.motor.getSelectedSensorVelocity(0)
+        if self.reverse:
+            sensorVel = -sensorVel
         return sensorVel * 10.0 / self.encoderCountsPerFoot
 
 
