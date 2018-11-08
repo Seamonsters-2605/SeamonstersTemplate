@@ -1,29 +1,19 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Welcome to the seamonsters library documentation! &#8212; seamonsters 0 documentation</title>
-    
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -32,8 +22,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   
 
     <div class="document">
@@ -43,9 +32,9 @@
             
   <div class="section" id="welcome-to-the-seamonsters-library-documentation">
 <h1>Welcome to the seamonsters library documentation!<a class="headerlink" href="#welcome-to-the-seamonsters-library-documentation" title="Permalink to this headline">¶</a></h1>
-<p>This is Team 2605&#8217;s Python library for robot code. It builds on Wpilib/RobotPy
+<p>This is Team 2605’s Python library for robot code. It builds on Wpilib/RobotPy
 and adds useful utilities for working with input, drivetrains, generators,
-and RobotPy&#8217;s robot simulator, along with a custom dashboard.</p>
+and RobotPy’s robot simulator, along with a custom dashboard.</p>
 <div class="section" id="index">
 <h2>Index:<a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="longtable docutils">
@@ -54,109 +43,112 @@ and RobotPy&#8217;s robot simulator, along with a custom dashboard.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.AccelerationFilterDrive" title="seamonsters.AccelerationFilterDrive"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.AccelerationFilterDrive</span></code></a>(interface)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.AccelerationFilterDrive" title="seamonsters.AccelerationFilterDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.AccelerationFilterDrive</span></code></a>(interface)</td>
 <td>Wraps another drive interface, and provides acceleration filtering.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.AngledWheel" title="seamonsters.AngledWheel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.AngledWheel</span></code></a>(motor,&nbsp;x,&nbsp;y,&nbsp;angle,&nbsp;...)</td>
-<td>An AngledWheel is a wheel oriented in a fixed direction, which it can&#8217;t change on its own.</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.AngledWheel" title="seamonsters.AngledWheel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.AngledWheel</span></code></a>(motor,&nbsp;x,&nbsp;y,&nbsp;angle,&nbsp;…)</td>
+<td>An AngledWheel is a wheel oriented in a fixed direction, which it can’t change on its own.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.DashboardCommandReader" title="seamonsters.DashboardCommandReader"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.DashboardCommandReader</span></code></a>()</td>
-<td>Allows reading data entered in the Command box on the dashboard.</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.CasterWheel" title="seamonsters.CasterWheel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.CasterWheel</span></code></a>(x,&nbsp;y)</td>
+<td>Doesn’t drive a motor, only stores its drive parameters and echoes them back for getMovementDirection and getMovementMagnitude.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.DriveInterface" title="seamonsters.DriveInterface"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.DriveInterface</span></code></a></td>
-<td>A generic, abstract interface for driving a robot.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.DynamicAxis" title="seamonsters.DynamicAxis"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.DynamicAxis</span></code></a>([exponent,&nbsp;...])</td>
-<td>Makes values from a joystick axis go higher if you push them faster.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.DynamicPIDDrive" title="seamonsters.DynamicPIDDrive"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.DynamicPIDDrive</span></code></a>(interface,&nbsp;...)</td>
-<td>Wraps another drive interface.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.FieldOrientedDrive" title="seamonsters.FieldOrientedDrive"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.FieldOrientedDrive</span></code></a>(interface,&nbsp;ahrs)</td>
-<td>Wraps another drive interface, and provides field orientation.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.Gamepad" title="seamonsters.Gamepad"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.Gamepad</span></code></a>(port)</td>
-<td>An extended Joystick specifically designed for Logitech gamepads.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.GeneratorBot" title="seamonsters.GeneratorBot"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.GeneratorBot</span></code></a>()</td>
-<td>A robot which runs generators throughout the cycles of autonomous, teleop, and test mode.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.IterativeRobotInstance" title="seamonsters.IterativeRobotInstance"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.IterativeRobotInstance</span></code></a>(robotType)</td>
-<td>Allows an &#8220;instance&#8221; of an IterativeRobot to be created without connecting to HAL or LiveWindow.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.LogState" title="seamonsters.LogState"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.LogState</span></code></a>(name[,&nbsp;logFrequency])</td>
-<td>Represents a value important to the user that is constantly changing.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.MecanumWheel" title="seamonsters.MecanumWheel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.MecanumWheel</span></code></a>(motor,&nbsp;x,&nbsp;y,&nbsp;angle,&nbsp;...)</td>
-<td>An angled Mecanum wheel.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.MultiDrive" title="seamonsters.MultiDrive"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.MultiDrive</span></code></a>(interface)</td>
-<td>Wraps another DriveInterface, and allows <code class="docutils literal"><span class="pre">drive()</span></code> to be called multiple times in a loop.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.SuperHolonomicDrive" title="seamonsters.SuperHolonomicDrive"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.SuperHolonomicDrive</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.Dashboard" title="seamonsters.Dashboard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.Dashboard</span></code></a>(*args,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.SwerveWheel" title="seamonsters.SwerveWheel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.SwerveWheel</span></code></a>(angledWheel,&nbsp;...[,&nbsp;...])</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.DriveInterface" title="seamonsters.DriveInterface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.DriveInterface</span></code></a></td>
+<td>A generic interface for driving a robot.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.DynamicAxis" title="seamonsters.DynamicAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.DynamicAxis</span></code></a>([exponent,&nbsp;…])</td>
+<td>Makes values from a joystick axis go higher if you push them faster.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.DynamicPIDDrive" title="seamonsters.DynamicPIDDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.DynamicPIDDrive</span></code></a>(interface,&nbsp;…)</td>
+<td>Wraps another drive interface.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.FieldOrientedDrive" title="seamonsters.FieldOrientedDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.FieldOrientedDrive</span></code></a>(interface,&nbsp;ahrs)</td>
+<td>Wraps another drive interface, and provides field orientation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.Gamepad" title="seamonsters.Gamepad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.Gamepad</span></code></a>(port)</td>
+<td>An extended Joystick specifically designed for Logitech gamepads.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.GeneratorBot" title="seamonsters.GeneratorBot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.GeneratorBot</span></code></a>()</td>
+<td>A robot which runs generators throughout the cycles of autonomous, teleop, and test mode.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.IterativeRobotInstance" title="seamonsters.IterativeRobotInstance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.IterativeRobotInstance</span></code></a>(robotType)</td>
+<td>Allows an “instance” of an IterativeRobot to be created without connecting to HAL or LiveWindow.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.MecanumWheel" title="seamonsters.MecanumWheel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.MecanumWheel</span></code></a>(motor,&nbsp;x,&nbsp;y,&nbsp;angle,&nbsp;…)</td>
+<td>An angled Mecanum wheel.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.MultiDrive" title="seamonsters.MultiDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.MultiDrive</span></code></a>(interface)</td>
+<td>Wraps another DriveInterface, and allows <code class="docutils literal notranslate"><span class="pre">drive()</span></code> to be called multiple times in a loop.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.SuperHolonomicDrive" title="seamonsters.SuperHolonomicDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.SuperHolonomicDrive</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.SwerveWheel" title="seamonsters.SwerveWheel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.SwerveWheel</span></code></a>(angledWheel,&nbsp;…[,&nbsp;…])</td>
 <td>A wheel which can rotate.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.TestDriveInterface" title="seamonsters.TestDriveInterface"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.TestDriveInterface</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.TestDriveInterface" title="seamonsters.TestDriveInterface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.TestDriveInterface</span></code></a></td>
 <td>A DriveInterface which does nothing but log the magnitude/direction/turn values it receives.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.TestWheel" title="seamonsters.TestWheel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.TestWheel</span></code></a>(name,&nbsp;x,&nbsp;y)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.TestWheel" title="seamonsters.TestWheel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.TestWheel</span></code></a>(name,&nbsp;x,&nbsp;y)</td>
 <td>Logs parameters for drive(), for testing.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.Wheel</span></code></a>(x,&nbsp;y)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.TimingMonitor" title="seamonsters.TimingMonitor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.TimingMonitor</span></code></a>()</td>
+<td>Monitors the rate of the update loop, to see how closely it matches 50Hz.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.Wheel</span></code></a>(x,&nbsp;y)</td>
 <td>Interface for wheels.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.deadZone" title="seamonsters.deadZone"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.deadZone</span></code></a>(value[,&nbsp;deadZone,&nbsp;maxValue])</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.deadZone" title="seamonsters.deadZone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.deadZone</span></code></a>(value[,&nbsp;deadZone,&nbsp;maxValue])</td>
 <td>Add a dead-zone to the number.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.ensureTrue" title="seamonsters.ensureTrue"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.ensureTrue</span></code></a>(iterable,&nbsp;requiredCount)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.ensureTrue" title="seamonsters.ensureTrue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.ensureTrue</span></code></a>(iterable,&nbsp;requiredCount)</td>
 <td>Wait until the iterable yields True for a certain number of consecutive iterations before finishing.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.forever" title="seamonsters.forever"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.forever</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.forever" title="seamonsters.forever"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.forever</span></code></a>()</td>
 <td>Iterate forever.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.getSwitch" title="seamonsters.getSwitch"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.getSwitch</span></code></a>(name,&nbsp;defaultValue)</td>
-<td>Get whether a switch on the dashboard is enabled.</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.hBoxWith" title="seamonsters.hBoxWith"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.hBoxWith</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.parallel" title="seamonsters.parallel"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.parallel</span></code></a>(\*iterables)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.parallel" title="seamonsters.parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.parallel</span></code></a>(*iterables)</td>
 <td>Run a group of iterables in parallel.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.readPoints" title="seamonsters.readPoints"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.readPoints</span></code></a>(filePath,&nbsp;...)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.readPoints" title="seamonsters.readPoints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.readPoints</span></code></a>(filePath,&nbsp;…)</td>
 <td>Given an SVG with a path created in GIMP, read all the points in the path and return a list of points.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.returnValue" title="seamonsters.returnValue"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.returnValue</span></code></a>(iterable,&nbsp;value)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.returnValue" title="seamonsters.returnValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.returnValue</span></code></a>(iterable,&nbsp;value)</td>
 <td>Run an iterable but change the return value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.sendLogStates" title="seamonsters.sendLogStates"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.sendLogStates</span></code></a>()</td>
-<td>Send all LogStates that have been updated to the dashboard</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.sequence" title="seamonsters.sequence"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.sequence</span></code></a>(\*iterables)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.sequence" title="seamonsters.sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.sequence</span></code></a>(*iterables)</td>
 <td>Run a set of iterables sequentially</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.setActiveCameraURL" title="seamonsters.setActiveCameraURL"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.setActiveCameraURL</span></code></a>(url)</td>
-<td>Set the URL of the camera stream to display in the dashboard</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.startDashboard" title="seamonsters.startDashboard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.startDashboard</span></code></a>(robot,&nbsp;dashboardClass)</td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.talonModeToString" title="seamonsters.talonModeToString"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.talonModeToString</span></code></a>(mode)</td>
-<td>Get a readable name from a <code class="docutils literal"><span class="pre">ctre.ControlMode</span></code> constant</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.talonModeToString" title="seamonsters.talonModeToString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.talonModeToString</span></code></a>(mode)</td>
+<td>Get a readable name from a <code class="docutils literal notranslate"><span class="pre">ctre.ControlMode</span></code> constant :param mode: a constant from <code class="docutils literal notranslate"><span class="pre">ctre.ControlMode</span></code> :return: a string name</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.timeLimit" title="seamonsters.timeLimit"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.timeLimit</span></code></a>(iterable,&nbsp;time)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.timeLimit" title="seamonsters.timeLimit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.timeLimit</span></code></a>(iterable,&nbsp;time)</td>
 <td>Run the iterable until it finishes or the given time limit has passed.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.untilButtonPressed" title="seamonsters.untilButtonPressed"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.untilButtonPressed</span></code></a>(joystick,&nbsp;button)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.untilButtonPressed" title="seamonsters.untilButtonPressed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.untilButtonPressed</span></code></a>(joystick,&nbsp;button)</td>
 <td>A generator which runs until the joystick button is pressed, then exits.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.untilTrue" title="seamonsters.untilTrue"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.untilTrue</span></code></a>(iterable)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.untilTrue" title="seamonsters.untilTrue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.untilTrue</span></code></a>(iterable)</td>
 <td>Run the iterable until it yields True, then stop.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.wait" title="seamonsters.wait"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.wait</span></code></a>(time)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.vBoxWith" title="seamonsters.vBoxWith"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.vBoxWith</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.wait" title="seamonsters.wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.wait</span></code></a>(time)</td>
 <td>Wait for a certain number of iterations.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.watch" title="seamonsters.watch"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.watch</span></code></a>(\*iterables)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.watch" title="seamonsters.watch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.watch</span></code></a>(*iterables)</td>
 <td>Run a group of iterables in parallel.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.whileButtonPressed" title="seamonsters.whileButtonPressed"><code class="xref py py-obj docutils literal"><span class="pre">seamonsters.whileButtonPressed</span></code></a>(joystick,&nbsp;button)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.whileButtonPressed" title="seamonsters.whileButtonPressed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.whileButtonPressed</span></code></a>(joystick,&nbsp;button)</td>
 <td>A generator which runs while the joystick button is pressed, then exits.</td>
 </tr>
 </tbody>
@@ -170,13 +162,17 @@ and RobotPy&#8217;s robot simulator, along with a custom dashboard.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Welcome to the seamonsters library documentation!</a><ul>
-<li><a class="reference internal" href="#index">Index:</a></li>
-</ul>
-</li>
-</ul>
+<h1 class="logo"><a href="#">seamonsters</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
@@ -184,21 +180,16 @@ and RobotPy&#8217;s robot simulator, along with a custom dashboard.</p>
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -209,7 +200,7 @@ and RobotPy&#8217;s robot simulator, along with a custom dashboard.</p>
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |

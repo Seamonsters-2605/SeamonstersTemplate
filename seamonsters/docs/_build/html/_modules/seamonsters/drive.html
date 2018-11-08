@@ -1,29 +1,19 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>seamonsters.drive &#8212; seamonsters 0 documentation</title>
-    
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -32,8 +22,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   
 
     <div class="document">
@@ -74,20 +63,19 @@
 
 <span class="k">class</span> <span class="nc">DriveInterface</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A generic, abstract interface for driving a robot.</span>
+<span class="sd">    A generic interface for driving a robot.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DriveInterface.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.DriveInterface.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Drive the robot, with a given magnitude, direction, and turn.</span>
-
-<span class="sd">        Magnitude: 0 to 1</span>
-
-<span class="sd">        Direction: Counterclockwise positive, radians</span>
-
-<span class="sd">        Turn: -1 to 1</span>
+<span class="sd">        Drive the robot. This should be called 50 times per second.</span>
+<span class="sd">        :param magnitude: feet per second</span>
+<span class="sd">        :param direction: radians. 0 is right, positive counter-clockwise</span>
+<span class="sd">        :param turn: radians per second. positive counter-clockwise</span>
+<span class="sd">        :return: the scale of the actual output speed, as a fraction of the</span>
+<span class="sd">        input magnitude and turn components</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
+        <span class="k">return</span> <span class="mf">1.0</span></div>
 
 
 <span class="k">class</span> <span class="nc">TestDriveInterface</span><span class="p">(</span><span class="n">DriveInterface</span><span class="p">):</span>
@@ -97,7 +85,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="TestDriveInterface.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.TestDriveInterface.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Drive mag&quot;</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="s2">&quot;dir&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="s2">&quot;turn&quot;</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Drive mag&quot;</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span>
+              <span class="s2">&quot;dir&quot;</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">direction</span><span class="p">),</span>
+              <span class="s2">&quot;turn&quot;</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">turn</span><span class="p">))</span>
+        <span class="k">return</span> <span class="mf">1.0</span></div>
 
 
 <span class="k">class</span> <span class="nc">AccelerationFilterDrive</span><span class="p">(</span><span class="n">DriveInterface</span><span class="p">):</span>
@@ -121,7 +112,7 @@
 <div class="viewcode-block" id="AccelerationFilterDrive.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.AccelerationFilterDrive.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">):</span>
         <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span> <span class="o">=</span> \
             <span class="bp">self</span><span class="o">.</span><span class="n">_accelerationFilter</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AccelerationFilterDrive.getFilteredMagnitude"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.AccelerationFilterDrive.getFilteredMagnitude">[docs]</a>    <span class="k">def</span> <span class="nf">getFilteredMagnitude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previousX</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousY</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
@@ -188,7 +179,7 @@
 
 <div class="viewcode-block" id="FieldOrientedDrive.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.FieldOrientedDrive.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">):</span>
         <span class="n">direction</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRobotOffset</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_getYawRadians</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ahrs</span><span class="o">.</span><span class="n">getAngle</span><span class="p">())</span>
@@ -199,7 +190,7 @@
 
 <span class="k">class</span> <span class="nc">DynamicPIDDrive</span><span class="p">(</span><span class="n">DriveInterface</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Wraps another drive interface. Based on the driving matnitude and turn</span>
+<span class="sd">    Wraps another drive interface. Based on the driving magnitude and turn</span>
 <span class="sd">    speed, the PID&#39;s of a set of talons are changed. PID&#39;s are given as a tuple</span>
 <span class="sd">    of (p, i, d, f). For speeds below ``slowPIDScale``, ``slowPID`` is used.</span>
 <span class="sd">    For speeds above ``fastPIDScale``, ``fastPID`` is used. For speeds in</span>
@@ -225,7 +216,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">driveScales</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setPID</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lerpPID</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">driveScales</span><span class="p">)))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_setPID</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">pid</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentPID</span><span class="p">:</span>
@@ -297,7 +288,7 @@
             <span class="n">turn</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">totalTurn</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numTurnCalls</span><span class="p">)</span>
         <span class="n">magnitude</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">direction</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span></div>
 
 
@@ -312,7 +303,19 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">seamonsters</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
@@ -325,12 +328,14 @@
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -341,7 +346,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
     </div>
