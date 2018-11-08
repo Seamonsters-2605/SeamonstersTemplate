@@ -54,6 +54,13 @@ class Wheel:
         :param direction: radians. 0 is right, positive counter-clockwise
         """
 
+    def measureDistance(self):
+        """
+        :return: a value representing distance the wheel has travelled, which
+            accumulates over the lifetime of the wheel.
+        """
+        return 0
+
     def getMovementDirection(self):
         """
         :return: the current direction the wheel is moving in radians. This may be based on sensors.
@@ -73,9 +80,17 @@ class CasterWheel(Wheel):
     back for getMovementDirection and getMovementMagnitude.
     """
 
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self._distance = 0
+
     def drive(self, magnitude, direction):
         self._storedMagnitude = magnitude
         self._storedDirection = direction
+        self._distance += magnitude / 50
+
+    def measureDistance(self):
+        return self._distance
 
     def getMovementDirection(self):
         return self._storedDirection
@@ -203,7 +218,13 @@ class AngledWheel(Wheel):
         else:
             self._positionOccurence = 0
         self._encoderCheckCount += 1
-            
+
+    def measureDistance(self):
+        sensorPos = self.motor.getSelectedSensorPosition(0)
+        if self.reverse:
+            sensorPos = -sensorPos
+        return sensorPos / self.encoderCountsPerFoot
+
     def getMovementDirection(self):
         return self.angle
 
@@ -228,6 +249,9 @@ class MecanumWheel(AngledWheel):
 
     def drive(self, magnitude, direction):
         return super().drive(magnitude * MecanumWheel.SQRT_2, direction)
+
+    def measureDistance(self):
+        return super().measureDistance() / MecanumWheel.SQRT_2
 
     def getMovementMagnitude(self):
         return super().getMovementMagnitude() / MecanumWheel.SQRT_2
@@ -295,6 +319,9 @@ class SwerveWheel(Wheel):
 
         self.angledWheel.angle = currentAngle
         self.angledWheel.drive(magnitude, direction)
+
+    def measureDistance(self):
+        return self.angledWheel.measureDistance()
 
     def getMovementDirection(self):
         return self.angledWheel.getMovementDirection()
