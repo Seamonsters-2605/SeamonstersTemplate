@@ -30,20 +30,19 @@ def talonModeToString(mode):
 
 class DriveInterface:
     """
-    A generic, abstract interface for driving a robot.
+    A generic interface for driving a robot.
     """
 
     def drive(self, magnitude, direction, turn):
         """
-        Drive the robot, with a given magnitude, direction, and turn.
-
-        Magnitude: 0 to 1
-
-        Direction: Counterclockwise positive, radians
-
-        Turn: -1 to 1
+        Drive the robot. This should be called 50 times per second.
+        :param magnitude: feet per second
+        :param direction: radians. 0 is right, positive counter-clockwise
+        :param turn: radians per second. positive counter-clockwise
+        :return: the scale of the actual output speed, as a fraction of the
+        input magnitude and turn components
         """
-        pass
+        return 1.0
 
 
 class TestDriveInterface(DriveInterface):
@@ -53,7 +52,10 @@ class TestDriveInterface(DriveInterface):
     """
 
     def drive(self, magnitude, direction, turn):
-        print("Drive mag", magnitude, "dir", direction, "turn", turn)
+        print("Drive mag", magnitude,
+              "dir", math.degrees(direction),
+              "turn", math.degrees(turn))
+        return 1.0
 
 
 class AccelerationFilterDrive(DriveInterface):
@@ -77,7 +79,7 @@ class AccelerationFilterDrive(DriveInterface):
     def drive(self, magnitude, direction, turn):
         magnitude, direction, turn = \
             self._accelerationFilter(magnitude, direction, turn)
-        self.interface.drive(magnitude, direction, turn)
+        return self.interface.drive(magnitude, direction, turn)
 
     def getFilteredMagnitude(self):
         return math.sqrt(self.previousX ** 2 + self.previousY ** 2)
@@ -144,7 +146,7 @@ class FieldOrientedDrive(DriveInterface):
 
     def drive(self, magnitude, direction, turn):
         direction -= self.getRobotOffset()
-        self.interface.drive(magnitude, direction, turn)
+        return self.interface.drive(magnitude, direction, turn)
 
     def _getYawRadians(self):
         return - math.radians(self.ahrs.getAngle())
@@ -155,7 +157,7 @@ class FieldOrientedDrive(DriveInterface):
 
 class DynamicPIDDrive(DriveInterface):
     """
-    Wraps another drive interface. Based on the driving matnitude and turn
+    Wraps another drive interface. Based on the driving magnitude and turn
     speed, the PID's of a set of talons are changed. PID's are given as a tuple
     of (p, i, d, f). For speeds below ``slowPIDScale``, ``slowPID`` is used.
     For speeds above ``fastPIDScale``, ``fastPID`` is used. For speeds in
@@ -181,7 +183,7 @@ class DynamicPIDDrive(DriveInterface):
         self.driveScales.pop(0)
         self._setPID(self._lerpPID(max(self.driveScales)))
 
-        self.interface.drive(magnitude, direction, turn)
+        return self.interface.drive(magnitude, direction, turn)
 
     def _setPID(self, pid):
         if pid == self.currentPID:
@@ -253,7 +255,7 @@ class MultiDrive(DriveInterface):
             turn = float(self.totalTurn) / float(self.numTurnCalls)
         magnitude = math.sqrt(x ** 2 + y ** 2)
         direction = math.atan2(y, x)
-        self.interface.drive(magnitude, direction, turn)
+        return self.interface.drive(magnitude, direction, turn)
         self._reset()
 
 

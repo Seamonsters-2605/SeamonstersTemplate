@@ -2,16 +2,11 @@
 
 Template for robot code.
 
-Deploy with `./deploy.sh` or `.\deploy.bat` (Windows). Test with `./test.sh` or
-`.\test.bat` (Windows).
-
 ## Directory Structure
 
+- `.vscode/`: Settings for Visual Studio Code, including launch configurations
 - `seamonsters/`: The seamonsters library
 - `tests/`: Created and used by pyfrc for tests.
-- `deploy.bat` and `deploy.sh`: Windows and Bash versions of scripts for
-    deploying code to robot.
-- `fastdeploy.bat` and `fastdeploy.sh`: Deploy code without testing it.
 - `physics.py` and `sim/`: Used for pyfrc robot simulation. See `sim/README` for details.
 
 ## How to update the seamonsters library documentation

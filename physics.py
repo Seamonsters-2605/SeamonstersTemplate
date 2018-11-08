@@ -1,4 +1,4 @@
-__author__ = "jacobvanthoog"
+__author__ = "seamonsters"
 import math
 import wpilib
 import inspect, os
@@ -9,6 +9,8 @@ import ctre
 import robotpy_ext.common_drivers.navx
 from networktables import NetworkTables
 
+simulatedDrivetrain = None
+
 # make the NavX work with the physics simulator
 def createAnalogGyro():
     return wpilib.AnalogGyro(0)
@@ -16,17 +18,12 @@ robotpy_ext.common_drivers.navx.AHRS.create_spi = createAnalogGyro
 
 class SimulatedTalon:
 
-    def __init__(self, name):
-        if name == '':
-            self.port = None
-        else:
-            self.port = abs(int(name))
-        self.inv = -1 if name.startswith('-') else 1
+    def __init__(self, port, maxVel):
+        self.port = port
+        self.maxVel = maxVel
         self.lastPosition = 0
 
-    def getSpeed(self, data, maxVel):
-        if self.port == None:
-            return 0.0
+    def update(self, data):
         try:
             talonData = data['CAN'][self.port]
             controlMode = talonData['control_mode']
@@ -36,21 +33,20 @@ class SimulatedTalon:
                     value = -1.0
                 if value > 1:
                     value = 1.0
-                return value * self.inv
+                talonData['quad_position'] += int(value * self.maxVel / 5)
+                talonData['quad_velocity'] = int(value * self.maxVel) # update encoder
             elif controlMode == ctre.ControlMode.Position:
                 targetPos = talonData['pid0_target']
                 diff = targetPos - self.lastPosition
                 self.lastPosition = targetPos
-                talonData['quad_position'] = targetPos # update encoders
-                return diff / maxVel * 5 * self.inv
+                talonData['quad_position'] = targetPos # update encoder
+                talonData['quad_velocity'] = int(diff * 5)
             elif controlMode == ctre.ControlMode.Velocity:
                 targetVel = talonData['pid0_target']
-                talonData['quad_position'] += int(targetVel/5) # update encoders
-                return targetVel / maxVel * self.inv
-            else:
-                return 0.0
+                talonData['quad_position'] += int(targetVel / 5) # update encoder
+                talonData['quad_velocity'] = int(targetVel)
         except KeyError:
-            return 0.0
+            pass
 
 class PhysicsEngine:
 
@@ -65,29 +61,28 @@ class PhysicsEngine:
         print("Reading robot data from", filename)
         config.read(filename)
 
-        if not 'physics' in config:
-            print("Please use the [physics] header in drivetrain.ini")
-            exit()
-        physics = config['physics']
-        # get() allows fallback values if the key isn't in the config file
-        self.xLen = float(physics.get('xlen', '2'))
-        self.yLen = float(physics.get('ylen', '3'))
-        self.speed = float(physics.get('speed', '6'))
-        self.drivetrain = physics.get('drivetrain', 'four')
+        if 'talons' in config:
+            talons = config['talons']
+        else:
+            talons = { }
+        self.simulatedTalons = [ ]
+        for key, value in talons.items():
+            num = int(key[len('talon'):])
+            maxVel = float(value)
+            self.simulatedTalons.append(SimulatedTalon(num, maxVel))
 
-        self.flMotor = SimulatedTalon(physics.get('canfl', '0'))
-        self.frMotor = SimulatedTalon(physics.get('canfr', '0'))
-        self.blMotor = SimulatedTalon(physics.get('canbl', '0'))
-        self.brMotor = SimulatedTalon(physics.get('canbr', '0'))
-
-        self.maxVel = int(physics.get('maxvel', '8000'))
-
-        ds = config['ds']
+        if 'ds' in config:
+            ds = config['ds']
+        else:
+            ds = { }
         location = int(ds.get('location', '1'))
         team = 1 if (ds.get('team', 'red').lower() == 'blue') else 0
         self.allianceStation = location - 1 + team * 3
 
-        field = config['field']
+        if 'field' in config:
+            field = config['field']
+        else:
+            field = { }
         self.visionX = float(field.get('visionx', '0'))
         self.visionY = float(field.get('visiony', '0'))
         self.visionAngleStart = float(field.get('visionanglestart', '90'))
@@ -108,24 +103,15 @@ class PhysicsEngine:
         hal_data['alliance_station'] = self.allianceStation
 
     def update_sim(self, data, time, elapsed):
+        global simulatedDrivetrain
+        for simTalon in self.simulatedTalons:
+            simTalon.update(data)
 
-        fl = self.flMotor.getSpeed(data, self.maxVel)
-        fr = self.frMotor.getSpeed(data, self.maxVel)
-        bl = self.blMotor.getSpeed(data, self.maxVel)
-        br = self.brMotor.getSpeed(data, self.maxVel)
-
-        if self.drivetrain == "mecanum":
-            vx, vy, vw = drivetrains.mecanum_drivetrain(bl, br, fl, fr,
-                self.xLen, self.yLen, self.speed)
-            self.physicsController.vector_drive(vx, vy, vw, elapsed)
-        elif self.drivetrain == "four":
-            speed, rot = drivetrains.four_motor_drivetrain(bl, br, fl, fr,
-                self.xLen, self.speed)
-            self.physicsController.drive(speed, rot, elapsed)
-        elif self.drivetrain == "two":
-            speed, rot = drivetrains.two_motor_drivetrain(fl, fr,
-                self.xLen, self.speed)
-            self.physicsController.drive(speed, rot, elapsed)
+        if simulatedDrivetrain != None:
+            robotMag, robotDir, robotTurn = simulatedDrivetrain.getRobotMovement()
+            xVel = robotMag * math.cos(robotDir)
+            yVel = robotMag * math.sin(robotDir)
+            self.physicsController.vector_drive(xVel, yVel, -robotTurn, elapsed)
 
         # https://github.com/robotpy/robotpy-wpilib/issues/291
         data['analog_gyro'][0]['angle'] = math.degrees(self.physicsController.angle)
