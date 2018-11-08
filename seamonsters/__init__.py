@@ -35,3 +35,6 @@ _changeModule(path)
 
 from .superHolonomicDrive import *
 _changeModule(superHolonomicDrive)
+
+from .utils import *
+_changeModule(utils)
