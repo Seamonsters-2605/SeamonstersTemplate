@@ -54,7 +54,7 @@ class Wheel:
         :param direction: radians. 0 is right, positive counter-clockwise
         """
 
-    def measureDistance(self):
+    def getPosition(self):
         """
         :return: a value representing distance the wheel has travelled, which
             accumulates over the lifetime of the wheel.
@@ -89,7 +89,7 @@ class CasterWheel(Wheel):
         self._storedDirection = direction
         self._distance += magnitude / 50
 
-    def measureDistance(self):
+    def getPosition(self):
         return self._distance
 
     def getMovementDirection(self):
@@ -219,7 +219,7 @@ class AngledWheel(Wheel):
             self._positionOccurence = 0
         self._encoderCheckCount += 1
 
-    def measureDistance(self):
+    def getPosition(self):
         sensorPos = self.motor.getSelectedSensorPosition(0)
         if self.reverse:
             sensorPos = -sensorPos
@@ -250,8 +250,8 @@ class MecanumWheel(AngledWheel):
     def drive(self, magnitude, direction):
         return super().drive(magnitude * MecanumWheel.SQRT_2, direction)
 
-    def measureDistance(self):
-        return super().measureDistance() / MecanumWheel.SQRT_2
+    def getPosition(self):
+        return super().getPosition() / MecanumWheel.SQRT_2
 
     def getMovementMagnitude(self):
         return super().getMovementMagnitude() / MecanumWheel.SQRT_2
@@ -320,8 +320,8 @@ class SwerveWheel(Wheel):
         self.angledWheel.angle = currentAngle
         self.angledWheel.drive(magnitude, direction)
 
-    def measureDistance(self):
-        return self.angledWheel.measureDistance()
+    def getPosition(self):
+        return self.angledWheel.getPosition()
 
     def getMovementDirection(self):
         return self.angledWheel.getMovementDirection()
@@ -393,7 +393,7 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
             is an object that can be stored and passed to a future call of
             ``getRobotPositionOffset`` for comparison.
         """
-        currentPositions = [w.measureDistance() for w in self.wheels]
+        currentPositions = [w.getPosition() for w in self.wheels]
         if origin == None:
             return 0.0, 0.0, 0.0, currentPositions
         wheelValues = []
