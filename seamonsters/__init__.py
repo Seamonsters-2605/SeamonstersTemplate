@@ -33,6 +33,9 @@ _changeModule(joystick)
 from .path import *
 _changeModule(path)
 
+from .pathFollower import *
+_changeModule(pathFollower)
+
 from .superHolonomicDrive import *
 _changeModule(superHolonomicDrive)
 
