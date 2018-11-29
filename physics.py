@@ -24,6 +24,8 @@ class SimulatedTalon:
         self.lastPosition = 0
 
     def update(self, data):
+        if not data['control']['enabled']:
+            return
         try:
             talonData = data['CAN'][self.port]
             controlMode = talonData['control_mode']
