@@ -9,6 +9,12 @@ class PathFollower:
         self.robotY = y
         self.robotAngle = angle
         self.ahrs = ahrs
+        self.ahrsOrigin = 0
+        if ahrs is not None:
+            self.ahrsOrigin = self._getAHRSAngle() - angle
+
+    def _getAHRSAngle(self):
+        return -math.radians(self.ahrs.getAngle()) - self.ahrsOrigin
 
     def driveToPointGenerator(self, x, y, angle, time):
         distToPoint = math.sqrt((x - self.robotX) ** 2 + (y - self.robotY) ** 2)
@@ -19,7 +25,7 @@ class PathFollower:
             moveDist, moveDir, moveTurn, newState = \
                 self.drive.getRobotPositionOffset(self._drivePositionState)
             if self.ahrs is not None:
-                pass
+                self.robotAngle = self._getAHRSAngle()
             else:
                 self.robotAngle += moveTurn
             self.robotX += math.cos(moveDir + self.robotAngle) * moveDist
