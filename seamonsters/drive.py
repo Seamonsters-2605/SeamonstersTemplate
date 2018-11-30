@@ -79,8 +79,8 @@ class AccelerationFilterDrive(DriveInterface):
 
         x = magnitude * math.cos(direction)
         y = magnitude * math.sin(direction)
-        distanceToNew = math.sqrt((x - self.previousX) ** 2 \
-                                  + (y - self.previousY) ** 2)
+        distanceToNew = math.sqrt((x - self.previousX) ** 2
+                                + (y - self.previousY) ** 2)
 
         if distanceToNew <= self.accelerationRate:
             newX = x
@@ -88,11 +88,10 @@ class AccelerationFilterDrive(DriveInterface):
             newMagnitude = magnitude
             newDirection = direction
         else:
-            directionToNew = math.atan2(y - self.previousY, x - self.previousX)
             newX = self.previousX \
-                   + math.cos(directionToNew) * self.accelerationRate
+                + (x - self.previousX) * self.accelerationRate / distanceToNew
             newY = self.previousY \
-                   + math.sin(directionToNew) * self.accelerationRate
+                + (y - self.previousY) * self.accelerationRate / distanceToNew
             newMagnitude = math.sqrt(newX ** 2 + newY ** 2)
             newDirection = math.atan2(newY, newX)
 
