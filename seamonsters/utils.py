@@ -1,4 +1,10 @@
+import sys
 import time
+
+def setSimulatedDrivetrain(drivetrain):
+    if sys.argv[1] == 'sim':
+        import physics
+        physics.simulatedDrivetrain = drivetrain
 
 class TimingMonitor:
     """

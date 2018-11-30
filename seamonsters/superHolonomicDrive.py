@@ -2,6 +2,10 @@ import math
 import ctre
 import seamonsters.drive
 
+TWO_PI = math.pi * 2
+
+MAX_POSITION_OCCURENCE = 10
+CHECK_ENCODER_CYCLE = 10
 # if circle = math.pi*2, returns the smallest angle between two directions
 # on a circle
 def _circleDistance(a, b, circle):
@@ -52,6 +56,13 @@ class Wheel:
         :param direction: radians. 0 is right, positive counter-clockwise
         """
 
+    def getPosition(self):
+        """
+        :return: a value representing distance the wheel has travelled, which
+            accumulates over the lifetime of the wheel.
+        """
+        return 0
+
     def getMovementDirection(self):
         """
         :return: the current direction the wheel is moving in radians. This may be based on sensors.
@@ -71,9 +82,17 @@ class CasterWheel(Wheel):
     back for getMovementDirection and getMovementMagnitude.
     """
 
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self._distance = 0
+
     def drive(self, magnitude, direction):
         self._storedMagnitude = magnitude
         self._storedDirection = direction
+        self._distance += magnitude / 50
+
+    def getPosition(self):
+        return self._distance
 
     def getMovementDirection(self):
         return self._storedDirection
@@ -128,10 +147,13 @@ class AngledWheel(Wheel):
         self.reverse = reverse
 
         self.driveMode = ctre.ControlMode.PercentOutput
+        self.encoderWorking = True
 
         self._motorState = None
         self._positionTarget = 0
-        self._errorCheckCount = 0
+        self._encoderCheckCount = 0
+        self._oldPosition = 0
+        self._positionOccurence = 0
 
     def limitMagnitude(self, magnitude, direction):
         # TODO: check position error in this function instead, and factor it
@@ -140,6 +162,27 @@ class AngledWheel(Wheel):
         if abs(magnitude) > self.maxVoltageVelocity:
             return self.maxVoltageVelocity / abs(magnitude)
         return 1.0
+
+    def _encoderCheck(self):
+        newPosition = self.motor.getSelectedSensorPosition(0)
+        #print(newPosition)
+        #print(self.oldPosition)
+        if abs(newPosition - self._oldPosition) <= 1:
+            self._positionOccurence += 1
+        else:
+            self._positionOccurence = 0
+            self.encoderWorking = True
+            self._oldPosition = newPosition
+
+        if self._positionOccurence >= MAX_POSITION_OCCURENCE:
+            self.encoderWorking = False
+
+        if self.driveMode == ctre.ControlMode.Position:
+            # TODO: this is arbitrary
+            maxError = self.maxVoltageVelocity * self.encoderCountsPerFoot / 2
+            if abs(newPosition - self._positionTarget) > maxError:
+                print("Incremental position error!", self.motor.getDeviceID())
+                self._positionTarget = newPosition
 
     def drive(self, magnitude, direction):
         magnitude *= math.cos(direction - self.angle)
@@ -164,25 +207,25 @@ class AngledWheel(Wheel):
             if self._motorState != self.driveMode:
                 self._positionTarget = self.motor.getSelectedSensorPosition(0)
                 self._motorState = self.driveMode
-                self._errorCheckCount = 0
 
             encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot
             self._positionTarget += encoderCountsPerSecond / 50.0
+            self.motor.set(self.driveMode, self._positionTarget)
 
-            self._errorCheckCount += 1
-            if self._errorCheckCount % 20 == 0:
+        if abs(magnitude) > 0.1:
+            if self._encoderCheckCount % CHECK_ENCODER_CYCLE == 0:
                 # getSelectedSensorPosition is slow so only check a few times
                 # per second
-                currentPos = self.motor.getSelectedSensorPosition(0)
-                # TODO: this is arbitrary
-                maxError = self.maxVoltageVelocity \
-                           * self.encoderCountsPerFoot / 2
-                if abs(currentPos - self._positionTarget) \
-                        > maxError:
-                    print("Incremental position error!", currentPos)
-                    self._positionTarget = currentPos
+                self._encoderCheck()
+        else:
+            self._positionOccurence = 0
+        self._encoderCheckCount += 1
 
-            self.motor.set(self.driveMode, self._positionTarget)
+    def getPosition(self):
+        sensorPos = self.motor.getSelectedSensorPosition(0)
+        if self.reverse:
+            sensorPos = -sensorPos
+        return sensorPos / self.encoderCountsPerFoot
 
     def getMovementDirection(self):
         return self.angle
@@ -208,6 +251,9 @@ class MecanumWheel(AngledWheel):
 
     def drive(self, magnitude, direction):
         return super().drive(magnitude * MecanumWheel.SQRT_2, direction)
+
+    def getPosition(self):
+        return super().getPosition() / MecanumWheel.SQRT_2
 
     def getMovementMagnitude(self):
         return super().getMovementMagnitude() / MecanumWheel.SQRT_2
@@ -255,10 +301,10 @@ class SwerveWheel(Wheel):
                  - self._steerOrigin
         if self.reverseSteerMotor:
             offset = -offset
-        return offset * 2 * math.pi / self.encoderCountsPerRev
+        return offset * TWO_PI / self.encoderCountsPerRev
 
     def _setSteering(self, direction):
-        pos = direction * self.encoderCountsPerRev / math.pi / 2
+        pos = direction * self.encoderCountsPerRev / TWO_PI
         if self.reverseSteerMotor:
             pos = -pos
         self.steerMotor.set(ctre.ControlMode.Position, pos + self._steerOrigin)
@@ -275,6 +321,9 @@ class SwerveWheel(Wheel):
 
         self.angledWheel.angle = currentAngle
         self.angledWheel.drive(magnitude, direction)
+
+    def getPosition(self):
+        return self.angledWheel.getPosition()
 
     def getMovementDirection(self):
         return self.angledWheel.getMovementDirection()
@@ -332,7 +381,37 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
             dx = wheelMag * math.cos(wheelDir)
             dy = wheelMag * math.sin(wheelDir)
             wheelValues.append((wheel, dx, dy))
+        return self._calcRobotMovement(wheelValues)
 
+    def getRobotPositionOffset(self, origin):
+        """
+        Calculate how the robot has moved from a previous position.
+        :param origin: an object returned by a previous call to
+            ``getRobotPositionOffset``, for comparing previous state. Passing
+            None will return an offset of 0 and a newly initialized state
+        :return: a tuple of ``(distance, direction, turn, state)`` where
+            ``distance`` and ``direction`` define linear offset in feet and
+            radians, ``turn`` defines angular offset in radians, and ``state``
+            is an object that can be stored and passed to a future call of
+            ``getRobotPositionOffset`` for comparison.
+        """
+        currentPositions = [w.getPosition() for w in self.wheels]
+        if origin == None:
+            return 0.0, 0.0, 0.0, currentPositions
+        wheelValues = []
+        for i in range(len(currentPositions)):
+            wheel = self.wheels[i]
+            wheelMag = currentPositions[i] - origin[i]
+            wheelDir = wheel.getMovementDirection()
+            dx = wheelMag * math.cos(wheelDir)
+            dy = wheelMag * math.sin(wheelDir)
+            wheelValues.append((wheel, dx, dy))
+        outMag, outDir, outTurn = self._calcRobotMovement(wheelValues)
+        return outMag, outDir, outTurn, currentPositions
+
+    # wheel values is a list of (wheel, dx, dy)
+    # return (mag, dir, turn)
+    def _calcRobotMovement(self, wheelValues):
         totalX = 0
         totalY = 0
         totalA = 0

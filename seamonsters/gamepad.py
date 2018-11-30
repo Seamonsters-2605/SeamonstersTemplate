@@ -38,17 +38,18 @@ class Gamepad(wpilib.Joystick):
     LEFT = 15
     RIGHT = 16
 
+    TRIGGER_THRESHOLD = 0.5
     
     def __init__(self, port):
         super().__init__(port)
-        self.deadZone = .08
+        self.deadZone = .08 # default, can be changed
 
     def getDPad(self):
         """
         Return the currently pressed direction of the d-pad. -1 is not pressed.
         0 - 7 represents the directions starting at Up and moving clockwise.
         """
-        pov = self.getPOV()
+        pov = self.getPOV() # degrees
         if pov == -1:
             return -1
         return int(round(self.getPOV() / 45.0))
@@ -158,9 +159,9 @@ class Gamepad(wpilib.Joystick):
 
     def getRawButton(self, button):
         if button == Gamepad.LT:
-            return self.getLTrigger() > .5
+            return self.getLTrigger() > Gamepad.TRIGGER_THRESHOLD
         elif button == Gamepad.RT:
-            return self.getRTrigger() > .5
+            return self.getRTrigger() > Gamepad.TRIGGER_THRESHOLD
         elif button == Gamepad.UP:
             dpad = self.getDPad()
             return dpad == 0 or dpad == 1 or dpad == 7

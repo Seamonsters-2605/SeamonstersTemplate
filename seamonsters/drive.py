@@ -4,31 +4,6 @@ import ctre
 import math
 
 
-def talonModeToString(mode):
-    """
-    Get a readable name from a ``ctre.ControlMode`` constant
-
-    :param mode: a constant from ``ctre.ControlMode``
-    :return: a string name
-    """
-    if mode == ctre.ControlMode.Disabled:
-        return "Disabled"
-    elif mode == ctre.ControlMode.PercentOutput:
-        return "PercentOutput"
-    elif mode == ctre.ControlMode.Position:
-        return "Position"
-    elif mode == ctre.ControlMode.Velocity:
-        return "Velocity"
-    elif mode == ctre.ControlMode.Current:
-        return "Current"
-    elif mode == ctre.ControlMode.Follower:
-        return "Follower"
-    elif mode == ctre.ControlMode.MotionProfile:
-        return "MotionProfile"
-    else:
-        return str(mode)
-
-
 class DriveInterface:
     """
     A generic interface for driving a robot.
@@ -104,8 +79,8 @@ class AccelerationFilterDrive(DriveInterface):
 
         x = magnitude * math.cos(direction)
         y = magnitude * math.sin(direction)
-        distanceToNew = math.sqrt((x - self.previousX) ** 2 \
-                                  + (y - self.previousY) ** 2)
+        distanceToNew = math.sqrt((x - self.previousX) ** 2
+                                + (y - self.previousY) ** 2)
 
         if distanceToNew <= self.accelerationRate:
             newX = x
@@ -113,11 +88,10 @@ class AccelerationFilterDrive(DriveInterface):
             newMagnitude = magnitude
             newDirection = direction
         else:
-            directionToNew = math.atan2(y - self.previousY, x - self.previousX)
             newX = self.previousX \
-                   + math.cos(directionToNew) * self.accelerationRate
+                + (x - self.previousX) * self.accelerationRate / distanceToNew
             newY = self.previousY \
-                   + math.sin(directionToNew) * self.accelerationRate
+                + (y - self.previousY) * self.accelerationRate / distanceToNew
             newMagnitude = math.sqrt(newX ** 2 + newY ** 2)
             newDirection = math.atan2(newY, newX)
 
@@ -257,8 +231,9 @@ class MultiDrive(DriveInterface):
             turn = float(self.totalTurn) / float(self.numTurnCalls)
         magnitude = math.sqrt(x ** 2 + y ** 2)
         direction = math.atan2(y, x)
-        return self.interface.drive(magnitude, direction, turn)
+        scale = self.interface.drive(magnitude, direction, turn)
         self._reset()
+        return scale
 
 
 if __name__ == "__main__":

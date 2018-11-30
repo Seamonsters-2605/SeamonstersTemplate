@@ -13,16 +13,14 @@ def deadZone(value, deadZone=0.1, maxValue=1.0):
     :param maxValue: the maximum value
     :return: the number, constrained to the minimum/maximum values
     """
-    if value > deadZone:
-        value = (value - deadZone) / (maxValue - deadZone)
-        if value > maxValue:
-            return maxValue
-        return value
-    elif value < -deadZone:
-        value = (value + deadZone) / (maxValue - deadZone)
-        if value < -maxValue:
-            return -maxValue
-        return value
+    if abs(value) > deadZone:
+        newValue = (abs(value) - deadZone) / (maxValue - deadZone)
+        if newValue > maxValue:
+            newValue = maxValue
+        if value < 0:
+            return -newValue
+        else:
+            return newValue
     else:
         return 0.0
 
