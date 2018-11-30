@@ -8,18 +8,36 @@ import socket
 DASHBOARD_PORT = 5805
 
 def hBoxWith(*args, **kwargs):
+    """
+    Construct a REMI HBox with the given keyword arguments, and add all of the
+    given widgets to it.
+    """
     box = gui.HBox(**kwargs)
     for widget in args:
         box.append(widget)
     return box
 
 def vBoxWith(*args, **kwargs):
+    """
+    Construct a REMI VBox with the given keyword arguments, and add all of the
+    given widgets to it.
+    """
     box = gui.VBox(**kwargs)
     for widget in args:
         box.append(widget)
     return box
 
 def startDashboard(robot, dashboardClass):
+    """
+    Start the dashboard in a separate thread. Behavior of this function will
+    depend on the RobotPy command line arguments -- in "run" mode the server
+    will be started quietly, in "sim" mode a web browser will also be opened,
+    and in "deploy" mode nothing will happen.
+
+    :param robot: a robot object with an ``app`` variable. This will be set
+        when the dashboard has started.
+    :param dashboardClass: a class which extends from ``sea.Dashboard``
+    """
     robot.app = None
 
     def appCallback(app):
@@ -45,12 +63,25 @@ def startDashboard(robot, dashboardClass):
 
 
 class Dashboard(remi.App):
+    """
+    Adds some utilities for building robot dashboards to ``remi.App``.
+
+    A dashboard class must have a ``main`` function which takes ``robot`` and
+    ``appCallback`` as arguments, where ``robot`` is the robot object and
+    ``appCallback`` is a function that should be called with ``self`` as an
+    argument when ``main`` has completed.
+    """
 
     def __init__(self, *args, **kwargs):
         self.eventQueue = queue.Queue()
         super(Dashboard, self).__init__(*args, **kwargs)
 
     def queuedEvent(self, eventF):
+        """
+        Given a function ``eventF`` which takes any number of arguments,
+        returns a new function which will add ``eventF`` and given arguments
+        to the Dashboard event queue, to be called later.
+        """
         def queueTheEvent(*args, **kwargs):
             def doTheEvent():
                 print("Event:", eventF.__name__)
@@ -59,10 +90,19 @@ class Dashboard(remi.App):
         return queueTheEvent
 
     def clearEvents(self):
+        """
+        Clear the event queue without executing any events. It's a good idea to
+        call this at the start of teleop, in case someone clicked some buttons
+        while the robot was disabled.
+        """
         while not self.eventQueue.empty():
             self.eventQueue.get()
 
     def doEvents(self):
+        """
+        Execute all events in the event queue and clear the queue. This should
+        be called continuously during teleop.
+        """
         while not self.eventQueue.empty():
             event = self.eventQueue.get()
             event()
