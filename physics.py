@@ -9,6 +9,13 @@ import ctre
 import robotpy_ext.common_drivers.navx
 from networktables import NetworkTables
 
+# HAL keys
+
+HALK_TALON_PERCENT = 'value'
+HALK_TALON_POSITION = 'quad_position'
+HALK_TALON_VELOCITY = 'quad_velocity'
+HALK_TALON_PID_TARGET = 'pid0_target'
+
 simulatedDrivetrain = None
 
 # make the NavX work with the physics simulator
@@ -24,31 +31,43 @@ class SimulatedTalon:
         self.lastPosition = 0
 
     def update(self, data):
+        """
+        Update the talon. ``data`` is the HAL dictionary, which has many nested
+        dictionaries of data about the simulated robot. Some documentation can
+        be found in the ``_reset_hal_data`` in this file:
+        https://github.com/robotpy/robotpy-wpilib/blob/master/hal-sim/hal_impl/data.py
+        """
         if not data['control']['enabled']:
             return
-        try:
-            talonData = data['CAN'][self.port]
-            controlMode = talonData['control_mode']
-            if controlMode == ctre.ControlMode.PercentOutput:
-                value = talonData['value']
-                if value < -1:
-                    value = -1.0
-                if value > 1:
-                    value = 1.0
-                talonData['quad_position'] += int(value * self.maxVel / 5)
-                talonData['quad_velocity'] = int(value * self.maxVel) # update encoder
-            elif controlMode == ctre.ControlMode.Position:
-                targetPos = talonData['pid0_target']
-                diff = targetPos - self.lastPosition
-                self.lastPosition = targetPos
-                talonData['quad_position'] = targetPos # update encoder
-                talonData['quad_velocity'] = int(diff * 5)
-            elif controlMode == ctre.ControlMode.Velocity:
-                targetVel = talonData['pid0_target']
-                talonData['quad_position'] += int(targetVel / 5) # update encoder
-                talonData['quad_velocity'] = int(targetVel)
-        except KeyError:
-            pass
+        if not self.port in data['CAN']:
+            return
+        talonData = data['CAN'][self.port]
+        controlMode = talonData['control_mode']
+        if controlMode == ctre.ControlMode.PercentOutput:
+            value = talonData[HALK_TALON_PERCENT]
+            if value < -1:
+                value = -1.0
+            elif value > 1:
+                value = 1.0
+            velocity = int(value * self.maxVel)
+            # update encoder
+            # velocity is measured in encoder counts per 1/10 second
+            # position is updated 50 times a second
+            # so position should be incremented by 1/5 of the velocity value
+            talonData[HALK_TALON_POSITION] += velocity // 5
+            talonData[HALK_TALON_VELOCITY] = velocity
+        elif controlMode == ctre.ControlMode.Position:
+            targetPos = talonData[HALK_TALON_PID_TARGET]
+            diff = targetPos - self.lastPosition
+            self.lastPosition = targetPos
+            # update encoder
+            talonData[HALK_TALON_POSITION] = targetPos
+            talonData[HALK_TALON_VELOCITY] = int(diff * 5)
+        elif controlMode == ctre.ControlMode.Velocity:
+            targetVel = talonData[HALK_TALON_PID_TARGET]
+            # update encoder
+            talonData[HALK_TALON_POSITION] += int(targetVel / 5)
+            talonData[HALK_TALON_VELOCITY] = int(targetVel)
 
 class PhysicsEngine:
 
@@ -59,19 +78,18 @@ class PhysicsEngine:
         self.physicsController.add_analog_gyro_channel(0)
 
         config = configparser.ConfigParser()
-        filename = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + os.sep + "sim" + os.sep + "drivetrain.ini"
+        filename = os.path.dirname(os.path.abspath(
+            inspect.getfile(inspect.currentframe()))) \
+            + os.sep + "sim" + os.sep + "drivetrain.ini"
         print("Reading robot data from", filename)
         config.read(filename)
 
-        if 'talons' in config:
-            talons = config['talons']
-        else:
-            talons = { }
         self.simulatedTalons = [ ]
-        for key, value in talons.items():
-            num = int(key[len('talon'):])
-            maxVel = float(value)
-            self.simulatedTalons.append(SimulatedTalon(num, maxVel))
+        if 'talons' in config:
+            for key, value in config['talons'].items():
+                num = int(key.replace('talon', ''))
+                maxVel = float(value)
+                self.simulatedTalons.append(SimulatedTalon(num, maxVel))
 
         if 'ds' in config:
             ds = config['ds']
@@ -90,9 +108,10 @@ class PhysicsEngine:
         self.visionAngleStart = float(field.get('visionanglestart', '90'))
         self.visionAngleEnd = float(field.get('visionangleend', '270'))
 
+    # special function called by pyfrc when simulator starts
     def initialize(self, hal_data):
         self.visionTable = NetworkTables.getTable('limelight')
-        self.visionTable.putNumber('tv', 1)
+        self.visionTable.putNumber('tv', 1) # some arbitrary default vision data
         self.visionTable.putNumber('tx', 0)
         self.visionTable.putNumber('ty', 0)
         self.visionTable.putNumber('ts', 0)
@@ -104,19 +123,20 @@ class PhysicsEngine:
         self.visionSim = VisionSim([visionTarget], 60, 2, 50)
         hal_data['alliance_station'] = self.allianceStation
 
-    def update_sim(self, data, time, elapsed):
+    # special function called by pyfrc to update the robot state
+    def update_sim(self, hal_data, time, elapsed):
         global simulatedDrivetrain
         for simTalon in self.simulatedTalons:
-            simTalon.update(data)
+            simTalon.update(hal_data)
 
-        if simulatedDrivetrain != None:
+        if simulatedDrivetrain is not None:
             robotMag, robotDir, robotTurn = simulatedDrivetrain.getRobotMovement()
             xVel = robotMag * math.cos(robotDir)
             yVel = robotMag * math.sin(robotDir)
             self.physicsController.vector_drive(xVel, yVel, -robotTurn, elapsed)
 
         # https://github.com/robotpy/robotpy-wpilib/issues/291
-        data['analog_gyro'][0]['angle'] = math.degrees(self.physicsController.angle)
+        hal_data['analog_gyro'][0]['angle'] = math.degrees(self.physicsController.angle)
 
         x, y, angle = self.physicsController.get_position()
         visionData = self.visionSim.compute(time, x, y, angle)
