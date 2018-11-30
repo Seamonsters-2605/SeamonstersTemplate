@@ -18,8 +18,11 @@ class PathFollower:
 
     def driveToPointGenerator(self, x, y, angle, time, positionTolerance, angleTolerance):
         distToPoint = math.sqrt((x - self.robotX) ** 2 + (y - self.robotY) ** 2)
-        targetMag = distToPoint / time
-        targetAVel = (angle - self.robotAngle) / time
+        targetMag = 0
+        targetAVel = 0
+        if time != 0:
+            targetMag = distToPoint / time
+            targetAVel = (angle - self.robotAngle) / time
 
         while True:
             moveDist, moveDir, moveTurn, newState = \
@@ -38,11 +41,11 @@ class PathFollower:
             dist = math.sqrt(xDiff ** 2 + yDiff ** 2)
             moveDir = math.atan2(yDiff, xDiff) - self.robotAngle
 
-            if dist < targetMag / 50:
+            if targetMag == 0 or dist < targetMag / 50:
                 mag = dist * 50
             else:
                 mag = targetMag
-            if abs(aDiff) < abs(targetAVel / 50):
+            if targetAVel == 0 or abs(aDiff) < abs(targetAVel / 50):
                 aVel = aDiff * 50
             else:
                 aVel = abs(targetAVel)
