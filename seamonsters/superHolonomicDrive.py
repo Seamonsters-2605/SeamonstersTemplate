@@ -372,7 +372,7 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
         Get the movement of the robot as a whole, based on wheel sensors.
 
         :return: (magnitude, direction, turn). Magnitude in feet per second,
-        direction in radians, turn in radians per second.
+            direction in radians, turn in radians per second.
         """
         wheelValues = []
         for wheel in self.wheels:
@@ -386,6 +386,7 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
     def getRobotPositionOffset(self, origin):
         """
         Calculate how the robot has moved from a previous position.
+
         :param origin: an object returned by a previous call to
             ``getRobotPositionOffset``, for comparing previous state. Passing
             None will return an offset of 0 and a newly initialized state
