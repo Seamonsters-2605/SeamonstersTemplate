@@ -4,31 +4,6 @@ import ctre
 import math
 
 
-def talonModeToString(mode):
-    """
-    Get a readable name from a ``ctre.ControlMode`` constant
-
-    :param mode: a constant from ``ctre.ControlMode``
-    :return: a string name
-    """
-    if mode == ctre.ControlMode.Disabled:
-        return "Disabled"
-    elif mode == ctre.ControlMode.PercentOutput:
-        return "PercentOutput"
-    elif mode == ctre.ControlMode.Position:
-        return "Position"
-    elif mode == ctre.ControlMode.Velocity:
-        return "Velocity"
-    elif mode == ctre.ControlMode.Current:
-        return "Current"
-    elif mode == ctre.ControlMode.Follower:
-        return "Follower"
-    elif mode == ctre.ControlMode.MotionProfile:
-        return "MotionProfile"
-    else:
-        return str(mode)
-
-
 class DriveInterface:
     """
     A generic interface for driving a robot.
