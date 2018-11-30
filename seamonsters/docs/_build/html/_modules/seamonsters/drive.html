@@ -13,7 +13,6 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -28,6 +27,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for seamonsters.drive</h1><div class="highlight"><pre>
@@ -35,31 +36,6 @@
 
 <span class="kn">import</span> <span class="nn">ctre</span>
 <span class="kn">import</span> <span class="nn">math</span>
-
-
-<span class="k">def</span> <span class="nf">talonModeToString</span><span class="p">(</span><span class="n">mode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get a readable name from a ``ctre.ControlMode`` constant</span>
-
-<span class="sd">    :param mode: a constant from ``ctre.ControlMode``</span>
-<span class="sd">    :return: a string name</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">Disabled</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;Disabled&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">PercentOutput</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;PercentOutput&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">Position</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;Position&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">Velocity</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;Velocity&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">Current</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;Current&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">Follower</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;Follower&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">MotionProfile</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;MotionProfile&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">DriveInterface</span><span class="p">:</span>
@@ -137,8 +113,8 @@
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">magnitude</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">magnitude</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span>
-        <span class="n">distanceToNew</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousX</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> \
-                                  <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousY</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">distanceToNew</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousX</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+                                <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousY</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">distanceToNew</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelerationRate</span><span class="p">:</span>
             <span class="n">newX</span> <span class="o">=</span> <span class="n">x</span>
@@ -146,11 +122,10 @@
             <span class="n">newMagnitude</span> <span class="o">=</span> <span class="n">magnitude</span>
             <span class="n">newDirection</span> <span class="o">=</span> <span class="n">direction</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">directionToNew</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousY</span><span class="p">,</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousX</span><span class="p">)</span>
             <span class="n">newX</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousX</span> \
-                   <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">directionToNew</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelerationRate</span>
+                <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousX</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelerationRate</span> <span class="o">/</span> <span class="n">distanceToNew</span>
             <span class="n">newY</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousY</span> \
-                   <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">directionToNew</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelerationRate</span>
+                <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousY</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelerationRate</span> <span class="o">/</span> <span class="n">distanceToNew</span>
             <span class="n">newMagnitude</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">newX</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">newY</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">newDirection</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">newY</span><span class="p">,</span> <span class="n">newX</span><span class="p">)</span>
 
@@ -201,7 +176,7 @@
 
 <div class="viewcode-block" id="DynamicPIDDrive.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.DynamicPIDDrive.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">,</span> <span class="n">wheelTalons</span><span class="p">,</span> <span class="n">slowPID</span><span class="p">,</span> <span class="n">slowPIDScale</span><span class="p">,</span>
                  <span class="n">fastPID</span><span class="p">,</span> <span class="n">fastPIDScale</span><span class="p">,</span> <span class="n">pidLookBackRange</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">talons</span> <span class="o">=</span> <span class="n">wheelTalons</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">slowPID</span> <span class="o">=</span> <span class="n">slowPID</span>
@@ -256,7 +231,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MultiDrive.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.MultiDrive.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span></div>
 
@@ -290,11 +265,12 @@
             <span class="n">turn</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">totalTurn</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numTurnCalls</span><span class="p">)</span>
         <span class="n">magnitude</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">direction</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span></div>
+        <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">scale</span></div>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="c1"># test acceleration filter drive</span>
     <span class="n">filterDrive</span> <span class="o">=</span> <span class="n">AccelerationFilterDrive</span><span class="p">(</span><span class="n">TestDriveInterface</span><span class="p">())</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
@@ -302,6 +278,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -340,6 +317,14 @@
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -348,8 +333,8 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

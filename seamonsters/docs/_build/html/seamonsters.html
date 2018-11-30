@@ -13,7 +13,6 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -28,6 +27,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="module-seamonsters">
@@ -160,6 +161,20 @@ per second</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="seamonsters.AngledWheel.getPosition">
+<code class="descname">getPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.getPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.getPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a value representing distance the wheel has travelled, which</td>
+</tr>
+</tbody>
+</table>
+<p>accumulates over the lifetime of the wheel.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="seamonsters.AngledWheel.limitMagnitude">
 <code class="descname">limitMagnitude</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.limitMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.limitMagnitude" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the scaling factor necessary to keep the wheel speed within its
@@ -190,6 +205,23 @@ between 0 and 1 to scale the wheel down to its maximum speed.</p>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.Wheel</span></code></a></p>
 <p>Doesn’t drive a motor, only stores its drive parameters and echoes them
 back for getMovementDirection and getMovementMagnitude.</p>
+<dl class="method">
+<dt id="seamonsters.CasterWheel.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> – X offset from origin in feet</li>
+<li><strong>y</strong> – Y offset from origin in feet</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="seamonsters.CasterWheel.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.drive" title="Permalink to this definition">¶</a></dt>
@@ -234,12 +266,31 @@ back for getMovementDirection and getMovementMagnitude.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="seamonsters.CasterWheel.getPosition">
+<code class="descname">getPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.getPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.getPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a value representing distance the wheel has travelled, which</td>
+</tr>
+</tbody>
+</table>
+<p>accumulates over the lifetime of the wheel.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="seamonsters.Dashboard">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">Dashboard</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.Dashboard" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">remi.server.App</span></code></p>
+<p>Adds some utilities for building robot dashboards to <code class="docutils literal notranslate"><span class="pre">remi.App</span></code>.</p>
+<p>A dashboard class must have a <code class="docutils literal notranslate"><span class="pre">main</span></code> function which takes <code class="docutils literal notranslate"><span class="pre">robot</span></code> and
+<code class="docutils literal notranslate"><span class="pre">appCallback</span></code> as arguments, where <code class="docutils literal notranslate"><span class="pre">robot</span></code> is the robot object and
+<code class="docutils literal notranslate"><span class="pre">appCallback</span></code> is a function that should be called with <code class="docutils literal notranslate"><span class="pre">self</span></code> as an
+argument when <code class="docutils literal notranslate"><span class="pre">main</span></code> has completed.</p>
 <dl class="method">
 <dt id="seamonsters.Dashboard.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#Dashboard.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Dashboard.__init__" title="Permalink to this definition">¶</a></dt>
@@ -249,17 +300,25 @@ back for getMovementDirection and getMovementMagnitude.</p>
 <dl class="method">
 <dt id="seamonsters.Dashboard.clearEvents">
 <code class="descname">clearEvents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#Dashboard.clearEvents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Dashboard.clearEvents" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Clear the event queue without executing any events. It’s a good idea to
+call this at the start of teleop, in case someone clicked some buttons
+while the robot was disabled.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.Dashboard.doEvents">
 <code class="descname">doEvents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#Dashboard.doEvents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Dashboard.doEvents" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Execute all events in the event queue and clear the queue. This should
+be called continuously during teleop.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.Dashboard.queuedEvent">
 <code class="descname">queuedEvent</code><span class="sig-paren">(</span><em>eventF</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#Dashboard.queuedEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Dashboard.queuedEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given a function <code class="docutils literal notranslate"><span class="pre">eventF</span></code> which takes any number of arguments,
+returns a new function which will add <code class="docutils literal notranslate"><span class="pre">eventF</span></code> and given arguments
+to the Dashboard event queue, to be called later.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -489,6 +548,11 @@ of these buttons can be checked with
 <dl class="attribute">
 <dt id="seamonsters.Gamepad.START">
 <code class="descname">START</code><em class="property"> = 8</em><a class="headerlink" href="#seamonsters.Gamepad.START" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="seamonsters.Gamepad.TRIGGER_THRESHOLD">
+<code class="descname">TRIGGER_THRESHOLD</code><em class="property"> = 0.5</em><a class="headerlink" href="#seamonsters.Gamepad.TRIGGER_THRESHOLD" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -789,6 +853,20 @@ the diagonal direction of force in the diamond pattern.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="seamonsters.MecanumWheel.getPosition">
+<code class="descname">getPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#MecanumWheel.getPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.MecanumWheel.getPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a value representing distance the wheel has travelled, which</td>
+</tr>
+</tbody>
+</table>
+<p>accumulates over the lifetime of the wheel.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="seamonsters.MecanumWheel.limitMagnitude">
 <code class="descname">limitMagnitude</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#MecanumWheel.limitMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.MecanumWheel.limitMagnitude" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the scaling factor necessary to keep the wheel speed within its
@@ -857,6 +935,23 @@ input magnitude and turn components</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="seamonsters.PathFollower">
+<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">PathFollower</code><span class="sig-paren">(</span><em>drive</em>, <em>x</em>, <em>y</em>, <em>angle</em>, <em>ahrs</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.PathFollower" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="seamonsters.PathFollower.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>drive</em>, <em>x</em>, <em>y</em>, <em>angle</em>, <em>ahrs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.PathFollower.driveToPointGenerator">
+<code class="descname">driveToPointGenerator</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>angle</em>, <em>time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.driveToPointGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.driveToPointGenerator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="seamonsters.SuperHolonomicDrive">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">SuperHolonomicDrive</code><a class="headerlink" href="#seamonsters.SuperHolonomicDrive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.DriveInterface" title="seamonsters.DriveInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.DriveInterface</span></code></a></p>
@@ -904,11 +999,33 @@ input magnitude and turn components</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(magnitude, direction, turn). Magnitude in feet per second,</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(magnitude, direction, turn). Magnitude in feet per second,
+direction in radians, turn in radians per second.</td>
 </tr>
 </tbody>
 </table>
-<p>direction in radians, turn in radians per second.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.SuperHolonomicDrive.getRobotPositionOffset">
+<code class="descname">getRobotPositionOffset</code><span class="sig-paren">(</span><em>origin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.getRobotPositionOffset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.getRobotPositionOffset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate how the robot has moved from a previous position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>origin</strong> – an object returned by a previous call to
+<code class="docutils literal notranslate"><span class="pre">getRobotPositionOffset</span></code>, for comparing previous state. Passing
+None will return an offset of 0 and a newly initialized state</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a tuple of <code class="docutils literal notranslate"><span class="pre">(distance,</span> <span class="pre">direction,</span> <span class="pre">turn,</span> <span class="pre">state)</span></code> where
+<code class="docutils literal notranslate"><span class="pre">distance</span></code> and <code class="docutils literal notranslate"><span class="pre">direction</span></code> define linear offset in feet and
+radians, <code class="docutils literal notranslate"><span class="pre">turn</span></code> defines angular offset in radians, and <code class="docutils literal notranslate"><span class="pre">state</span></code>
+is an object that can be stored and passed to a future call of
+<code class="docutils literal notranslate"><span class="pre">getRobotPositionOffset</span></code> for comparison.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -985,6 +1102,20 @@ of the steer motor</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.SwerveWheel.getPosition">
+<code class="descname">getPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.getPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.getPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a value representing distance the wheel has travelled, which</td>
+</tr>
+</tbody>
+</table>
+<p>accumulates over the lifetime of the wheel.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1192,6 +1323,20 @@ direction.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="seamonsters.Wheel.getPosition">
+<code class="descname">getPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.getPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.getPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a value representing distance the wheel has travelled, which
+accumulates over the lifetime of the wheel.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="seamonsters.Wheel.limitMagnitude">
 <code class="descname">limitMagnitude</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.limitMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.limitMagnitude" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the scaling factor necessary to keep the wheel speed within its
@@ -1256,7 +1401,9 @@ iterations before finishing.</p>
 <dl class="function">
 <dt id="seamonsters.hBoxWith">
 <code class="descclassname">seamonsters.</code><code class="descname">hBoxWith</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.hBoxWith" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Construct a REMI HBox with the given keyword arguments, and add all of the
+given widgets to it.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="seamonsters.parallel">
@@ -1264,31 +1411,6 @@ iterations before finishing.</p>
 <dd><p>Run a group of iterables in parallel. Ends when none are left running.</p>
 <p>If any iterable yields a function, it will be added to the set of running
 iterables.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="seamonsters.readPoints">
-<code class="descclassname">seamonsters.</code><code class="descname">readPoints</code><span class="sig-paren">(</span><em>filePath</em>, <em>pixelsPerUnit</em>, <em>leftMargin</em>, <em>bottomMargin</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.readPoints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given an SVG with a path created in GIMP, read all the points in the path
-and return a list of points.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filePath</strong> – string path to the SVG file</li>
-<li><strong>pixelsPerUnit</strong> – number of pixels for a single unit</li>
-<li><strong>leftMargin</strong> – units (not pixels) of margin at the left side of the
-image</li>
-<li><strong>bottomMargin</strong> – units (not pixels) of margin at the bottom of the image</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list of tuples (x, y)</p>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="function">
@@ -1312,21 +1434,27 @@ image</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="seamonsters.startDashboard">
-<code class="descclassname">seamonsters.</code><code class="descname">startDashboard</code><span class="sig-paren">(</span><em>robot</em>, <em>dashboardClass</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.startDashboard" title="Permalink to this definition">¶</a></dt>
+<dt id="seamonsters.setSimulatedDrivetrain">
+<code class="descclassname">seamonsters.</code><code class="descname">setSimulatedDrivetrain</code><span class="sig-paren">(</span><em>drivetrain</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.setSimulatedDrivetrain" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="seamonsters.talonModeToString">
-<code class="descclassname">seamonsters.</code><code class="descname">talonModeToString</code><span class="sig-paren">(</span><em>mode</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.talonModeToString" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a readable name from a <code class="docutils literal notranslate"><span class="pre">ctre.ControlMode</span></code> constant</p>
+<dt id="seamonsters.startDashboard">
+<code class="descclassname">seamonsters.</code><code class="descname">startDashboard</code><span class="sig-paren">(</span><em>robot</em>, <em>dashboardClass</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.startDashboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the dashboard in a separate thread. Behavior of this function will
+depend on the RobotPy command line arguments – in “run” mode the server
+will be started quietly, in “sim” mode a web browser will also be opened,
+and in “deploy” mode nothing will happen.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> – a constant from <code class="docutils literal notranslate"><span class="pre">ctre.ControlMode</span></code></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a string name</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>robot</strong> – a robot object with an <code class="docutils literal notranslate"><span class="pre">app</span></code> variable. This will be set
+when the dashboard has started.</li>
+<li><strong>dashboardClass</strong> – a class which extends from <code class="docutils literal notranslate"><span class="pre">sea.Dashboard</span></code></li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1366,7 +1494,9 @@ Return the value of the iterable if it ends early, None otherwise.</p>
 <dl class="function">
 <dt id="seamonsters.vBoxWith">
 <code class="descclassname">seamonsters.</code><code class="descname">vBoxWith</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.vBoxWith" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Construct a REMI VBox with the given keyword arguments, and add all of the
+given widgets to it.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="seamonsters.wait">
@@ -1405,6 +1535,7 @@ iterables.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -1439,6 +1570,14 @@ iterables.</p>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -1447,8 +1586,8 @@ iterables.</p>
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/seamonsters.rst.txt"

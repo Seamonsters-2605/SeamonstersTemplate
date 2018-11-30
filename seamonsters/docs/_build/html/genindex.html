@@ -14,7 +14,6 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -29,6 +28,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
 
@@ -68,6 +69,8 @@
       <ul>
         <li><a href="seamonsters.html#seamonsters.AngledWheel.__init__">(seamonsters.AngledWheel method)</a>
 </li>
+        <li><a href="seamonsters.html#seamonsters.CasterWheel.__init__">(seamonsters.CasterWheel method)</a>
+</li>
         <li><a href="seamonsters.html#seamonsters.Dashboard.__init__">(seamonsters.Dashboard method)</a>
 </li>
         <li><a href="seamonsters.html#seamonsters.DynamicAxis.__init__">(seamonsters.DynamicAxis method)</a>
@@ -83,6 +86,8 @@
         <li><a href="seamonsters.html#seamonsters.IterativeRobotInstance.__init__">(seamonsters.IterativeRobotInstance method)</a>
 </li>
         <li><a href="seamonsters.html#seamonsters.MultiDrive.__init__">(seamonsters.MultiDrive method)</a>
+</li>
+        <li><a href="seamonsters.html#seamonsters.PathFollower.__init__">(seamonsters.PathFollower method)</a>
 </li>
         <li><a href="seamonsters.html#seamonsters.SuperHolonomicDrive.__init__">(seamonsters.SuperHolonomicDrive method)</a>
 </li>
@@ -185,6 +190,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.DriveInterface">DriveInterface (class in seamonsters)</a>
 </li>
+      <li><a href="seamonsters.html#seamonsters.PathFollower.driveToPointGenerator">driveToPointGenerator() (seamonsters.PathFollower method)</a>
+</li>
       <li><a href="seamonsters.html#seamonsters.DynamicAxis">DynamicAxis (class in seamonsters)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.DynamicPIDDrive">DynamicPIDDrive (class in seamonsters)</a>
@@ -263,6 +270,18 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="seamonsters.html#seamonsters.AngledWheel.getPosition">getPosition() (seamonsters.AngledWheel method)</a>
+
+      <ul>
+        <li><a href="seamonsters.html#seamonsters.CasterWheel.getPosition">(seamonsters.CasterWheel method)</a>
+</li>
+        <li><a href="seamonsters.html#seamonsters.MecanumWheel.getPosition">(seamonsters.MecanumWheel method)</a>
+</li>
+        <li><a href="seamonsters.html#seamonsters.SwerveWheel.getPosition">(seamonsters.SwerveWheel method)</a>
+</li>
+        <li><a href="seamonsters.html#seamonsters.Wheel.getPosition">(seamonsters.Wheel method)</a>
+</li>
+      </ul></li>
       <li><a href="seamonsters.html#seamonsters.Gamepad.getRawButton">getRawButton() (seamonsters.Gamepad method)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.Gamepad.getRawLMagnitude">getRawLMagnitude() (seamonsters.Gamepad method)</a>
@@ -284,6 +303,8 @@
       <li><a href="seamonsters.html#seamonsters.SuperHolonomicDrive.getRobotMovement">getRobotMovement() (seamonsters.SuperHolonomicDrive method)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.FieldOrientedDrive.getRobotOffset">getRobotOffset() (seamonsters.FieldOrientedDrive method)</a>
+</li>
+      <li><a href="seamonsters.html#seamonsters.SuperHolonomicDrive.getRobotPositionOffset">getRobotPositionOffset() (seamonsters.SuperHolonomicDrive method)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.Gamepad.getRTrigger">getRTrigger() (seamonsters.Gamepad method)</a>
 </li>
@@ -360,6 +381,10 @@
       <li><a href="seamonsters.html#seamonsters.parallel">parallel() (in module seamonsters)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="seamonsters.html#seamonsters.PathFollower">PathFollower (class in seamonsters)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="Q">Q</h2>
@@ -375,16 +400,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.Gamepad.RB">RB (seamonsters.Gamepad attribute)</a>
 </li>
-      <li><a href="seamonsters.html#seamonsters.readPoints">readPoints() (in module seamonsters)</a>
-</li>
       <li><a href="seamonsters.html#seamonsters.TimingMonitor.reset">reset() (seamonsters.TimingMonitor method)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.returnValue">returnValue() (in module seamonsters)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.Gamepad.RIGHT">RIGHT (seamonsters.Gamepad attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.Gamepad.rInDeadZone">rInDeadZone() (seamonsters.Gamepad method)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.Gamepad.RJ">RJ (seamonsters.Gamepad attribute)</a>
@@ -402,6 +425,8 @@
       <li><a href="seamonsters.html#module-seamonsters">seamonsters (module)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.sequence">sequence() (in module seamonsters)</a>
+</li>
+      <li><a href="seamonsters.html#seamonsters.setSimulatedDrivetrain">setSimulatedDrivetrain() (in module seamonsters)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.MecanumWheel.SQRT_2">SQRT_2 (seamonsters.MecanumWheel attribute)</a>
 </li>
@@ -425,23 +450,23 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="seamonsters.html#seamonsters.talonModeToString">talonModeToString() (in module seamonsters)</a>
-</li>
       <li><a href="seamonsters.html#seamonsters.GeneratorBot.teleop">teleop() (seamonsters.GeneratorBot method)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.IterativeRobotInstance.teleopGenerator">teleopGenerator() (seamonsters.IterativeRobotInstance method)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.GeneratorBot.test">test() (seamonsters.GeneratorBot method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.TestDriveInterface">TestDriveInterface (class in seamonsters)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.TestWheel">TestWheel (class in seamonsters)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.timeLimit">timeLimit() (in module seamonsters)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.TimingMonitor">TimingMonitor (class in seamonsters)</a>
+</li>
+      <li><a href="seamonsters.html#seamonsters.Gamepad.TRIGGER_THRESHOLD">TRIGGER_THRESHOLD (seamonsters.Gamepad attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -523,6 +548,7 @@
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -557,6 +583,14 @@
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -565,8 +599,8 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -13,7 +13,6 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -28,6 +27,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for seamonsters.dashboard</h1><div class="highlight"><pre>
@@ -41,18 +42,36 @@
 <span class="n">DASHBOARD_PORT</span> <span class="o">=</span> <span class="mi">5805</span>
 
 <span class="k">def</span> <span class="nf">hBoxWith</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct a REMI HBox with the given keyword arguments, and add all of the</span>
+<span class="sd">    given widgets to it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">box</span> <span class="o">=</span> <span class="n">gui</span><span class="o">.</span><span class="n">HBox</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
         <span class="n">box</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">box</span>
 
 <span class="k">def</span> <span class="nf">vBoxWith</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct a REMI VBox with the given keyword arguments, and add all of the</span>
+<span class="sd">    given widgets to it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">box</span> <span class="o">=</span> <span class="n">gui</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
         <span class="n">box</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">box</span>
 
 <span class="k">def</span> <span class="nf">startDashboard</span><span class="p">(</span><span class="n">robot</span><span class="p">,</span> <span class="n">dashboardClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start the dashboard in a separate thread. Behavior of this function will</span>
+<span class="sd">    depend on the RobotPy command line arguments -- in &quot;run&quot; mode the server</span>
+<span class="sd">    will be started quietly, in &quot;sim&quot; mode a web browser will also be opened,</span>
+<span class="sd">    and in &quot;deploy&quot; mode nothing will happen.</span>
+
+<span class="sd">    :param robot: a robot object with an ``app`` variable. This will be set</span>
+<span class="sd">        when the dashboard has started.</span>
+<span class="sd">    :param dashboardClass: a class which extends from ``sea.Dashboard``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">robot</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">appCallback</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
@@ -78,30 +97,53 @@
 
 
 <span class="k">class</span> <span class="nc">Dashboard</span><span class="p">(</span><span class="n">remi</span><span class="o">.</span><span class="n">App</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds some utilities for building robot dashboards to ``remi.App``.</span>
+
+<span class="sd">    A dashboard class must have a ``main`` function which takes ``robot`` and</span>
+<span class="sd">    ``appCallback`` as arguments, where ``robot`` is the robot object and</span>
+<span class="sd">    ``appCallback`` is a function that should be called with ``self`` as an</span>
+<span class="sd">    argument when ``main`` has completed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Dashboard.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Dashboard.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Dashboard</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Dashboard</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Dashboard.queuedEvent"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Dashboard.queuedEvent">[docs]</a>    <span class="k">def</span> <span class="nf">queuedEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eventF</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a function ``eventF`` which takes any number of arguments,</span>
+<span class="sd">        returns a new function which will add ``eventF`` and given arguments</span>
+<span class="sd">        to the Dashboard event queue, to be called later.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">queueTheEvent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">def</span> <span class="nf">doTheEvent</span><span class="p">():</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Event:&quot;</span><span class="p">,</span> <span class="n">eventF</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Event:&quot;</span><span class="p">,</span> <span class="n">eventF</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
                 <span class="n">eventF</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">doTheEvent</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">queueTheEvent</span></div>
 
 <div class="viewcode-block" id="Dashboard.clearEvents"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Dashboard.clearEvents">[docs]</a>    <span class="k">def</span> <span class="nf">clearEvents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear the event queue without executing any events. It&#39;s a good idea to</span>
+<span class="sd">        call this at the start of teleop, in case someone clicked some buttons</span>
+<span class="sd">        while the robot was disabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Dashboard.doEvents"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Dashboard.doEvents">[docs]</a>    <span class="k">def</span> <span class="nf">doEvents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute all events in the event queue and clear the queue. This should</span>
+<span class="sd">        be called continuously during teleop.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
             <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
             <span class="n">event</span><span class="p">()</span></div>
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -140,6 +182,14 @@
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -148,8 +198,8 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

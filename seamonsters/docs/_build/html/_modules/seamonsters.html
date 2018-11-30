@@ -13,7 +13,6 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
    
@@ -28,6 +27,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for seamonsters</h1><div class="highlight"><pre>
@@ -37,10 +38,10 @@
 
 <span class="k">def</span> <span class="nf">_changeModule</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">itemName</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
-        <span class="n">item</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">itemName</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">itemName</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">__module__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;seamonsters&quot;</span><span class="p">)):</span>
-                <span class="n">item</span><span class="o">.</span><span class="n">__module__</span> <span class="o">=</span> <span class="s2">&quot;seamonsters&quot;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="vm">__module__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;seamonsters&quot;</span><span class="p">)):</span>
+                <span class="n">item</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="s2">&quot;seamonsters&quot;</span>
 
 <span class="kn">from</span> <span class="nn">.bot</span> <span class="k">import</span> <span class="o">*</span>
 <span class="n">_changeModule</span><span class="p">(</span><span class="n">bot</span><span class="p">)</span>
@@ -63,8 +64,8 @@
 <span class="kn">from</span> <span class="nn">.joystick</span> <span class="k">import</span> <span class="o">*</span>
 <span class="n">_changeModule</span><span class="p">(</span><span class="n">joystick</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.path</span> <span class="k">import</span> <span class="o">*</span>
-<span class="n">_changeModule</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.pathFollower</span> <span class="k">import</span> <span class="o">*</span>
+<span class="n">_changeModule</span><span class="p">(</span><span class="n">pathFollower</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">.superHolonomicDrive</span> <span class="k">import</span> <span class="o">*</span>
 <span class="n">_changeModule</span><span class="p">(</span><span class="n">superHolonomicDrive</span><span class="p">)</span>
@@ -74,6 +75,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -110,6 +112,14 @@
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -118,8 +128,8 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 
