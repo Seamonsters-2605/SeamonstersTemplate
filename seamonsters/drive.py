@@ -231,8 +231,9 @@ class MultiDrive(DriveInterface):
             turn = float(self.totalTurn) / float(self.numTurnCalls)
         magnitude = math.sqrt(x ** 2 + y ** 2)
         direction = math.atan2(y, x)
-        return self.interface.drive(magnitude, direction, turn)
+        scale = self.interface.drive(magnitude, direction, turn)
         self._reset()
+        return scale
 
 
 if __name__ == "__main__":
