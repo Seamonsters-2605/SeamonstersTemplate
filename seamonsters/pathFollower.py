@@ -16,7 +16,7 @@ class PathFollower:
     def _getAHRSAngle(self):
         return -math.radians(self.ahrs.getAngle()) - self.ahrsOrigin
 
-    def driveToPointGenerator(self, x, y, angle, time):
+    def driveToPointGenerator(self, x, y, angle, time, positionTolerance, angleTolerance):
         distToPoint = math.sqrt((x - self.robotX) ** 2 + (y - self.robotY) ** 2)
         targetMag = distToPoint / time
         targetAVel = (angle - self.robotAngle) / time
@@ -50,4 +50,8 @@ class PathFollower:
                     aVel = -aVel
 
             self.drive.drive(mag, moveDir, aVel)
-            yield dist, aDiff
+            try:
+                yield dist < positionTolerance and aDiff < angleTolerance
+            except GeneratorExit:
+                self.drive.drive(0, 0, 0)
+                return
