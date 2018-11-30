@@ -6,6 +6,16 @@ def setSimulatedDrivetrain(drivetrain):
         import physics
         physics.simulatedDrivetrain = drivetrain
 
+def readDataFile(filename):
+    lines = [ ]
+    with open(filename, 'r') as f:
+        for line in f.readlines():
+            values = line.split()
+            if len(values) == 0:
+                continue
+            lines.append(tuple(values))
+    return lines
+
 class TimingMonitor:
     """
     Monitors the rate of the update loop, to see how closely it matches 50Hz.
