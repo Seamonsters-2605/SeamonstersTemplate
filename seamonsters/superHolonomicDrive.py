@@ -55,6 +55,13 @@ class Wheel:
         :param magnitude: speed in feet per second.
         :param direction: radians. 0 is right, positive counter-clockwise
         """
+    
+    def orientWheel(self, direction):
+        """
+        Attempt to point the wheel in the given direction. Return True if this
+        will be possible
+        """
+        return False
 
     def getPosition(self):
         """
@@ -90,6 +97,10 @@ class CasterWheel(Wheel):
         self._storedMagnitude = magnitude
         self._storedDirection = direction
         self._distance += magnitude / 50
+    
+    def orientWheel(self, direction):
+        self._storedMagnitude = 0
+        self._storedDirection = direction
 
     def getPosition(self):
         return self._distance
@@ -310,17 +321,22 @@ class SwerveWheel(Wheel):
         self.steerMotor.set(ctre.ControlMode.Position, pos + self._steerOrigin)
 
     def drive(self, magnitude, direction):
+        if magnitude != 0:
+            self.orientWheel(direction)
+        else:
+            self.angledWheel.angle = self._getCurrentSteeringAngle()
+        self.angledWheel.drive(magnitude, direction)
+    
+    def orientWheel(self, direction):
         #print("Wheel", math.degrees(direction))
         currentAngle = self._getCurrentSteeringAngle()
-        if magnitude != 0:
-            # steering should never rotate more than 90 degrees from any position
-            angleDiff = _circleDistance(currentAngle, direction, math.pi)
-            #print("Target", math.degrees(currentAngle + angleDiff))
-            #print(math.degrees(currentAngle), math.degrees(currentAngle + angleDiff))
-            self._setSteering(currentAngle + angleDiff)
-
+        # steering should never rotate more than 90 degrees from any position
+        angleDiff = _circleDistance(currentAngle, direction, math.pi)
+        #print("Target", math.degrees(currentAngle + angleDiff))
+        #print(math.degrees(currentAngle), math.degrees(currentAngle + angleDiff))
+        self._setSteering(currentAngle + angleDiff)
         self.angledWheel.angle = currentAngle
-        self.angledWheel.drive(magnitude, direction)
+        return True
 
     def getPosition(self):
         return self.angledWheel.getPosition()
@@ -353,8 +369,8 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
         wheelLimitScales = []
 
         for wheel in self.wheels:
-            wheelVectorX = moveX - wheel.y * turn
-            wheelVectorY = moveY + wheel.x * turn
+            wheelVectorX, wheelVectorY = self._calcWheelVector(
+                wheel, moveX, moveY, turn)
             wheelMag = math.sqrt(wheelVectorX ** 2.0 + wheelVectorY ** 2.0)
             wheelDir = math.atan2(wheelVectorY, wheelVectorX)
             wheelMagnitudes.append(wheelMag)
@@ -366,6 +382,25 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
             self.wheels[i].drive(wheelMagnitudes[i] * minWheelScale,
                                  wheelDirections[i])
         return minWheelScale
+    
+    def orientWheels(self, magnitude, direction, turn, angleTolerance):
+        moveX = math.cos(direction) * magnitude
+        moveY = math.sin(direction) * magnitude
+
+        done = True
+        for wheel in self.wheels:
+            wheelVectorX, wheelVectorY = self._calcWheelVector(
+                wheel, moveX, moveY, turn)
+            wheelDir = math.atan2(wheelVectorY, wheelVectorX)
+            if wheel.orientWheel(wheelDir):
+                currentWheelDir = wheel.getMovementDirection()
+                if _circleDistance(currentWheelDir, wheelDir, math.pi) \
+                        > angleTolerance:
+                    done = False
+        return done
+
+    def _calcWheelVector(self, wheel, moveX, moveY, turn):
+        return moveX - wheel.y * turn, moveY + wheel.x * turn
 
     def getRobotMovement(self):
         """
