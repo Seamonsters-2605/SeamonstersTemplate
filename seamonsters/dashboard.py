@@ -47,7 +47,11 @@ def startDashboard(robot, dashboardClass):
     def startDashboardThread(robot, appCallback):
         if sys.argv[1] == 'sim':
             # doesn't work with 127.0.0.1 or localhost on school laptops
-            address = socket.gethostbyname(socket.gethostname())
+            try:
+                address = socket.gethostbyname(socket.gethostname())
+            except socket.gaierror:
+                # issue with macOS Sierra and later
+                address = '127.0.0.1'
             remi.start(dashboardClass, start_browser=True,
                 address=address, port=DASHBOARD_PORT, userdata=(robot, appCallback,))
         elif sys.argv[1] == 'depoly':
