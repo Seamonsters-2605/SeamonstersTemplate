@@ -1,8 +1,22 @@
 import math
 
 class PathFollower:
+    """
+    Controls a SuperHolonomicDrive to follow paths on the field.
+    """
 
-    def __init__(self, drive, x, y, angle, ahrs):
+    def __init__(self, drive, x, y, angle, ahrs=None):
+        """
+        :param drive: a SuperHolonomicDrive
+        :param x: starting x position of the robot, in feet
+        :param y: starting y position of the robot, in feet
+        :param angle: starting angle of the robot, radians.
+            0 means the robot's local XY coordinates line up with the field XY
+            coordinates.
+        :param ahrs: an optional AHRS (NavX) instance. If provided, this will
+            be used to track the robot's rotation; if not, the rotation will
+            be calculated based on the movement of the motors.
+        """
         self.drive = drive
         self._drivePositionState = None
         self.robotX = x
@@ -17,6 +31,19 @@ class PathFollower:
         return -math.radians(self.ahrs.getAngle()) - self._ahrsOrigin
 
     def driveToPointGenerator(self, x, y, angle, time, positionTolerance, angleTolerance):
+        """
+        A generator to drive to a location on the field while simultaneously
+        pointing the robot in a new direction. This will attempt to move the
+        robot at a velocity so it reaches the target position angle in ``time``
+        seconds. This generator never exits, but yields ``True`` or ``False``
+        if the robot is within ``positionTolerance`` and ``angleTolerance`` of
+        its target.
+
+        If ``time`` is zero, the robot will attempt to move to the position as
+        fast as possible.
+
+        Position mode is recommended!
+        """
         distToPoint = math.sqrt((x - self.robotX) ** 2 + (y - self.robotY) ** 2)
         targetMag = 0
         targetAVel = 0
