@@ -83,8 +83,8 @@ and RobotPy’s robot simulator, along with a custom dashboard.</p>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.MultiDrive" title="seamonsters.MultiDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.MultiDrive</span></code></a>(interface)</td>
 <td>Wraps another DriveInterface, and allows <code class="docutils literal notranslate"><span class="pre">drive()</span></code> to be called multiple times in a loop.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.PathFollower" title="seamonsters.PathFollower"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.PathFollower</span></code></a>(drive,&nbsp;x,&nbsp;y,&nbsp;angle,&nbsp;…)</td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.PathFollower" title="seamonsters.PathFollower"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.PathFollower</span></code></a>(drive,&nbsp;x,&nbsp;y,&nbsp;angle)</td>
+<td>Controls a SuperHolonomicDrive to follow paths on the field.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.SuperHolonomicDrive" title="seamonsters.SuperHolonomicDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.SuperHolonomicDrive</span></code></a>()</td>
 <td></td>
@@ -119,37 +119,40 @@ and RobotPy’s robot simulator, along with a custom dashboard.</p>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.parallel" title="seamonsters.parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.parallel</span></code></a>(*iterables)</td>
 <td>Run a group of iterables in parallel.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.returnValue" title="seamonsters.returnValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.returnValue</span></code></a>(iterable,&nbsp;value)</td>
-<td>Run an iterable but change the return value.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.sequence" title="seamonsters.sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.sequence</span></code></a>(*iterables)</td>
-<td>Run a set of iterables sequentially</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.setSimulatedDrivetrain" title="seamonsters.setSimulatedDrivetrain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.setSimulatedDrivetrain</span></code></a>(drivetrain)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.readDataFile" title="seamonsters.readDataFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.readDataFile</span></code></a>(filename)</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.startDashboard" title="seamonsters.startDashboard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.startDashboard</span></code></a>(robot,&nbsp;dashboardClass)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.returnValue" title="seamonsters.returnValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.returnValue</span></code></a>(iterable,&nbsp;value)</td>
+<td>Run an iterable but change the return value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.sequence" title="seamonsters.sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.sequence</span></code></a>(*iterables)</td>
+<td>Run a set of iterables sequentially</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.setSimulatedDrivetrain" title="seamonsters.setSimulatedDrivetrain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.setSimulatedDrivetrain</span></code></a>(drivetrain)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.startDashboard" title="seamonsters.startDashboard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.startDashboard</span></code></a>(robot,&nbsp;dashboardClass)</td>
 <td>Start the dashboard in a separate thread.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.timeLimit" title="seamonsters.timeLimit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.timeLimit</span></code></a>(iterable,&nbsp;time)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.timeLimit" title="seamonsters.timeLimit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.timeLimit</span></code></a>(iterable,&nbsp;time)</td>
 <td>Run the iterable until it finishes or the given time limit has passed.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.untilButtonPressed" title="seamonsters.untilButtonPressed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.untilButtonPressed</span></code></a>(joystick,&nbsp;button)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.untilButtonPressed" title="seamonsters.untilButtonPressed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.untilButtonPressed</span></code></a>(joystick,&nbsp;button)</td>
 <td>A generator which runs until the joystick button is pressed, then exits.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.untilTrue" title="seamonsters.untilTrue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.untilTrue</span></code></a>(iterable)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.untilTrue" title="seamonsters.untilTrue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.untilTrue</span></code></a>(iterable)</td>
 <td>Run the iterable until it yields True, then stop.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.vBoxWith" title="seamonsters.vBoxWith"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.vBoxWith</span></code></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.vBoxWith" title="seamonsters.vBoxWith"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.vBoxWith</span></code></a>(*args,&nbsp;**kwargs)</td>
 <td>Construct a REMI VBox with the given keyword arguments, and add all of the given widgets to it.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.wait" title="seamonsters.wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.wait</span></code></a>(time)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.wait" title="seamonsters.wait"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.wait</span></code></a>(time)</td>
 <td>Wait for a certain number of iterations.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.watch" title="seamonsters.watch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.watch</span></code></a>(*iterables)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.watch" title="seamonsters.watch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.watch</span></code></a>(*iterables)</td>
 <td>Run a group of iterables in parallel.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.whileButtonPressed" title="seamonsters.whileButtonPressed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.whileButtonPressed</span></code></a>(joystick,&nbsp;button)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.whileButtonPressed" title="seamonsters.whileButtonPressed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.whileButtonPressed</span></code></a>(joystick,&nbsp;button)</td>
 <td>A generator which runs while the joystick button is pressed, then exits.</td>
 </tr>
 </tbody>
