@@ -41,6 +41,11 @@ class PathFollower:
 
     def waitForOrientWheelsGenerator(self, magnitude, direction, turn,
             angleTolerance):
+        """
+        Orient wheels to prepare to drive with the given mag/dir/turn, and wait
+        until all wheels are within ``angleTolerance`` radians of their target
+        direction.
+        """
         if magnitude == 0 and turn == 0:
             return
         done = False
@@ -130,6 +135,10 @@ class PathFollower:
         return (float(n) for n in line)
 
     def followPathData(self, data, wheelAngleTolerance):
+        """
+        Follow path data read from a file. ``data`` should be a list of line
+        tuples returned by ``sea.readDataFile``.
+        """
         lastTime, x, y, angle = self._readDataLine(data[0])
         self.setPosition(x, y, math.radians(angle))
         for point in data[1:]:
