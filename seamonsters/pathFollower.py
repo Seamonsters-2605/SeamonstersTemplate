@@ -139,11 +139,17 @@ class PathFollower:
         Follow path data read from a file. ``data`` should be a list of line
         tuples returned by ``sea.readDataFile``.
         """
-        lastTime, x, y, angle = self._readDataLine(data[0])
-        self.setPosition(x, y, math.radians(angle))
+        lastTime, lastX, lastY, lastAngle = self._readDataLine(data[0])
+        self.setPosition(lastX, lastY, math.radians(lastAngle))
         for point in data[1:]:
             t, x, y, angle = self._readDataLine(point)
-            yield from seamonsters.generators.untilTrue(
-                self.driveToPointGenerator(x, y, math.radians(angle),
-                    t - lastTime, wheelAngleTolerance))
+            if lastX == x and lastY == y and lastAngle == angle:
+                yield from seamonsters.generators.wait(int((t - lastTime) * 50))
+            else:
+                yield from seamonsters.generators.untilTrue(
+                    self.driveToPointGenerator(x, y, math.radians(angle),
+                        t - lastTime, wheelAngleTolerance))
             lastTime = t
+            lastX = x
+            lastY = y
+            lastAngle = angle
