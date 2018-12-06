@@ -1,11 +1,12 @@
 import math
+import seamonsters.generators
 
 class PathFollower:
     """
     Controls a SuperHolonomicDrive to follow paths on the field.
     """
 
-    def __init__(self, drive, x, y, angle, ahrs=None):
+    def __init__(self, drive, ahrs=None):
         """
         :param drive: a SuperHolonomicDrive
         :param x: starting x position of the robot, in feet
@@ -19,13 +20,21 @@ class PathFollower:
         """
         self.drive = drive
         self._drivePositionState = None
-        self.robotX = x
-        self.robotY = y
-        self.robotAngle = angle
         self.ahrs = ahrs
         self._ahrsOrigin = 0
         if ahrs is not None:
+            self._ahrsOrigin = self._getAHRSAngle()
+        self.robotX = 0
+        self.robotY = 0
+        self.robotAngle = 0
+
+    def setPosition(self, x, y, angle):
+        self.robotX = x
+        self.robotY = y
+        self.robotAngle = angle
+        if self.ahrs is not None:
             self._ahrsOrigin = self._getAHRSAngle() - angle
+        self._drivePositionState = None
 
     def _getAHRSAngle(self):
         return -math.radians(self.ahrs.getAngle()) - self._ahrsOrigin
@@ -116,3 +125,16 @@ class PathFollower:
         yDiff = y - self.robotY
         return (math.sqrt(xDiff ** 2 + yDiff ** 2),
                 math.atan2(yDiff, xDiff) - self.robotAngle)
+
+    def _readDataLine(self, line):
+        return (float(n) for n in line)
+
+    def followPathData(self, data, wheelAngleTolerance):
+        lastTime, x, y, angle = self._readDataLine(data[0])
+        self.setPosition(x, y, math.radians(angle))
+        for point in data[1:]:
+            t, x, y, angle = self._readDataLine(point)
+            yield from seamonsters.generators.untilTrue(
+                self.driveToPointGenerator(x, y, math.radians(angle),
+                    t - lastTime, wheelAngleTolerance))
+            lastTime = t
