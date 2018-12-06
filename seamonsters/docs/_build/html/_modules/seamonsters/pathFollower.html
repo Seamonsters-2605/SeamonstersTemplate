@@ -33,13 +33,14 @@
             
   <h1>Source code for seamonsters.pathFollower</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">seamonsters.generators</span>
 
 <span class="k">class</span> <span class="nc">PathFollower</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Controls a SuperHolonomicDrive to follow paths on the field.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="PathFollower.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.PathFollower.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drive</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">ahrs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PathFollower.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.PathFollower.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drive</span><span class="p">,</span> <span class="n">ahrs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param drive: a SuperHolonomicDrive</span>
 <span class="sd">        :param x: starting x position of the robot, in feet</span>
@@ -53,60 +54,97 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drive</span> <span class="o">=</span> <span class="n">drive</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_drivePositionState</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">robotX</span> <span class="o">=</span> <span class="n">x</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">robotY</span> <span class="o">=</span> <span class="n">y</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span> <span class="o">=</span> <span class="n">angle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ahrs</span> <span class="o">=</span> <span class="n">ahrs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ahrsOrigin</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">ahrs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ahrsOrigin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getAHRSAngle</span><span class="p">()</span> <span class="o">-</span> <span class="n">angle</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ahrsOrigin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getAHRSAngle</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robotX</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robotY</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="PathFollower.setPosition"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.PathFollower.setPosition">[docs]</a>    <span class="k">def</span> <span class="nf">setPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robotX</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robotY</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span> <span class="o">=</span> <span class="n">angle</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ahrs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ahrsOrigin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getAHRSAngle</span><span class="p">()</span> <span class="o">-</span> <span class="n">angle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drivePositionState</span> <span class="o">=</span> <span class="kc">None</span></div>
 
     <span class="k">def</span> <span class="nf">_getAHRSAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ahrs</span><span class="o">.</span><span class="n">getAngle</span><span class="p">())</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ahrsOrigin</span>
 
-<div class="viewcode-block" id="PathFollower.driveToPointGenerator"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.PathFollower.driveToPointGenerator">[docs]</a>    <span class="k">def</span> <span class="nf">driveToPointGenerator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">positionTolerance</span><span class="p">,</span> <span class="n">angleTolerance</span><span class="p">):</span>
+<div class="viewcode-block" id="PathFollower.waitForOrientWheelsGenerator"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.PathFollower.waitForOrientWheelsGenerator">[docs]</a>    <span class="k">def</span> <span class="nf">waitForOrientWheelsGenerator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">,</span>
+            <span class="n">angleTolerance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Orient wheels to prepare to drive with the given mag/dir/turn, and wait</span>
+<span class="sd">        until all wheels are within ``angleTolerance`` radians of their target</span>
+<span class="sd">        direction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">magnitude</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">turn</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">orientWheels</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
+            <span class="k">yield</span>
+            <span class="k">for</span> <span class="n">wheel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">wheels</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">wheel</span><span class="o">.</span><span class="n">getTargetDirection</span><span class="p">()</span> <span class="o">-</span> <span class="n">wheel</span><span class="o">.</span><span class="n">getRealDirection</span><span class="p">())</span> \
+                        <span class="o">&gt;</span> <span class="n">angleTolerance</span><span class="p">:</span>
+                    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="PathFollower.driveToPointGenerator"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.PathFollower.driveToPointGenerator">[docs]</a>    <span class="k">def</span> <span class="nf">driveToPointGenerator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">wheelAngleTolerance</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A generator to drive to a location on the field while simultaneously</span>
 <span class="sd">        pointing the robot in a new direction. This will attempt to move the</span>
 <span class="sd">        robot at a velocity so it reaches the target position angle in ``time``</span>
 <span class="sd">        seconds. This generator never exits, but yields ``True`` or ``False``</span>
-<span class="sd">        if the robot is within ``positionTolerance`` and ``angleTolerance`` of</span>
-<span class="sd">        its target.</span>
+<span class="sd">        if the robot is close enough to reach its position/angle in the next</span>
+<span class="sd">        cycle.</span>
 
 <span class="sd">        If ``time`` is zero, the robot will attempt to move to the position as</span>
 <span class="sd">        fast as possible.</span>
 
 <span class="sd">        Position mode is recommended!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">distToPoint</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotX</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotY</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">dist</span><span class="p">,</span> <span class="n">moveDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robotVectorToPoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">aDiff</span> <span class="o">=</span> <span class="n">angle</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span>
+        <span class="c1"># actual velocities don&#39;t matter for orientWheels as long as the ratios</span>
+        <span class="c1"># are correct</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">waitForOrientWheelsGenerator</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">moveDir</span><span class="p">,</span> <span class="n">aDiff</span><span class="p">,</span>
+            <span class="n">wheelAngleTolerance</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span> <span class="c1"># TODO: constant</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">aDiff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="c1"># TODO</span>
+            <span class="n">aDiff</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">targetMag</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">targetAVel</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">time</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">targetMag</span> <span class="o">=</span> <span class="n">distToPoint</span> <span class="o">/</span> <span class="n">time</span>
-            <span class="n">targetAVel</span> <span class="o">=</span> <span class="p">(</span><span class="n">angle</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span><span class="p">)</span> <span class="o">/</span> <span class="n">time</span>
+            <span class="n">targetMag</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">/</span> <span class="n">time</span>
+            <span class="n">targetAVel</span> <span class="o">=</span> <span class="n">aDiff</span> <span class="o">/</span> <span class="n">time</span>
 
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">moveDist</span><span class="p">,</span> <span class="n">moveDir</span><span class="p">,</span> <span class="n">moveTurn</span><span class="p">,</span> <span class="n">newState</span> <span class="o">=</span> \
-                <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">getRobotPositionOffset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drivePositionState</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">getRobotPositionOffset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drivePositionState</span><span class="p">,</span>
+                                                  <span class="n">target</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_drivePositionState</span> <span class="o">=</span> <span class="n">newState</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ahrs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getAHRSAngle</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span> <span class="o">+=</span> <span class="n">moveTurn</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">robotX</span> <span class="o">+=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">moveDir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">moveDist</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">robotY</span> <span class="o">+=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">moveDir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">moveDist</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_drivePositionState</span> <span class="o">=</span> <span class="n">newState</span>
 
-            <span class="n">xDiff</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotX</span>
-            <span class="n">yDiff</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotY</span>
+            <span class="n">dist</span><span class="p">,</span> <span class="n">moveDir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robotVectorToPoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
             <span class="n">aDiff</span> <span class="o">=</span> <span class="n">angle</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span>
-            <span class="n">dist</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xDiff</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">yDiff</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">moveDir</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">yDiff</span><span class="p">,</span> <span class="n">xDiff</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span>
 
-            <span class="k">if</span> <span class="n">targetMag</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">targetMag</span> <span class="o">/</span> <span class="mi">50</span><span class="p">:</span>
+            <span class="n">atPosition</span> <span class="o">=</span> <span class="n">targetMag</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">targetMag</span> <span class="o">/</span> <span class="mi">50</span>
+            <span class="k">if</span> <span class="n">atPosition</span><span class="p">:</span>
                 <span class="n">mag</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">*</span> <span class="mi">50</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">mag</span> <span class="o">=</span> <span class="n">targetMag</span>
-            <span class="k">if</span> <span class="n">targetAVel</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">aDiff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">targetAVel</span> <span class="o">/</span> <span class="mi">50</span><span class="p">):</span>
+            <span class="n">atAngle</span> <span class="o">=</span> <span class="n">targetAVel</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">aDiff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">targetAVel</span> <span class="o">/</span> <span class="mi">50</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">atAngle</span><span class="p">:</span>
                 <span class="n">aVel</span> <span class="o">=</span> <span class="n">aDiff</span> <span class="o">*</span> <span class="mi">50</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">aVel</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">targetAVel</span><span class="p">)</span>
@@ -115,10 +153,34 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="n">moveDir</span><span class="p">,</span> <span class="n">aVel</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">positionTolerance</span> <span class="ow">and</span> <span class="n">aDiff</span> <span class="o">&lt;</span> <span class="n">angleTolerance</span>
+                <span class="k">yield</span> <span class="n">atPosition</span> <span class="ow">and</span> <span class="n">atAngle</span>
             <span class="k">except</span> <span class="ne">GeneratorExit</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
                 <span class="k">return</span></div>
+
+    <span class="c1"># return magnitude, direction</span>
+    <span class="k">def</span> <span class="nf">_robotVectorToPoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">xDiff</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotX</span>
+        <span class="n">yDiff</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotY</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xDiff</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">yDiff</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">yDiff</span><span class="p">,</span> <span class="n">xDiff</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_readDataLine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">line</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PathFollower.followPathData"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.PathFollower.followPathData">[docs]</a>    <span class="k">def</span> <span class="nf">followPathData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">wheelAngleTolerance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Follow path data read from a file. ``data`` should be a list of line</span>
+<span class="sd">        tuples returned by ``sea.readDataFile``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lastTime</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readDataLine</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readDataLine</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+            <span class="k">yield from</span> <span class="n">seamonsters</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">untilTrue</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">driveToPointGenerator</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span>
+                    <span class="n">t</span> <span class="o">-</span> <span class="n">lastTime</span><span class="p">,</span> <span class="n">wheelAngleTolerance</span><span class="p">))</span>
+            <span class="n">lastTime</span> <span class="o">=</span> <span class="n">t</span></div>
 </pre></div>
 
           </div>

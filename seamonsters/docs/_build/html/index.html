@@ -51,7 +51,7 @@ and RobotPy’s robot simulator, along with a custom dashboard.</p>
 <td>An AngledWheel is a wheel oriented in a fixed direction, which it can’t change on its own.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.CasterWheel" title="seamonsters.CasterWheel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.CasterWheel</span></code></a>(x,&nbsp;y)</td>
-<td>Doesn’t drive a motor, only stores its drive parameters and echoes them back for getMovementDirection and getMovementMagnitude.</td>
+<td>Doesn’t drive a motor, only stores its drive parameters and echoes them back for getRealDirection and getRealVelocity.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.Dashboard" title="seamonsters.Dashboard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.Dashboard</span></code></a>(*args,&nbsp;**kwargs)</td>
 <td>Adds some utilities for building robot dashboards to <code class="docutils literal notranslate"><span class="pre">remi.App</span></code>.</td>
@@ -83,7 +83,7 @@ and RobotPy’s robot simulator, along with a custom dashboard.</p>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.MultiDrive" title="seamonsters.MultiDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.MultiDrive</span></code></a>(interface)</td>
 <td>Wraps another DriveInterface, and allows <code class="docutils literal notranslate"><span class="pre">drive()</span></code> to be called multiple times in a loop.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.PathFollower" title="seamonsters.PathFollower"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.PathFollower</span></code></a>(drive,&nbsp;x,&nbsp;y,&nbsp;angle)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.PathFollower" title="seamonsters.PathFollower"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.PathFollower</span></code></a>(drive[,&nbsp;ahrs])</td>
 <td>Controls a SuperHolonomicDrive to follow paths on the field.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.SuperHolonomicDrive" title="seamonsters.SuperHolonomicDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.SuperHolonomicDrive</span></code></a>()</td>

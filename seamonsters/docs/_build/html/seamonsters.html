@@ -125,7 +125,8 @@ per second</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>magnitude</strong> – speed in feet per second. Even if the magnitude is
+zero, the wheel will attempt to orient in the given direction</li>
 <li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
 </ul>
 </td>
@@ -135,34 +136,22 @@ per second</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="seamonsters.AngledWheel.getMovementDirection">
-<code class="descname">getMovementDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.getMovementDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.getMovementDirection" title="Permalink to this definition">¶</a></dt>
+<dt id="seamonsters.AngledWheel.getRealDirection">
+<code class="descname">getRealDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.getRealDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.getRealDirection" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current direction the wheel is moving in radians. This may be based on sensors.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current direction the wheel is moving in radians. This may</td>
 </tr>
 </tbody>
 </table>
+<p>be based on sensors.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="seamonsters.AngledWheel.getMovementMagnitude">
-<code class="descname">getMovementMagnitude</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.getMovementMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.getMovementMagnitude" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current velocity of the wheel in feet per second, based on sensors.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.AngledWheel.getPosition">
-<code class="descname">getPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.getPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.getPosition" title="Permalink to this definition">¶</a></dt>
+<dt id="seamonsters.AngledWheel.getRealPosition">
+<code class="descname">getRealPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.getRealPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.getRealPosition" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -172,6 +161,47 @@ per second</li>
 </tbody>
 </table>
 <p>accumulates over the lifetime of the wheel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.AngledWheel.getRealVelocity">
+<code class="descname">getRealVelocity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.getRealVelocity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.getRealVelocity" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current velocity of the wheel in feet per second, based on</td>
+</tr>
+</tbody>
+</table>
+<p>sensors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.AngledWheel.getTargetDirection">
+<code class="descname">getTargetDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.getTargetDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.getTargetDirection" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">target value for <code class="docutils literal notranslate"><span class="pre">getRealDirection()</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.AngledWheel.getTargetPosition">
+<code class="descname">getTargetPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.getTargetPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.getTargetPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">target value for <code class="docutils literal notranslate"><span class="pre">getRealPosition()</span></code> – where wheel is</td>
+</tr>
+</tbody>
+</table>
+<p>moving to</p>
 </dd></dl>
 
 <dl class="method">
@@ -197,6 +227,12 @@ between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="seamonsters.AngledWheel.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop driving.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -204,7 +240,7 @@ between 0 and 1 to scale the wheel down to its maximum speed.</p>
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">CasterWheel</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.CasterWheel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.Wheel</span></code></a></p>
 <p>Doesn’t drive a motor, only stores its drive parameters and echoes them
-back for getMovementDirection and getMovementMagnitude.</p>
+back for getRealDirection and getRealVelocity.</p>
 <dl class="method">
 <dt id="seamonsters.CasterWheel.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.__init__" title="Permalink to this definition">¶</a></dt>
@@ -231,7 +267,8 @@ back for getMovementDirection and getMovementMagnitude.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>magnitude</strong> – speed in feet per second. Even if the magnitude is
+zero, the wheel will attempt to orient in the given direction</li>
 <li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
 </ul>
 </td>
@@ -241,34 +278,22 @@ back for getMovementDirection and getMovementMagnitude.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="seamonsters.CasterWheel.getMovementDirection">
-<code class="descname">getMovementDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.getMovementDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.getMovementDirection" title="Permalink to this definition">¶</a></dt>
+<dt id="seamonsters.CasterWheel.getRealDirection">
+<code class="descname">getRealDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.getRealDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.getRealDirection" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current direction the wheel is moving in radians. This may be based on sensors.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current direction the wheel is moving in radians. This may</td>
 </tr>
 </tbody>
 </table>
+<p>be based on sensors.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="seamonsters.CasterWheel.getMovementMagnitude">
-<code class="descname">getMovementMagnitude</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.getMovementMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.getMovementMagnitude" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current velocity of the wheel in feet per second, based on sensors.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.CasterWheel.getPosition">
-<code class="descname">getPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.getPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.getPosition" title="Permalink to this definition">¶</a></dt>
+<dt id="seamonsters.CasterWheel.getRealPosition">
+<code class="descname">getRealPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.getRealPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.getRealPosition" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -278,6 +303,53 @@ back for getMovementDirection and getMovementMagnitude.</p>
 </tbody>
 </table>
 <p>accumulates over the lifetime of the wheel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.CasterWheel.getRealVelocity">
+<code class="descname">getRealVelocity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.getRealVelocity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.getRealVelocity" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current velocity of the wheel in feet per second, based on</td>
+</tr>
+</tbody>
+</table>
+<p>sensors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.CasterWheel.getTargetDirection">
+<code class="descname">getTargetDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.getTargetDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.getTargetDirection" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">target value for <code class="docutils literal notranslate"><span class="pre">getRealDirection()</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.CasterWheel.getTargetPosition">
+<code class="descname">getTargetPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.getTargetPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.getTargetPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">target value for <code class="docutils literal notranslate"><span class="pre">getRealPosition()</span></code> – where wheel is</td>
+</tr>
+</tbody>
+</table>
+<p>moving to</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.CasterWheel.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#CasterWheel.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.CasterWheel.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop driving.</p>
 </dd></dl>
 
 </dd></dl>
@@ -830,7 +902,8 @@ the diagonal direction of force in the diamond pattern.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>magnitude</strong> – speed in feet per second. Even if the magnitude is
+zero, the wheel will attempt to orient in the given direction</li>
 <li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
 </ul>
 </td>
@@ -840,21 +913,8 @@ the diagonal direction of force in the diamond pattern.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="seamonsters.MecanumWheel.getMovementMagnitude">
-<code class="descname">getMovementMagnitude</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#MecanumWheel.getMovementMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.MecanumWheel.getMovementMagnitude" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current velocity of the wheel in feet per second, based on sensors.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.MecanumWheel.getPosition">
-<code class="descname">getPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#MecanumWheel.getPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.MecanumWheel.getPosition" title="Permalink to this definition">¶</a></dt>
+<dt id="seamonsters.MecanumWheel.getRealPosition">
+<code class="descname">getRealPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#MecanumWheel.getRealPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.MecanumWheel.getRealPosition" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -864,6 +924,34 @@ the diagonal direction of force in the diamond pattern.</p>
 </tbody>
 </table>
 <p>accumulates over the lifetime of the wheel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.MecanumWheel.getRealVelocity">
+<code class="descname">getRealVelocity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#MecanumWheel.getRealVelocity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.MecanumWheel.getRealVelocity" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current velocity of the wheel in feet per second, based on</td>
+</tr>
+</tbody>
+</table>
+<p>sensors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.MecanumWheel.getTargetPosition">
+<code class="descname">getTargetPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#MecanumWheel.getTargetPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.MecanumWheel.getTargetPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">target value for <code class="docutils literal notranslate"><span class="pre">getRealPosition()</span></code> – where wheel is</td>
+</tr>
+</tbody>
+</table>
+<p>moving to</p>
 </dd></dl>
 
 <dl class="method">
@@ -936,12 +1024,12 @@ input magnitude and turn components</p>
 
 <dl class="class">
 <dt id="seamonsters.PathFollower">
-<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">PathFollower</code><span class="sig-paren">(</span><em>drive</em>, <em>x</em>, <em>y</em>, <em>angle</em>, <em>ahrs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.PathFollower" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">PathFollower</code><span class="sig-paren">(</span><em>drive</em>, <em>ahrs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.PathFollower" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Controls a SuperHolonomicDrive to follow paths on the field.</p>
 <dl class="method">
 <dt id="seamonsters.PathFollower.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>drive</em>, <em>x</em>, <em>y</em>, <em>angle</em>, <em>ahrs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>drive</em>, <em>ahrs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -965,16 +1053,36 @@ be calculated based on the movement of the motors.</li>
 
 <dl class="method">
 <dt id="seamonsters.PathFollower.driveToPointGenerator">
-<code class="descname">driveToPointGenerator</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>angle</em>, <em>time</em>, <em>positionTolerance</em>, <em>angleTolerance</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.driveToPointGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.driveToPointGenerator" title="Permalink to this definition">¶</a></dt>
+<code class="descname">driveToPointGenerator</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>angle</em>, <em>time</em>, <em>wheelAngleTolerance</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.driveToPointGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.driveToPointGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>A generator to drive to a location on the field while simultaneously
 pointing the robot in a new direction. This will attempt to move the
 robot at a velocity so it reaches the target position angle in <code class="docutils literal notranslate"><span class="pre">time</span></code>
 seconds. This generator never exits, but yields <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code>
-if the robot is within <code class="docutils literal notranslate"><span class="pre">positionTolerance</span></code> and <code class="docutils literal notranslate"><span class="pre">angleTolerance</span></code> of
-its target.</p>
+if the robot is close enough to reach its position/angle in the next
+cycle.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">time</span></code> is zero, the robot will attempt to move to the position as
 fast as possible.</p>
 <p>Position mode is recommended!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.PathFollower.followPathData">
+<code class="descname">followPathData</code><span class="sig-paren">(</span><em>data</em>, <em>wheelAngleTolerance</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.followPathData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.followPathData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Follow path data read from a file. <code class="docutils literal notranslate"><span class="pre">data</span></code> should be a list of line
+tuples returned by <code class="docutils literal notranslate"><span class="pre">sea.readDataFile</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.PathFollower.setPosition">
+<code class="descname">setPosition</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.setPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.setPosition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.PathFollower.waitForOrientWheelsGenerator">
+<code class="descname">waitForOrientWheelsGenerator</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em>, <em>angleTolerance</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.waitForOrientWheelsGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.waitForOrientWheelsGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient wheels to prepare to drive with the given mag/dir/turn, and wait
+until all wheels are within <code class="docutils literal notranslate"><span class="pre">angleTolerance</span></code> radians of their target
+direction.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1036,24 +1144,37 @@ direction in radians, turn in radians per second.</td>
 
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.getRobotPositionOffset">
-<code class="descname">getRobotPositionOffset</code><span class="sig-paren">(</span><em>origin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.getRobotPositionOffset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.getRobotPositionOffset" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getRobotPositionOffset</code><span class="sig-paren">(</span><em>origin</em>, <em>target=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.getRobotPositionOffset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.getRobotPositionOffset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate how the robot has moved from a previous position.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>origin</strong> – an object returned by a previous call to
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>origin</strong> – an object returned by a previous call to
 <code class="docutils literal notranslate"><span class="pre">getRobotPositionOffset</span></code>, for comparing previous state. Passing
-None will return an offset of 0 and a newly initialized state</td>
+None will return an offset of 0 and a newly initialized state</li>
+<li><strong>targetPosition</strong> – if False, the “real” position of wheels will be
+used based on encoder values. If True, the target position of
+wheels will be used based on where they were last told to move.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a tuple of <code class="docutils literal notranslate"><span class="pre">(distance,</span> <span class="pre">direction,</span> <span class="pre">turn,</span> <span class="pre">state)</span></code> where
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple of <code class="docutils literal notranslate"><span class="pre">(distance,</span> <span class="pre">direction,</span> <span class="pre">turn,</span> <span class="pre">state)</span></code> where
 <code class="docutils literal notranslate"><span class="pre">distance</span></code> and <code class="docutils literal notranslate"><span class="pre">direction</span></code> define linear offset in feet and
 radians, <code class="docutils literal notranslate"><span class="pre">turn</span></code> defines angular offset in radians, and <code class="docutils literal notranslate"><span class="pre">state</span></code>
 is an object that can be stored and passed to a future call of
-<code class="docutils literal notranslate"><span class="pre">getRobotPositionOffset</span></code> for comparison.</td>
+<code class="docutils literal notranslate"><span class="pre">getRobotPositionOffset</span></code> for comparison.</p>
+</td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.SuperHolonomicDrive.orientWheels">
+<code class="descname">orientWheels</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.orientWheels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.orientWheels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orient the wheels as if the robot was driving, but don’t move.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1097,7 +1218,8 @@ of the steer motor</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>magnitude</strong> – speed in feet per second. Even if the magnitude is
+zero, the wheel will attempt to orient in the given direction</li>
 <li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
 </ul>
 </td>
@@ -1107,34 +1229,22 @@ of the steer motor</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="seamonsters.SwerveWheel.getMovementDirection">
-<code class="descname">getMovementDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.getMovementDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.getMovementDirection" title="Permalink to this definition">¶</a></dt>
+<dt id="seamonsters.SwerveWheel.getRealDirection">
+<code class="descname">getRealDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.getRealDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.getRealDirection" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current direction the wheel is moving in radians. This may be based on sensors.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current direction the wheel is moving in radians. This may</td>
 </tr>
 </tbody>
 </table>
+<p>be based on sensors.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="seamonsters.SwerveWheel.getMovementMagnitude">
-<code class="descname">getMovementMagnitude</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.getMovementMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.getMovementMagnitude" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current velocity of the wheel in feet per second, based on sensors.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.SwerveWheel.getPosition">
-<code class="descname">getPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.getPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.getPosition" title="Permalink to this definition">¶</a></dt>
+<dt id="seamonsters.SwerveWheel.getRealPosition">
+<code class="descname">getRealPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.getRealPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.getRealPosition" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1144,6 +1254,47 @@ of the steer motor</li>
 </tbody>
 </table>
 <p>accumulates over the lifetime of the wheel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.SwerveWheel.getRealVelocity">
+<code class="descname">getRealVelocity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.getRealVelocity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.getRealVelocity" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current velocity of the wheel in feet per second, based on</td>
+</tr>
+</tbody>
+</table>
+<p>sensors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.SwerveWheel.getTargetDirection">
+<code class="descname">getTargetDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.getTargetDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.getTargetDirection" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">target value for <code class="docutils literal notranslate"><span class="pre">getRealDirection()</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.SwerveWheel.getTargetPosition">
+<code class="descname">getTargetPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.getTargetPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.getTargetPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">target value for <code class="docutils literal notranslate"><span class="pre">getRealPosition()</span></code> – where wheel is</td>
+</tr>
+</tbody>
+</table>
+<p>moving to</p>
 </dd></dl>
 
 <dl class="method">
@@ -1167,6 +1318,12 @@ between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.SwerveWheel.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop driving.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1241,13 +1398,20 @@ input magnitude and turn components</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>magnitude</strong> – speed in feet per second. Even if the magnitude is
+zero, the wheel will attempt to orient in the given direction</li>
 <li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.TestWheel.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#TestWheel.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.TestWheel.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop driving.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1315,7 +1479,8 @@ direction.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>magnitude</strong> – speed in feet per second.</li>
+<li><strong>magnitude</strong> – speed in feet per second. Even if the magnitude is
+zero, the wheel will attempt to orient in the given direction</li>
 <li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
 </ul>
 </td>
@@ -1325,40 +1490,69 @@ direction.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="seamonsters.Wheel.getMovementDirection">
-<code class="descname">getMovementDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.getMovementDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.getMovementDirection" title="Permalink to this definition">¶</a></dt>
+<dt id="seamonsters.Wheel.getRealDirection">
+<code class="descname">getRealDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.getRealDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.getRealDirection" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current direction the wheel is moving in radians. This may be based on sensors.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current direction the wheel is moving in radians. This may
+be based on sensors.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="seamonsters.Wheel.getMovementMagnitude">
-<code class="descname">getMovementMagnitude</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.getMovementMagnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.getMovementMagnitude" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current velocity of the wheel in feet per second, based on sensors.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.Wheel.getPosition">
-<code class="descname">getPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.getPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.getPosition" title="Permalink to this definition">¶</a></dt>
+<dt id="seamonsters.Wheel.getRealPosition">
+<code class="descname">getRealPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.getRealPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.getRealPosition" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a value representing distance the wheel has travelled, which
 accumulates over the lifetime of the wheel.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.Wheel.getRealVelocity">
+<code class="descname">getRealVelocity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.getRealVelocity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.getRealVelocity" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current velocity of the wheel in feet per second, based on
+sensors.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.Wheel.getTargetDirection">
+<code class="descname">getTargetDirection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.getTargetDirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.getTargetDirection" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">target value for <code class="docutils literal notranslate"><span class="pre">getRealDirection()</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.Wheel.getTargetPosition">
+<code class="descname">getTargetPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.getTargetPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.getTargetPosition" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">target value for <code class="docutils literal notranslate"><span class="pre">getRealPosition()</span></code> – where wheel is
+moving to</td>
 </tr>
 </tbody>
 </table>
@@ -1385,6 +1579,12 @@ between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.Wheel.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop driving.</p>
 </dd></dl>
 
 </dd></dl>
