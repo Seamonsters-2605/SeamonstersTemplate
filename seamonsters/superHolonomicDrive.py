@@ -52,26 +52,47 @@ class Wheel:
         """
         Spin the wheel. This should be called 50 times per second.
 
-        :param magnitude: speed in feet per second.
+        :param magnitude: speed in feet per second. Even if the magnitude is
+            zero, the wheel will attempt to orient in the given direction
         :param direction: radians. 0 is right, positive counter-clockwise
         """
+    
+    def stop(self):
+        """
+        Stop driving.
+        """
 
-    def getPosition(self):
+    def getRealPosition(self):
         """
         :return: a value representing distance the wheel has travelled, which
             accumulates over the lifetime of the wheel.
         """
         return 0
 
-    def getMovementDirection(self):
+    def getTargetPosition(self):
         """
-        :return: the current direction the wheel is moving in radians. This may be based on sensors.
+        :return: target value for ``getRealPosition()`` -- where wheel is
+            moving to
         """
         return 0
 
-    def getMovementMagnitude(self):
+    def getRealDirection(self):
         """
-        :return: the current velocity of the wheel in feet per second, based on sensors.
+        :return: the current direction the wheel is moving in radians. This may
+            be based on sensors.
+        """
+        return 0
+
+    def getTargetDirection(self):
+        """
+        :return: target value for ``getRealDirection()``
+        """
+        return 0
+
+    def getRealVelocity(self):
+        """
+        :return: the current velocity of the wheel in feet per second, based on
+            sensors.
         """
         return 0
 
@@ -79,25 +100,36 @@ class Wheel:
 class CasterWheel(Wheel):
     """
     Doesn't drive a motor, only stores its drive parameters and echoes them
-    back for getMovementDirection and getMovementMagnitude.
+    back for getRealDirection and getRealVelocity.
     """
 
     def __init__(self, x, y):
         super().__init__(x, y)
+        self._storedMagnitude = 0
+        self._storedDirection = 0
         self._distance = 0
 
     def drive(self, magnitude, direction):
         self._storedMagnitude = magnitude
         self._storedDirection = direction
         self._distance += magnitude / 50
+    
+    def stop(self):
+        self._storedMagnitude = 0
 
-    def getPosition(self):
+    def getRealPosition(self):
+        return self.getTargetPosition()
+    
+    def getTargetPosition(self):
         return self._distance
 
-    def getMovementDirection(self):
+    def getRealDirection(self):
+        return self.getTargetDirection()
+
+    def getTargetDirection(self):
         return self._storedDirection
 
-    def getMovementMagnitude(self):
+    def getRealVelocity(self):
         return self._storedMagnitude
 
 
@@ -118,6 +150,10 @@ class TestWheel(CasterWheel):
     def drive(self, magnitude, direction):
         super().drive(magnitude, direction)
         print(self.name, "Mag:", magnitude, "Dir:", math.degrees(direction))
+
+    def stop(self):
+        super().stop()
+        print(self.name, "stop")
 
 
 class AngledWheel(Wheel):
@@ -188,31 +224,29 @@ class AngledWheel(Wheel):
         magnitude *= math.cos(direction - self.angle)
         if self.reverse:
             magnitude = -magnitude
+        
+        if self.driveMode == ctre.ControlMode.Position \
+                and self._motorState != self.driveMode:
+            self._positionTarget = self.motor.getSelectedSensorPosition(0)
+
+        encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot
+        # always incremented, even if not in position mode
+        # used by getTargetPosition
+        self._positionTarget += encoderCountsPerSecond / 50.0
 
         if self.driveMode == ctre.ControlMode.Disabled:
             if self._motorState != self.driveMode:
                 self.motor.disable()
-                self._motorState = self.driveMode
-
         elif self.driveMode == ctre.ControlMode.PercentOutput:
             self.motor.set(self.driveMode, magnitude / self.maxVoltageVelocity)
-            self._motorState = self.driveMode
-
         elif self.driveMode == ctre.ControlMode.Velocity:
-            encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot
             self.motor.set(self.driveMode, encoderCountsPerSecond / 10.0)
-            self._motorState = self.driveMode
-
         elif self.driveMode == ctre.ControlMode.Position:
-            if self._motorState != self.driveMode:
-                self._positionTarget = self.motor.getSelectedSensorPosition(0)
-                self._motorState = self.driveMode
-
-            encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot
-            self._positionTarget += encoderCountsPerSecond / 50.0
             self.motor.set(self.driveMode, self._positionTarget)
 
-        if abs(magnitude) > 0.1:
+        self._motorState = self.driveMode
+
+        if abs(magnitude) > 0.1: # TODO: magnitude threshold?
             if self._encoderCheckCount % CHECK_ENCODER_CYCLE == 0:
                 # getSelectedSensorPosition is slow so only check a few times
                 # per second
@@ -221,16 +255,28 @@ class AngledWheel(Wheel):
             self._positionOccurence = 0
         self._encoderCheckCount += 1
 
-    def getPosition(self):
-        sensorPos = self.motor.getSelectedSensorPosition(0)
+    def stop(self):
+        self.drive(0, 0)
+    
+    def _sensorPositionToDistance(self, pos):
         if self.reverse:
-            sensorPos = -sensorPos
-        return sensorPos / self.encoderCountsPerFoot
+            pos = -pos
+        return pos / self.encoderCountsPerFoot
 
-    def getMovementDirection(self):
+    def getRealPosition(self):
+        return self._sensorPositionToDistance(
+            self.motor.getSelectedSensorPosition(0))
+
+    def getTargetPosition(self):
+        return self._sensorPositionToDistance(self._positionTarget)
+
+    def getRealDirection(self):
+        return self.getTargetDirection()
+
+    def getTargetDirection(self):
         return self.angle
 
-    def getMovementMagnitude(self):
+    def getRealVelocity(self):
         sensorVel = self.motor.getSelectedSensorVelocity(0)
         if self.reverse:
             sensorVel = -sensorVel
@@ -252,11 +298,14 @@ class MecanumWheel(AngledWheel):
     def drive(self, magnitude, direction):
         return super().drive(magnitude * MecanumWheel.SQRT_2, direction)
 
-    def getPosition(self):
-        return super().getPosition() / MecanumWheel.SQRT_2
+    def getRealPosition(self):
+        return super().getRealPosition() / MecanumWheel.SQRT_2
 
-    def getMovementMagnitude(self):
-        return super().getMovementMagnitude() / MecanumWheel.SQRT_2
+    def getTargetPosition(self):
+        return super().getTargetPosition() / MecanumWheel.SQRT_2
+
+    def getRealVelocity(self):
+        return super().getRealVelocity() / MecanumWheel.SQRT_2
 
 
 class SwerveWheel(Wheel):
@@ -285,6 +334,7 @@ class SwerveWheel(Wheel):
         self.encoderCountsPerRev = encoderCountsPerRev
         self.reverseSteerMotor = reverseSteerMotor
         self.zeroSteering()
+        self._targetDirection = angledWheel.angle
 
     def zeroSteering(self):
         """
@@ -310,26 +360,32 @@ class SwerveWheel(Wheel):
         self.steerMotor.set(ctre.ControlMode.Position, pos + self._steerOrigin)
 
     def drive(self, magnitude, direction):
-        #print("Wheel", math.degrees(direction))
         currentAngle = self._getCurrentSteeringAngle()
-        if magnitude != 0:
-            # steering should never rotate more than 90 degrees from any position
-            angleDiff = _circleDistance(currentAngle, direction, math.pi)
-            #print("Target", math.degrees(currentAngle + angleDiff))
-            #print(math.degrees(currentAngle), math.degrees(currentAngle + angleDiff))
-            self._setSteering(currentAngle + angleDiff)
-
+        # steering should never rotate more than 90 degrees from any position
+        angleDiff = _circleDistance(currentAngle, direction, math.pi)
+        self._targetDirection = currentAngle + angleDiff
+        #print(math.degrees(currentAngle), math.degrees(self._targetDirection))
+        self._setSteering(self._targetDirection)
         self.angledWheel.angle = currentAngle
         self.angledWheel.drive(magnitude, direction)
 
-    def getPosition(self):
-        return self.angledWheel.getPosition()
+    def stop(self):
+        self.angledWheel.stop()
 
-    def getMovementDirection(self):
-        return self.angledWheel.getMovementDirection()
+    def getRealPosition(self):
+        return self.angledWheel.getRealPosition()
 
-    def getMovementMagnitude(self):
-        return self.angledWheel.getMovementMagnitude()
+    def getTargetPosition(self):
+        return self.angledWheel.getTargetPosition()
+
+    def getRealDirection(self):
+        return self.angledWheel.getRealDirection()
+
+    def getTargetDirection(self):
+        return self._targetDirection
+
+    def getRealVelocity(self):
+        return self.angledWheel.getRealVelocity()
 
 
 class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
@@ -353,8 +409,8 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
         wheelLimitScales = []
 
         for wheel in self.wheels:
-            wheelVectorX = moveX - wheel.y * turn
-            wheelVectorY = moveY + wheel.x * turn
+            wheelVectorX, wheelVectorY = self._calcWheelVector(
+                wheel, moveX, moveY, turn)
             wheelMag = math.sqrt(wheelVectorX ** 2.0 + wheelVectorY ** 2.0)
             wheelDir = math.atan2(wheelVectorY, wheelVectorX)
             wheelMagnitudes.append(wheelMag)
@@ -363,9 +419,29 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
 
         minWheelScale = min(wheelLimitScales)
         for i in range(len(self.wheels)):
-            self.wheels[i].drive(wheelMagnitudes[i] * minWheelScale,
-                                 wheelDirections[i])
+            if wheelMagnitudes[i] == 0:
+                self.wheels[i].stop()
+            else:
+                self.wheels[i].drive(wheelMagnitudes[i] * minWheelScale,
+                                    wheelDirections[i])
         return minWheelScale
+    
+    def orientWheels(self, magnitude, direction, turn):
+        """
+        Orient the wheels as if the robot was driving, but don't move.
+        """
+        moveX = math.cos(direction) * magnitude
+        moveY = math.sin(direction) * magnitude
+
+        for wheel in self.wheels:
+            wheelVectorX, wheelVectorY = self._calcWheelVector(
+                wheel, moveX, moveY, turn)
+            if wheelVectorX != 0 and wheelVectorY != 0:
+                wheelDir = math.atan2(wheelVectorY, wheelVectorX)
+                wheel.drive(0, wheelDir)
+
+    def _calcWheelVector(self, wheel, moveX, moveY, turn):
+        return moveX - wheel.y * turn, moveY + wheel.x * turn
 
     def getRobotMovement(self):
         """
@@ -376,34 +452,40 @@ class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
         """
         wheelValues = []
         for wheel in self.wheels:
-            wheelMag = wheel.getMovementMagnitude()
-            wheelDir = wheel.getMovementDirection()
+            wheelMag = wheel.getRealVelocity()
+            wheelDir = wheel.getRealDirection()
             dx = wheelMag * math.cos(wheelDir)
             dy = wheelMag * math.sin(wheelDir)
             wheelValues.append((wheel, dx, dy))
         return self._calcRobotMovement(wheelValues)
 
-    def getRobotPositionOffset(self, origin):
+    def getRobotPositionOffset(self, origin, target=False):
         """
         Calculate how the robot has moved from a previous position.
 
         :param origin: an object returned by a previous call to
             ``getRobotPositionOffset``, for comparing previous state. Passing
             None will return an offset of 0 and a newly initialized state
+        :param targetPosition: if False, the "real" position of wheels will be
+            used based on encoder values. If True, the target position of
+            wheels will be used based on where they were last told to move.
         :return: a tuple of ``(distance, direction, turn, state)`` where
             ``distance`` and ``direction`` define linear offset in feet and
             radians, ``turn`` defines angular offset in radians, and ``state``
             is an object that can be stored and passed to a future call of
             ``getRobotPositionOffset`` for comparison.
         """
-        currentPositions = [w.getPosition() for w in self.wheels]
+        currentPositions = [
+            (w.getTargetPosition() if target else w.getRealPosition())
+            for w in self.wheels]
         if origin == None:
             return 0.0, 0.0, 0.0, currentPositions
         wheelValues = []
         for i in range(len(currentPositions)):
             wheel = self.wheels[i]
             wheelMag = currentPositions[i] - origin[i]
-            wheelDir = wheel.getMovementDirection()
+            wheelDir = wheel.getTargetDirection() if target \
+                else wheel.getRealDirection()
             dx = wheelMag * math.cos(wheelDir)
             dy = wheelMag * math.sin(wheelDir)
             wheelValues.append((wheel, dx, dy))
