@@ -8,6 +8,9 @@ def setSimulatedDrivetrain(drivetrain):
 
 def readDataFile(filename):
     lines = [ ]
+    if sys.argv[1] == 'run':
+        # running on robot
+        filename = "/home/lvuser/py/" + filename
     with open(filename, 'r') as f:
         for line in f.readlines():
             values = line.split()
