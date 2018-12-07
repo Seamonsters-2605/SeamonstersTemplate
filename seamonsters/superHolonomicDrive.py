@@ -246,7 +246,7 @@ class AngledWheel(Wheel):
 
         self._motorState = self.driveMode
 
-        if abs(magnitude) > 0.1: # TODO: magnitude threshold?
+        if abs(encoderCountsPerSecond) > 400: # TODO: document constant
             if self._encoderCheckCount % CHECK_ENCODER_CYCLE == 0:
                 # getSelectedSensorPosition is slow so only check a few times
                 # per second
