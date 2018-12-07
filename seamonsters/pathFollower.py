@@ -79,6 +79,8 @@ class PathFollower:
         # are correct
         yield from self.waitForOrientWheelsGenerator(dist, moveDir, aDiff,
             wheelAngleTolerance)
+        for wheel in self.drive.wheels:
+            wheel.resetPosition()
 
         if dist < 0.1: # TODO: constant
             dist = 0
