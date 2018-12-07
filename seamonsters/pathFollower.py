@@ -33,6 +33,7 @@ class PathFollower:
         self.robotY = y
         self.robotAngle = angle
         if self.ahrs is not None:
+            self._ahrsOrigin = 0
             self._ahrsOrigin = self._getAHRSAngle() - angle
         self._drivePositionState = None
 
