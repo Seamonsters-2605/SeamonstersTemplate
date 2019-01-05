@@ -6,7 +6,7 @@ import configparser
 from pyfrc.physics import drivetrains
 from pyfrc.physics.visionsim import VisionSim
 import ctre
-import robotpy_ext.common_drivers.navx
+import navx
 from networktables import NetworkTables
 
 # HAL keys
@@ -21,7 +21,7 @@ simulatedDrivetrain = None
 # make the NavX work with the physics simulator
 def createAnalogGyro():
     return wpilib.AnalogGyro(0)
-robotpy_ext.common_drivers.navx.AHRS.create_spi = createAnalogGyro
+navx.AHRS.create_spi = createAnalogGyro
 
 class SimulatedTalon:
 
