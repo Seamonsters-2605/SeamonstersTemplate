@@ -3,8 +3,6 @@ __author__ = "seamonsters"
 import traceback
 import hal
 from wpilib.robotbase import RobotBase
-from wpilib.livewindow import LiveWindow
-from wpilib.smartdashboard import SmartDashboard
 
 class GeneratorBot(RobotBase):
     """
@@ -27,7 +25,6 @@ class GeneratorBot(RobotBase):
         # Tell the DS that the robot is ready to be enabled
         hal.observeUserProgramStarting()
 
-        LiveWindow.setEnabled(False)
         while True:
             # Wait for new data to arrive
             self.ds.waitForData()
@@ -36,11 +33,9 @@ class GeneratorBot(RobotBase):
                 if self.iterator:
                     self.iterator.close()
                     self.iterator = None
-                    LiveWindow.setEnabled(False)
                 hal.observeUserProgramDisabled()
             else: # not disabled
                 if not self.iterator and not self.earlyStop:
-                    LiveWindow.setEnabled(True)
                     try:
                         if self.isTest():
                             self.iterator = self.test()
@@ -72,9 +67,6 @@ class GeneratorBot(RobotBase):
                         traceback.print_exc()
                         self.iterator = None
                         self.earlyStop = True
-                # disabling both of these for now - they cause delays
-                #SmartDashboard.updateValues()
-                #LiveWindow.updateValues()
 
     def robotInit(self):
         """
@@ -107,8 +99,7 @@ class GeneratorBot(RobotBase):
 class IterativeRobotInstance:
     """
     Allows an "instance" of an IterativeRobot to be created without connecting
-    to HAL or LiveWindow. Allows running teleop/autonomous sequences as a
-    Generator.
+    to HAL. Allows running teleop/autonomous sequences as a Generator.
     """
 
     def __init__(self, robotType):
