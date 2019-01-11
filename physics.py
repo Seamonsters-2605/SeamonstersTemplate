@@ -22,6 +22,8 @@ simulatedDrivetrain = None
 def createAnalogGyro():
     return wpilib.AnalogGyro(0)
 navx.AHRS.create_spi = createAnalogGyro
+wpilib.AnalogGyro.getDisplacementX = lambda self: 0.0
+wpilib.AnalogGyro.getDisplacementY = lambda self: 0.0
 
 class SimulatedTalon:
 
