@@ -1,6 +1,5 @@
 import math
 import ctre
-import seamonsters.drive
 
 TWO_PI = math.pi * 2
 
@@ -397,7 +396,7 @@ class SwerveWheel(Wheel):
         return self.angledWheel.getRealVelocity()
 
 
-class SuperHolonomicDrive(seamonsters.drive.DriveInterface):
+class SuperHolonomicDrive:
 
     def __init__(self):
         self.wheels = []
