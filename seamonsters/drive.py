@@ -109,8 +109,8 @@ class FieldOrientedDrive(DriveInterface):
     def __init__(self, interface, ahrs, offset=0.0):
         """
         Create the FieldOrientedDrive with another DriveInterface to wrap and a
-        ``robotpy_ext.common_drivers.navx.AHRS``. If given, the offset is a
-        value in radians to add to all direction inputs.
+        ``AHRS``. If given, the offset is a value in radians to add to all
+        direction inputs.
         """
         self.interface = interface
         self.ahrs = ahrs

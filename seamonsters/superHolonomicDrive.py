@@ -62,6 +62,9 @@ class Wheel:
         Stop driving.
         """
 
+    def resetPosition(self):
+        pass
+
     def getRealPosition(self):
         """
         :return: a value representing distance the wheel has travelled, which
@@ -246,7 +249,7 @@ class AngledWheel(Wheel):
 
         self._motorState = self.driveMode
 
-        if abs(magnitude) > 0.1: # TODO: magnitude threshold?
+        if abs(encoderCountsPerSecond) > 400: # TODO: document constant
             if self._encoderCheckCount % CHECK_ENCODER_CYCLE == 0:
                 # getSelectedSensorPosition is slow so only check a few times
                 # per second
@@ -257,6 +260,9 @@ class AngledWheel(Wheel):
 
     def stop(self):
         self.drive(0, 0)
+
+    def resetPosition(self):
+        self._motorState = ctre.ControlMode.Disabled
     
     def _sensorPositionToDistance(self, pos):
         if self.reverse:
@@ -371,6 +377,9 @@ class SwerveWheel(Wheel):
 
     def stop(self):
         self.angledWheel.stop()
+
+    def resetPosition(self):
+        self.angledWheel.resetPosition()
 
     def getRealPosition(self):
         return self.angledWheel.getRealPosition()

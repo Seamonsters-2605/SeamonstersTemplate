@@ -3,6 +3,30 @@ __author__ = "seamonsters"
 import types
 import itertools
 
+class ParallelSignal:
+    """
+    A signal that can be returned from a generator in a parallel group to
+    trigger an action on the group.
+    """
+
+class StopParallelSignal(ParallelSignal):
+    """
+    Value to signal that a group of parallel commands should be stopped.
+    """
+
+    def __init__(self, value=None):
+        self.value = value
+
+class AddParallelSignal(ParallelSignal):
+    """
+    Value to signal that a new generator should be added to the group of
+    parallel commands.
+    """
+
+    def __init__(self, iterable):
+        self.iterable = iterable
+
+
 def sequence(*iterables):
     """
     Run a set of iterables sequentially
@@ -13,38 +37,23 @@ def parallel(*iterables):
     """
     Run a group of iterables in parallel. Ends when none are left running.
 
-    If any iterable yields a function, it will be added to the set of running
-    iterables.
-    """
-    return watch(*iterables, None)
-
-def watch(*iterables):
-    """
-    Run a group of iterables in parallel. Ends when the last iterables in the
-    given list has finished or yields True, regardless of the others.
-
-    If any iterable yields a function, it will be added to the set of running
-    iterables.
+    An iterable can yield or return a ParallelSignal to trigger an action.
     """
     iterables = list(iterables)
-    watch = iterables[-1]
-    if watch == None:
-        iterables = iterables[:-1]
     try:
         while len(iterables) != 0:
             toRemove = [ ]
             for iter in iterables:
-                result = None
                 try:
                     result = next(iter)
                 except StopIteration as e:
-                    if iter == watch:
-                        return e.value
+                    result = e.value
                     toRemove.append(iter)
-                if result == True and iter == watch:
-                    return
-                if isinstance(result, types.GeneratorType):
-                    iterables.append(result)
+                if isinstance(result, ParallelSignal):
+                    if isinstance(result, StopParallelSignal):
+                        return result.value
+                    elif isinstance(result, AddParallelSignal):
+                        iterables.append(result.iterable)
             for iter in toRemove:
                 iterables.remove(iter)
             yield
@@ -102,3 +111,10 @@ def returnValue(iterable, value):
     """
     yield from iterable
     return value
+
+def stopAllWhenDone(iterable, value=None):
+    """
+    If run in a ``sea.parallel`` block, when the iterable completes all
+    parallel commands will be stopped.
+    """
+    return returnValue(iterable, StopParallelSignal(value))

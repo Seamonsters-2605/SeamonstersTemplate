@@ -6,7 +6,7 @@ import configparser
 from pyfrc.physics import drivetrains
 from pyfrc.physics.visionsim import VisionSim
 import ctre
-import robotpy_ext.common_drivers.navx
+import navx
 from networktables import NetworkTables
 
 # HAL keys
@@ -18,10 +18,6 @@ HALK_TALON_PID_TARGET = 'pid0_target'
 
 simulatedDrivetrain = None
 
-# make the NavX work with the physics simulator
-def createAnalogGyro():
-    return wpilib.AnalogGyro(0)
-robotpy_ext.common_drivers.navx.AHRS.create_spi = createAnalogGyro
 
 class SimulatedTalon:
 
@@ -69,12 +65,32 @@ class SimulatedTalon:
             talonData[HALK_TALON_POSITION] += int(targetVel / 5)
             talonData[HALK_TALON_VELOCITY] = int(targetVel)
 
+class AHRSSim:
+
+    def __init__(self):
+        self.angle = 0
+
+    def getAngle(self):
+        return self.angle
+    
+    def getDisplacementX(self):
+        return 0.0
+    
+    def getDisplacementY(self):
+        return 0.0
+
 class PhysicsEngine:
 
     def __init__(self, physicsController):
         self.physicsController = physicsController
 
         # NavX simulation
+        self.ahrs = None
+        def createAHRSSim():
+            self.ahrs = AHRSSim()
+            return self.ahrs
+        navx.AHRS.create_spi = createAHRSSim
+
         self.physicsController.add_analog_gyro_channel(0)
 
         config = configparser.ConfigParser()
@@ -134,9 +150,9 @@ class PhysicsEngine:
             xVel = robotMag * math.cos(robotDir)
             yVel = robotMag * math.sin(robotDir)
             self.physicsController.vector_drive(xVel, yVel, -robotTurn, elapsed)
-
-        # https://github.com/robotpy/robotpy-wpilib/issues/291
-        hal_data['analog_gyro'][0]['angle'] = math.degrees(self.physicsController.angle)
+        
+        if self.ahrs != None:
+            self.ahrs.angle = math.degrees(self.physicsController.angle)
 
         x, y, angle = self.physicsController.get_position()
         visionData = self.visionSim.compute(time, x, y, angle)

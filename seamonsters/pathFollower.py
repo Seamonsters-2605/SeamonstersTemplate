@@ -33,6 +33,7 @@ class PathFollower:
         self.robotY = y
         self.robotAngle = angle
         if self.ahrs is not None:
+            self._ahrsOrigin = 0
             self._ahrsOrigin = self._getAHRSAngle() - angle
         self._drivePositionState = None
 
@@ -78,6 +79,8 @@ class PathFollower:
         # are correct
         yield from self.waitForOrientWheelsGenerator(dist, moveDir, aDiff,
             wheelAngleTolerance)
+        for wheel in self.drive.wheels:
+            wheel.resetPosition()
 
         if dist < 0.1: # TODO: constant
             dist = 0
@@ -139,11 +142,17 @@ class PathFollower:
         Follow path data read from a file. ``data`` should be a list of line
         tuples returned by ``sea.readDataFile``.
         """
-        lastTime, x, y, angle = self._readDataLine(data[0])
-        self.setPosition(x, y, math.radians(angle))
+        lastTime, lastX, lastY, lastAngle = self._readDataLine(data[0])
+        self.setPosition(lastX, lastY, math.radians(lastAngle))
         for point in data[1:]:
             t, x, y, angle = self._readDataLine(point)
-            yield from seamonsters.generators.untilTrue(
-                self.driveToPointGenerator(x, y, math.radians(angle),
-                    t - lastTime, wheelAngleTolerance))
+            if lastX == x and lastY == y and lastAngle == angle:
+                yield from seamonsters.generators.wait(int((t - lastTime) * 50))
+            else:
+                yield from seamonsters.generators.untilTrue(
+                    self.driveToPointGenerator(x, y, math.radians(angle),
+                        t - lastTime, wheelAngleTolerance))
             lastTime = t
+            lastX = x
+            lastY = y
+            lastAngle = angle
