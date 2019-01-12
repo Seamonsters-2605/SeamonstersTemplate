@@ -96,6 +96,9 @@
 <span class="sd">        Stop driving.</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
+<div class="viewcode-block" id="Wheel.resetPosition"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Wheel.resetPosition">[docs]</a>    <span class="k">def</span> <span class="nf">resetPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
 <div class="viewcode-block" id="Wheel.getRealPosition"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Wheel.getRealPosition">[docs]</a>    <span class="k">def</span> <span class="nf">getRealPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: a value representing distance the wheel has travelled, which</span>
@@ -280,7 +283,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span>
 
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">magnitude</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span> <span class="c1"># TODO: magnitude threshold?</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">encoderCountsPerSecond</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">400</span><span class="p">:</span> <span class="c1"># TODO: document constant</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encoderCheckCount</span> <span class="o">%</span> <span class="n">CHECK_ENCODER_CYCLE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># getSelectedSensorPosition is slow so only check a few times</span>
                 <span class="c1"># per second</span>
@@ -291,6 +294,9 @@
 
 <div class="viewcode-block" id="AngledWheel.stop"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.AngledWheel.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AngledWheel.resetPosition"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.AngledWheel.resetPosition">[docs]</a>    <span class="k">def</span> <span class="nf">resetPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">=</span> <span class="n">ctre</span><span class="o">.</span><span class="n">ControlMode</span><span class="o">.</span><span class="n">Disabled</span></div>
     
     <span class="k">def</span> <span class="nf">_sensorPositionToDistance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
@@ -405,6 +411,9 @@
 
 <div class="viewcode-block" id="SwerveWheel.stop"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SwerveWheel.resetPosition"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.resetPosition">[docs]</a>    <span class="k">def</span> <span class="nf">resetPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">resetPosition</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SwerveWheel.getRealPosition"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.getRealPosition">[docs]</a>    <span class="k">def</span> <span class="nf">getRealPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">getRealPosition</span><span class="p">()</span></div>

@@ -87,6 +87,20 @@ input magnitude and turn components</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="seamonsters.AddParallelSignal">
+<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">AddParallelSignal</code><span class="sig-paren">(</span><em>iterable</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.AddParallelSignal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#seamonsters.ParallelSignal" title="seamonsters.ParallelSignal"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.ParallelSignal</span></code></a></p>
+<p>Value to signal that a new generator should be added to the group of
+parallel commands.</p>
+<dl class="method">
+<dt id="seamonsters.AddParallelSignal.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>iterable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/generators.html#AddParallelSignal.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AddParallelSignal.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="seamonsters.AngledWheel">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">AngledWheel</code><span class="sig-paren">(</span><em>motor</em>, <em>x</em>, <em>y</em>, <em>angle</em>, <em>encoderCountsPerFoot</em>, <em>maxVoltageVelocity</em>, <em>reverse=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.AngledWheel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.Wheel</span></code></a></p>
@@ -226,6 +240,11 @@ between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.AngledWheel.resetPosition">
+<code class="descname">resetPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.resetPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.resetPosition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.AngledWheel.stop">
@@ -504,8 +523,8 @@ input magnitude and turn components</p>
 <dt id="seamonsters.FieldOrientedDrive.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>interface</em>, <em>ahrs</em>, <em>offset=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#FieldOrientedDrive.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.FieldOrientedDrive.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the FieldOrientedDrive with another DriveInterface to wrap and a
-<code class="docutils literal notranslate"><span class="pre">robotpy_ext.common_drivers.navx.AHRS</span></code>. If given, the offset is a
-value in radians to add to all direction inputs.</p>
+<code class="docutils literal notranslate"><span class="pre">AHRS</span></code>. If given, the offset is a value in radians to add to all
+direction inputs.</p>
 </dd></dl>
 
 <dl class="method">
@@ -858,8 +877,7 @@ with the rate that data is received from Driver Station.</p>
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">IterativeRobotInstance</code><span class="sig-paren">(</span><em>robotType</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.IterativeRobotInstance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Allows an “instance” of an IterativeRobot to be created without connecting
-to HAL or LiveWindow. Allows running teleop/autonomous sequences as a
-Generator.</p>
+to HAL. Allows running teleop/autonomous sequences as a Generator.</p>
 <dl class="method">
 <dt id="seamonsters.IterativeRobotInstance.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>robotType</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/bot.html#IterativeRobotInstance.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.IterativeRobotInstance.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1023,6 +1041,14 @@ input magnitude and turn components</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="seamonsters.ParallelSignal">
+<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">ParallelSignal</code><a class="headerlink" href="#seamonsters.ParallelSignal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A signal that can be returned from a generator in a parallel group to
+trigger an action on the group.</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="seamonsters.PathFollower">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">PathFollower</code><span class="sig-paren">(</span><em>drive</em>, <em>ahrs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.PathFollower" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -1083,6 +1109,19 @@ tuples returned by <code class="docutils literal notranslate"><span class="pre">
 <dd><p>Orient wheels to prepare to drive with the given mag/dir/turn, and wait
 until all wheels are within <code class="docutils literal notranslate"><span class="pre">angleTolerance</span></code> radians of their target
 direction.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="seamonsters.StopParallelSignal">
+<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">StopParallelSignal</code><span class="sig-paren">(</span><em>value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.StopParallelSignal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#seamonsters.ParallelSignal" title="seamonsters.ParallelSignal"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.ParallelSignal</span></code></a></p>
+<p>Value to signal that a group of parallel commands should be stopped.</p>
+<dl class="method">
+<dt id="seamonsters.StopParallelSignal.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/generators.html#StopParallelSignal.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.StopParallelSignal.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1319,6 +1358,11 @@ between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.SwerveWheel.resetPosition">
+<code class="descname">resetPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.resetPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.resetPosition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.SwerveWheel.stop">
@@ -1582,6 +1626,11 @@ between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="seamonsters.Wheel.resetPosition">
+<code class="descname">resetPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.resetPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.resetPosition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="seamonsters.Wheel.stop">
 <code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#Wheel.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Wheel.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop driving.</p>
@@ -1637,8 +1686,7 @@ given widgets to it.</p>
 <dt id="seamonsters.parallel">
 <code class="descclassname">seamonsters.</code><code class="descname">parallel</code><span class="sig-paren">(</span><em>*iterables</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.parallel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run a group of iterables in parallel. Ends when none are left running.</p>
-<p>If any iterable yields a function, it will be added to the set of running
-iterables.</p>
+<p>An iterable can yield or return a ParallelSignal to trigger an action.</p>
 </dd></dl>
 
 <dl class="function">
@@ -1694,6 +1742,13 @@ when the dashboard has started.</li>
 </dd></dl>
 
 <dl class="function">
+<dt id="seamonsters.stopAllWhenDone">
+<code class="descclassname">seamonsters.</code><code class="descname">stopAllWhenDone</code><span class="sig-paren">(</span><em>iterable</em>, <em>value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.stopAllWhenDone" title="Permalink to this definition">¶</a></dt>
+<dd><p>If run in a <code class="docutils literal notranslate"><span class="pre">sea.parallel</span></code> block, when the iterable completes all
+parallel commands will be stopped.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="seamonsters.timeLimit">
 <code class="descclassname">seamonsters.</code><code class="descname">timeLimit</code><span class="sig-paren">(</span><em>iterable</em>, <em>time</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.timeLimit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the iterable until it finishes or the given time limit has passed.
@@ -1735,15 +1790,6 @@ given widgets to it.</p>
 <dt id="seamonsters.wait">
 <code class="descclassname">seamonsters.</code><code class="descname">wait</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.wait" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wait for a certain number of iterations.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="seamonsters.watch">
-<code class="descclassname">seamonsters.</code><code class="descname">watch</code><span class="sig-paren">(</span><em>*iterables</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.watch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run a group of iterables in parallel. Ends when the last iterables in the
-given list has finished or yields True, regardless of the others.</p>
-<p>If any iterable yields a function, it will be added to the set of running
-iterables.</p>
 </dd></dl>
 
 <dl class="function">

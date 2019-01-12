@@ -37,8 +37,6 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">hal</span>
 <span class="kn">from</span> <span class="nn">wpilib.robotbase</span> <span class="k">import</span> <span class="n">RobotBase</span>
-<span class="kn">from</span> <span class="nn">wpilib.livewindow</span> <span class="k">import</span> <span class="n">LiveWindow</span>
-<span class="kn">from</span> <span class="nn">wpilib.smartdashboard</span> <span class="k">import</span> <span class="n">SmartDashboard</span>
 
 <span class="k">class</span> <span class="nc">GeneratorBot</span><span class="p">(</span><span class="n">RobotBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -61,7 +59,6 @@
         <span class="c1"># Tell the DS that the robot is ready to be enabled</span>
         <span class="n">hal</span><span class="o">.</span><span class="n">observeUserProgramStarting</span><span class="p">()</span>
 
-        <span class="n">LiveWindow</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="c1"># Wait for new data to arrive</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">waitForData</span><span class="p">()</span>
@@ -70,11 +67,9 @@
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="kc">None</span>
-                    <span class="n">LiveWindow</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
                 <span class="n">hal</span><span class="o">.</span><span class="n">observeUserProgramDisabled</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span> <span class="c1"># not disabled</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">earlyStop</span><span class="p">:</span>
-                    <span class="n">LiveWindow</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTest</span><span class="p">():</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test</span><span class="p">()</span>
@@ -106,9 +101,6 @@
                         <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="kc">None</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">earlyStop</span> <span class="o">=</span> <span class="kc">True</span></div>
-                <span class="c1"># disabling both of these for now - they cause delays</span>
-                <span class="c1">#SmartDashboard.updateValues()</span>
-                <span class="c1">#LiveWindow.updateValues()</span>
 
 <div class="viewcode-block" id="GeneratorBot.robotInit"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.robotInit">[docs]</a>    <span class="k">def</span> <span class="nf">robotInit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -141,8 +133,7 @@
 <span class="k">class</span> <span class="nc">IterativeRobotInstance</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Allows an &quot;instance&quot; of an IterativeRobot to be created without connecting</span>
-<span class="sd">    to HAL or LiveWindow. Allows running teleop/autonomous sequences as a</span>
-<span class="sd">    Generator.</span>
+<span class="sd">    to HAL. Allows running teleop/autonomous sequences as a Generator.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="IterativeRobotInstance.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.IterativeRobotInstance.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">robotType</span><span class="p">):</span>

@@ -42,6 +42,9 @@
 
 <span class="k">def</span> <span class="nf">readDataFile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;run&#39;</span><span class="p">:</span>
+        <span class="c1"># running on robot</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;/home/lvuser/py/&quot;</span> <span class="o">+</span> <span class="n">filename</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>

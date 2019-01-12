@@ -67,6 +67,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">robotY</span> <span class="o">=</span> <span class="n">y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">robotAngle</span> <span class="o">=</span> <span class="n">angle</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ahrs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ahrsOrigin</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ahrsOrigin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getAHRSAngle</span><span class="p">()</span> <span class="o">-</span> <span class="n">angle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_drivePositionState</span> <span class="o">=</span> <span class="kc">None</span></div>
 
@@ -112,6 +113,8 @@
         <span class="c1"># are correct</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">waitForOrientWheelsGenerator</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">moveDir</span><span class="p">,</span> <span class="n">aDiff</span><span class="p">,</span>
             <span class="n">wheelAngleTolerance</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">wheel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">wheels</span><span class="p">:</span>
+            <span class="n">wheel</span><span class="o">.</span><span class="n">resetPosition</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span> <span class="c1"># TODO: constant</span>
             <span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span>
@@ -173,14 +176,20 @@
 <span class="sd">        Follow path data read from a file. ``data`` should be a list of line</span>
 <span class="sd">        tuples returned by ``sea.readDataFile``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">lastTime</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readDataLine</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span>
+        <span class="n">lastTime</span><span class="p">,</span> <span class="n">lastX</span><span class="p">,</span> <span class="n">lastY</span><span class="p">,</span> <span class="n">lastAngle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readDataLine</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">lastX</span><span class="p">,</span> <span class="n">lastY</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lastAngle</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
             <span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readDataLine</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
-            <span class="k">yield from</span> <span class="n">seamonsters</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">untilTrue</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">driveToPointGenerator</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span>
-                    <span class="n">t</span> <span class="o">-</span> <span class="n">lastTime</span><span class="p">,</span> <span class="n">wheelAngleTolerance</span><span class="p">))</span>
-            <span class="n">lastTime</span> <span class="o">=</span> <span class="n">t</span></div>
+            <span class="k">if</span> <span class="n">lastX</span> <span class="o">==</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">lastY</span> <span class="o">==</span> <span class="n">y</span> <span class="ow">and</span> <span class="n">lastAngle</span> <span class="o">==</span> <span class="n">angle</span><span class="p">:</span>
+                <span class="k">yield from</span> <span class="n">seamonsters</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">t</span> <span class="o">-</span> <span class="n">lastTime</span><span class="p">)</span> <span class="o">*</span> <span class="mi">50</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield from</span> <span class="n">seamonsters</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">untilTrue</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">driveToPointGenerator</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span>
+                        <span class="n">t</span> <span class="o">-</span> <span class="n">lastTime</span><span class="p">,</span> <span class="n">wheelAngleTolerance</span><span class="p">))</span>
+            <span class="n">lastTime</span> <span class="o">=</span> <span class="n">t</span>
+            <span class="n">lastX</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="n">lastY</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="n">lastAngle</span> <span class="o">=</span> <span class="n">angle</span></div>
 </pre></div>
 
           </div>
