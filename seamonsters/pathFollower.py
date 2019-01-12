@@ -59,6 +59,16 @@ class PathFollower:
                         > angleTolerance:
                     done = False
 
+    def updateRobotPosition(self):
+        moveDist, moveDir, moveTurn, self._drivePositionState = \
+            self.drive.getRobotPositionOffset(self._drivePositionState, target=True)
+        if self.ahrs is not None:
+            self.robotAngle = self._getAHRSAngle()
+        else:
+            self.robotAngle += moveTurn
+        self.robotX += math.cos(moveDir + self.robotAngle) * moveDist
+        self.robotY += math.sin(moveDir + self.robotAngle) * moveDist
+
     def driveToPointGenerator(self, x, y, angle, time, wheelAngleTolerance):
         """
         A generator to drive to a location on the field while simultaneously
@@ -93,18 +103,9 @@ class PathFollower:
             targetAVel = aDiff / time
 
         while True:
-            moveDist, moveDir, moveTurn, newState = \
-                self.drive.getRobotPositionOffset(self._drivePositionState,
-                                                  target=True)
-            self._drivePositionState = newState
-            if self.ahrs is not None:
-                self.robotAngle = self._getAHRSAngle()
-            else:
-                self.robotAngle += moveTurn
-            self.robotX += math.cos(moveDir + self.robotAngle) * moveDist
-            self.robotY += math.sin(moveDir + self.robotAngle) * moveDist
+            self.updateRobotPosition()
 
-            dist, moveDir = self._robotVectorToPoint(x, y)
+            dist, dir = self._robotVectorToPoint(x, y)
             aDiff = angle - self.robotAngle
 
             atPosition = targetMag == 0 or dist < targetMag / 50
@@ -120,7 +121,7 @@ class PathFollower:
                 if aDiff < 0:
                     aVel = -aVel
 
-            self.drive.drive(mag, moveDir, aVel)
+            self.drive.drive(mag, dir, aVel)
             try:
                 yield atPosition and atAngle
             except GeneratorExit:
