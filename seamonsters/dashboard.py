@@ -80,16 +80,17 @@ class Dashboard(remi.App):
         self.eventQueue = queue.Queue()
         super(Dashboard, self).__init__(*args, **kwargs)
 
-    def queuedEvent(self, eventF):
+    @staticmethod
+    def queuedEvent(eventF):
         """
         Given a function ``eventF`` which takes any number of arguments,
         returns a new function which will add ``eventF`` and given arguments
         to the Dashboard event queue, to be called later.
         """
-        def queueTheEvent(*args, **kwargs):
+        def queueTheEvent(self,*args, **kwargs):
             def doTheEvent():
                 print("Event:", eventF.__name__)
-                eventF(*args, **kwargs)
+                eventF(self,*args, **kwargs)
             self.eventQueue.put(doTheEvent)
         return queueTheEvent
 
