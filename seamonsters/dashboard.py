@@ -1,3 +1,4 @@
+import os
 import sys
 import queue
 import threading
@@ -75,10 +76,15 @@ class Dashboard(remi.App):
     ``appCallback`` is a function that should be called with ``self`` as an
     argument when ``main`` has completed.
     """
-
-    def __init__(self, *args, **kwargs):
+    # The css file must be named 'style.css' and it also must
+    # be in a folder named 'res'
+    def __init__(self, *args, css=False, **kwargs):
         self.eventQueue = queue.Queue()
-        super(Dashboard, self).__init__(*args, **kwargs)
+        if css:
+            res_path = os.path.join(os.getcwd(),'res')
+            super(Dashboard, self).__init__(*args, static_file_path={'res':res_path},**kwargs)
+        else:
+            super(Dashboard,self).__init__(*args,**kwargs)
 
     @staticmethod
     def queuedEvent(eventF):
