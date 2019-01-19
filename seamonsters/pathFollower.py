@@ -6,6 +6,8 @@ class PathFollower:
     Controls a SuperHolonomicDrive to follow paths on the field.
     """
 
+    NAVX_LAG = 7 # frames
+
     def __init__(self, drive, ahrs=None):
         """
         :param drive: a SuperHolonomicDrive
@@ -28,6 +30,8 @@ class PathFollower:
         self.robotY = 0
         self.robotAngle = 0
 
+        self._robotAngleHistory = []
+
     def setPosition(self, x, y, angle):
         self.robotX = x
         self.robotY = y
@@ -36,6 +40,7 @@ class PathFollower:
             self._ahrsOrigin = 0
             self._ahrsOrigin = self._getAHRSAngle() - angle
         self._drivePositionState = None
+        self._robotAngleHistory.clear()
 
     def _getAHRSAngle(self):
         return -math.radians(self.ahrs.getAngle()) - self._ahrsOrigin
@@ -62,10 +67,19 @@ class PathFollower:
     def updateRobotPosition(self):
         moveDist, moveDir, moveTurn, self._drivePositionState = \
             self.drive.getRobotPositionOffset(self._drivePositionState, target=True)
-        if self.ahrs is not None:
-            self.robotAngle = self._getAHRSAngle()
-        else:
-            self.robotAngle += moveTurn
+
+        self.robotAngle += moveTurn
+        self._robotAngleHistory.append(self.robotAngle)
+        # pretty sure this isn't off by 1
+        if len(self._robotAngleHistory) >= PathFollower.NAVX_LAG:
+            laggedAngle = self._robotAngleHistory.pop(0)
+            if self.ahrs is not None:
+                navxAngle = self._getAHRSAngle()
+                error = navxAngle - laggedAngle
+                self.robotAngle += error
+                for i in range(0, len(self._robotAngleHistory)):
+                    self._robotAngleHistory[i] += error
+
         self.robotX += math.cos(moveDir + self.robotAngle) * moveDist
         self.robotY += math.sin(moveDir + self.robotAngle) * moveDist
 
