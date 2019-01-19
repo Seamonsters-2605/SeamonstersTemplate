@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -34,7 +35,6 @@
   <h1>Source code for seamonsters.superHolonomicDrive</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">ctre</span>
-<span class="kn">import</span> <span class="nn">seamonsters.drive</span>
 
 <span class="n">TWO_PI</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span>
 
@@ -431,7 +431,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">getRealVelocity</span><span class="p">()</span></div>
 
 
-<span class="k">class</span> <span class="nc">SuperHolonomicDrive</span><span class="p">(</span><span class="n">seamonsters</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">DriveInterface</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SuperHolonomicDrive</span><span class="p">:</span>
 
 <div class="viewcode-block" id="SuperHolonomicDrive.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span> <span class="o">=</span> <span class="p">[]</span></div>
@@ -640,7 +640,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

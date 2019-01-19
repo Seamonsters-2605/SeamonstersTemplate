@@ -13,6 +13,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -515,54 +516,6 @@ input magnitude and turn components</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="seamonsters.FieldOrientedDrive">
-<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">FieldOrientedDrive</code><span class="sig-paren">(</span><em>interface</em>, <em>ahrs</em>, <em>offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.FieldOrientedDrive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#seamonsters.DriveInterface" title="seamonsters.DriveInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.DriveInterface</span></code></a></p>
-<p>Wraps another drive interface, and provides field orientation.</p>
-<dl class="method">
-<dt id="seamonsters.FieldOrientedDrive.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>interface</em>, <em>ahrs</em>, <em>offset=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#FieldOrientedDrive.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.FieldOrientedDrive.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create the FieldOrientedDrive with another DriveInterface to wrap and a
-<code class="docutils literal notranslate"><span class="pre">AHRS</span></code>. If given, the offset is a value in radians to add to all
-direction inputs.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.FieldOrientedDrive.drive">
-<code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#FieldOrientedDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.FieldOrientedDrive.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>magnitude</strong> – feet per second</li>
-<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
-<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.FieldOrientedDrive.getRobotOffset">
-<code class="descname">getRobotOffset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#FieldOrientedDrive.getRobotOffset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.FieldOrientedDrive.getRobotOffset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.FieldOrientedDrive.zero">
-<code class="descname">zero</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#FieldOrientedDrive.zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.FieldOrientedDrive.zero" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="seamonsters.Gamepad">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">Gamepad</code><span class="sig-paren">(</span><em>port</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.Gamepad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wpilib.joystick.Joystick</span></code></p>
@@ -1053,6 +1006,11 @@ trigger an action on the group.</p>
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">PathFollower</code><span class="sig-paren">(</span><em>drive</em>, <em>ahrs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.PathFollower" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Controls a SuperHolonomicDrive to follow paths on the field.</p>
+<dl class="attribute">
+<dt id="seamonsters.PathFollower.NAVX_LAG">
+<code class="descname">NAVX_LAG</code><em class="property"> = 7</em><a class="headerlink" href="#seamonsters.PathFollower.NAVX_LAG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="seamonsters.PathFollower.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>drive</em>, <em>ahrs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1104,6 +1062,11 @@ tuples returned by <code class="docutils literal notranslate"><span class="pre">
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="seamonsters.PathFollower.updateRobotPosition">
+<code class="descname">updateRobotPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.updateRobotPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.updateRobotPosition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="seamonsters.PathFollower.waitForOrientWheelsGenerator">
 <code class="descname">waitForOrientWheelsGenerator</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em>, <em>angleTolerance</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.waitForOrientWheelsGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.waitForOrientWheelsGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient wheels to prepare to drive with the given mag/dir/turn, and wait
@@ -1129,7 +1092,7 @@ direction.</p>
 <dl class="class">
 <dt id="seamonsters.SuperHolonomicDrive">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">SuperHolonomicDrive</code><a class="headerlink" href="#seamonsters.SuperHolonomicDrive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#seamonsters.DriveInterface" title="seamonsters.DriveInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.DriveInterface</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1146,25 +1109,7 @@ direction.</p>
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>magnitude</strong> – feet per second</li>
-<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
-<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.getRobotMovement">
@@ -1865,7 +1810,7 @@ given widgets to it.</p>
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
