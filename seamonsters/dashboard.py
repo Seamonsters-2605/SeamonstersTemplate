@@ -92,7 +92,7 @@ class Dashboard(remi.App):
 
     :param css: Whether to use a custom css file. Must be located at 'res/style.css'
     """
-    def __init__(self, css=False, *args, **kwargs):
+    def __init__(self, *args, css=False, **kwargs):
         self.eventQueue = queue.Queue()
         if css:
             res_path = os.path.join(os.getcwd(), 'res')
