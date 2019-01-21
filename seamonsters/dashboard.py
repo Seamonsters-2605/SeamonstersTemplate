@@ -89,16 +89,16 @@ class Dashboard(remi.App):
     ``appCallback`` as arguments, where ``robot`` is the robot object and
     ``appCallback`` is a function that should be called with ``self`` as an
     argument when ``main`` has completed.
+
+    :param css: Whether to use a custom css file. Must be located at 'res/style.css'
     """
-    # The css file must be named 'style.css' and it also must
-    # be in a folder named 'res'
-    def __init__(self, *args, css=False, **kwargs):
+    def __init__(self, css=False, *args, **kwargs):
         self.eventQueue = queue.Queue()
         if css:
-            res_path = os.path.join(os.getcwd(),'res')
-            super(Dashboard, self).__init__(*args, static_file_path={'res':res_path},**kwargs)
+            res_path = os.path.join(os.getcwd(), 'res')
+            super(Dashboard, self).__init__(*args, static_file_path={'res':res_path}, **kwargs)
         else:
-            super(Dashboard,self).__init__(*args,**kwargs)
+            super(Dashboard,self).__init__(*args, **kwargs)
 
     def clearEvents(self):
         """
