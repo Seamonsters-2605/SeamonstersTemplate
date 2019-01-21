@@ -1,3 +1,4 @@
+import os
 import sys
 import queue
 import threading
@@ -66,6 +67,20 @@ def startDashboard(robot, dashboardClass):
     thread.start()
 
 
+def queuedDashboardEvent(eventF):
+    """
+    Given a function ``eventF`` which takes any number of arguments,
+    returns a new function which will add ``eventF`` and given arguments
+    to the Dashboard event queue, to be called later.
+    """
+    def queueTheEvent(self, *args, **kwargs):
+        # self is the robot
+        def doTheEvent():
+            print("Event:", eventF.__name__)
+            eventF(self, *args, **kwargs)
+        self.app.eventQueue.put(doTheEvent)
+    return queueTheEvent
+
 class Dashboard(remi.App):
     """
     Adds some utilities for building robot dashboards to ``remi.App``.
@@ -74,24 +89,16 @@ class Dashboard(remi.App):
     ``appCallback`` as arguments, where ``robot`` is the robot object and
     ``appCallback`` is a function that should be called with ``self`` as an
     argument when ``main`` has completed.
+
+    :param css: Whether to use a custom css file. Must be located at 'res/style.css'
     """
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self, css=False, *args, **kwargs):
         self.eventQueue = queue.Queue()
-        super(Dashboard, self).__init__(*args, **kwargs)
-
-    def queuedEvent(self, eventF):
-        """
-        Given a function ``eventF`` which takes any number of arguments,
-        returns a new function which will add ``eventF`` and given arguments
-        to the Dashboard event queue, to be called later.
-        """
-        def queueTheEvent(*args, **kwargs):
-            def doTheEvent():
-                print("Event:", eventF.__name__)
-                eventF(*args, **kwargs)
-            self.eventQueue.put(doTheEvent)
-        return queueTheEvent
+        if css:
+            res_path = os.path.join(os.getcwd(), 'res')
+            super(Dashboard, self).__init__(*args, static_file_path={'res':res_path}, **kwargs)
+        else:
+            super(Dashboard,self).__init__(*args, **kwargs)
 
     def clearEvents(self):
         """
