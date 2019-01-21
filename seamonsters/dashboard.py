@@ -67,6 +67,20 @@ def startDashboard(robot, dashboardClass):
     thread.start()
 
 
+def queuedDashboardEvent(eventF):
+    """
+    Given a function ``eventF`` which takes any number of arguments,
+    returns a new function which will add ``eventF`` and given arguments
+    to the Dashboard event queue, to be called later.
+    """
+    def queueTheEvent(self, *args, **kwargs):
+        # self is the robot
+        def doTheEvent():
+            print("Event:", eventF.__name__)
+            eventF(self, *args, **kwargs)
+        self.app.eventQueue.put(doTheEvent)
+    return queueTheEvent
+
 class Dashboard(remi.App):
     """
     Adds some utilities for building robot dashboards to ``remi.App``.
@@ -85,20 +99,6 @@ class Dashboard(remi.App):
             super(Dashboard, self).__init__(*args, static_file_path={'res':res_path},**kwargs)
         else:
             super(Dashboard,self).__init__(*args,**kwargs)
-
-    @staticmethod
-    def queuedEvent(eventF):
-        """
-        Given a function ``eventF`` which takes any number of arguments,
-        returns a new function which will add ``eventF`` and given arguments
-        to the Dashboard event queue, to be called later.
-        """
-        def queueTheEvent(self,*args, **kwargs):
-            def doTheEvent():
-                print("Event:", eventF.__name__)
-                eventF(self,*args, **kwargs)
-            self.eventQueue.put(doTheEvent)
-        return queueTheEvent
 
     def clearEvents(self):
         """
