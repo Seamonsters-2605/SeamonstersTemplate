@@ -312,7 +312,7 @@ class SwerveWheel(Wheel):
     rotates using a TalonSRX.
     """
 
-    def __init__(self, angledWheel, steerMotor, encoderCountsPerRev,
+    def __init__(self, angledWheel, steerMotor, encoderCountsPerRev, offsetX = 0, offsetY = 0,
                  reverseSteerMotor=False):
         """
         ``zeroSteering()`` is called in __init__.
@@ -333,6 +333,8 @@ class SwerveWheel(Wheel):
         self.reverseSteerMotor = reverseSteerMotor
         self.zeroSteering()
         self._targetDirection = angledWheel.angle
+        self.offsetX = offsetX
+        self.offsetY = offsetY
 
     def zeroSteering(self):
         """
@@ -365,6 +367,8 @@ class SwerveWheel(Wheel):
         #print(math.degrees(currentAngle), math.degrees(self._targetDirection))
         self._setSteering(self._targetDirection)
         self.angledWheel.angle = currentAngle
+        self.angledWheel.x = self.x + math.cos(currentAngle) * self.offsetX - math.sin(currentAngle) * self.offsetY
+        self.angledWheel.y = self.y + math.sin(currentAngle) * self.offsetX + math.cos(currentAngle) * self.offsetY
         self.angledWheel.drive(magnitude, direction)
 
     def stop(self):
