@@ -101,36 +101,6 @@ class AccelerationFilterDrive(DriveInterface):
         return newMagnitude, newDirection, newTurn
 
 
-class FieldOrientedDrive(DriveInterface):
-    """
-    Wraps another drive interface, and provides field orientation.
-    """
-
-    def __init__(self, interface, ahrs, offset=0.0):
-        """
-        Create the FieldOrientedDrive with another DriveInterface to wrap and a
-        ``AHRS``. If given, the offset is a value in radians to add to all
-        direction inputs.
-        """
-        self.interface = interface
-        self.ahrs = ahrs
-        self.origin = 0.0
-        self.offset = offset
-
-    def zero(self):
-        self.origin = self._getYawRadians()
-
-    def drive(self, magnitude, direction, turn):
-        direction -= self.getRobotOffset()
-        return self.interface.drive(magnitude, direction, turn)
-
-    def _getYawRadians(self):
-        return - math.radians(self.ahrs.getAngle())
-
-    def getRobotOffset(self):
-        return self._getYawRadians() - self.origin - self.offset
-
-
 class DynamicPIDDrive(DriveInterface):
     """
     Wraps another drive interface. Based on the driving magnitude and turn
