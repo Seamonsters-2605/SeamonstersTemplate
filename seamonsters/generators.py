@@ -186,6 +186,13 @@ class StateMachine:
             self.stateStack.pop()
         self._cancelState = True
 
+    def replace(self, state):
+        """
+        Cancel the current running state and replace it with a new one.
+        """
+        self.pop()
+        self.push(state)
+
     def _watchForCancelGenerator(self):
         while not self._cancelState:
             yield
