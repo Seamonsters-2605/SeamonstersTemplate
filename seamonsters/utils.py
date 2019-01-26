@@ -1,5 +1,20 @@
+import math
 import sys
 import time
+
+def circleDistance(a, b, circle=math.pi*2):
+    """
+    Returns the shortest arc length between two points on a circle. Positive if
+    direction is positive from a to b.
+
+    :param circle: Total arc length of the circle. Optional, defaults to 2 pi.
+    """
+    diff = b - a
+    while diff > circle / 2:
+        diff -= circle
+    while diff < -circle / 2:
+        diff += circle
+    return diff
 
 def setSimulatedDrivetrain(drivetrain):
     if sys.argv[1] == 'sim':

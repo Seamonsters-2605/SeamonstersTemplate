@@ -139,6 +139,8 @@ class PhysicsEngine:
         self.visionSim = VisionSim([visionTarget], 60, 2, 50)
         hal_data['alliance_station'] = self.allianceStation
 
+        self._drivePositionState = None
+
     # special function called by pyfrc to update the robot state
     def update_sim(self, hal_data, time, elapsed):
         global simulatedDrivetrain
@@ -146,10 +148,15 @@ class PhysicsEngine:
             simTalon.update(hal_data)
 
         if simulatedDrivetrain is not None:
-            robotMag, robotDir, robotTurn = simulatedDrivetrain.getRobotMovement()
+            #robotMag, robotDir, robotTurn = simulatedDrivetrain.getRobotMovement()
+            robotMag, robotDir, robotTurn, self._drivePositionState = \
+                simulatedDrivetrain.getRobotPositionOffset(self._drivePositionState)
             xVel = robotMag * math.cos(robotDir)
             yVel = robotMag * math.sin(robotDir)
-            self.physicsController.vector_drive(xVel, yVel, -robotTurn, elapsed)
+            #self.physicsController.vector_drive(xVel, yVel, -robotTurn, elapsed)
+            # HACKS: set the time diff to 1 to move by absolute position
+            # increments instead of velocities
+            self.physicsController.vector_drive(xVel, yVel, -robotTurn, 1)
         
         if self.ahrs != None:
             self.ahrs.angle = math.degrees(self.physicsController.angle)
