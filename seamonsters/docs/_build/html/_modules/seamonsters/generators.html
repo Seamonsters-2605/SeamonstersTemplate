@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -34,7 +35,6 @@
   <h1>Source code for seamonsters.generators</h1><div class="highlight"><pre>
 <span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;seamonsters&quot;</span>
 
-<span class="kn">import</span> <span class="nn">types</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 
 <span class="k">class</span> <span class="nc">ParallelSignal</span><span class="p">:</span>
@@ -146,12 +146,92 @@
     <span class="k">yield from</span> <span class="n">iterable</span>
     <span class="k">return</span> <span class="n">value</span>
 
-<span class="k">def</span> <span class="nf">stopAllWhenDone</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">stopAllWhenDone</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If run in a ``sea.parallel`` block, when the iterable completes all</span>
 <span class="sd">    parallel commands will be stopped.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">returnValue</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">StopParallelSignal</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="k">yield from</span> <span class="n">iterable</span>
+    <span class="k">return</span> <span class="n">StopParallelSignal</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">State</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An action to run in a StateMachine.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="State.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.State.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param function: A function with no arguments that returns a generator.</span>
+<span class="sd">            If the generator returns another State, that State will be pushed</span>
+<span class="sd">            to the stack. Otherwise the State will be popped when it completes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span></div>
+
+<span class="n">IDLE_STATE</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">forever</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">StateMachine</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of a Pushdown Automaton. Has one state always running at a</span>
+<span class="sd">    time, and keeps track of a stack of states.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="StateMachine.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.StateMachine.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stateStack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cancelState</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="StateMachine.currentState"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.StateMachine.currentState">[docs]</a>    <span class="k">def</span> <span class="nf">currentState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current running state. If the state stack is empty, IDLE_STATE</span>
+<span class="sd">        is the current state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stateStack</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">IDLE_STATE</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stateStack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="StateMachine.updateGenerator"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.StateMachine.updateGenerator">[docs]</a>    <span class="k">def</span> <span class="nf">updateGenerator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generator to update the state machine.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cancelState</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">yield from</span> <span class="n">parallel</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_runCurrentState</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_watchForCancelGenerator</span><span class="p">())</span></div>
+
+    <span class="k">def</span> <span class="nf">_runCurrentState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentState</span><span class="p">()</span><span class="o">.</span><span class="n">function</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">State</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stateStack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stateStack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">StopParallelSignal</span><span class="p">()</span>
+
+<div class="viewcode-block" id="StateMachine.push"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.StateMachine.push">[docs]</a>    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cancel the current running State and push a new State to the stack.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stateStack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cancelState</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="StateMachine.pop"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.StateMachine.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cancel the current running State and pop it. Run the State below it on</span>
+<span class="sd">        the stack.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stateStack</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stateStack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cancelState</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="StateMachine.replace"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.StateMachine.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cancel the current running state and replace it with a new one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_watchForCancelGenerator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cancelState</span><span class="p">:</span>
+            <span class="k">yield</span>
+        <span class="k">return</span> <span class="n">StopParallelSignal</span><span class="p">()</span>
 </pre></div>
 
           </div>
@@ -210,7 +290,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

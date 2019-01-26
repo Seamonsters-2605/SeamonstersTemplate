@@ -14,6 +14,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -48,6 +49,7 @@
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
@@ -80,8 +82,6 @@
 </li>
         <li><a href="seamonsters.html#seamonsters.DynamicPIDDrive.__init__">(seamonsters.DynamicPIDDrive method)</a>
 </li>
-        <li><a href="seamonsters.html#seamonsters.FieldOrientedDrive.__init__">(seamonsters.FieldOrientedDrive method)</a>
-</li>
         <li><a href="seamonsters.html#seamonsters.Gamepad.__init__">(seamonsters.Gamepad method)</a>
 </li>
         <li><a href="seamonsters.html#seamonsters.GeneratorBot.__init__">(seamonsters.GeneratorBot method)</a>
@@ -91,6 +91,10 @@
         <li><a href="seamonsters.html#seamonsters.MultiDrive.__init__">(seamonsters.MultiDrive method)</a>
 </li>
         <li><a href="seamonsters.html#seamonsters.PathFollower.__init__">(seamonsters.PathFollower method)</a>
+</li>
+        <li><a href="seamonsters.html#seamonsters.State.__init__">(seamonsters.State method)</a>
+</li>
+        <li><a href="seamonsters.html#seamonsters.StateMachine.__init__">(seamonsters.StateMachine method)</a>
 </li>
         <li><a href="seamonsters.html#seamonsters.StopParallelSignal.__init__">(seamonsters.StopParallelSignal method)</a>
 </li>
@@ -147,9 +151,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.CasterWheel">CasterWheel (class in seamonsters)</a>
 </li>
+      <li><a href="seamonsters.html#seamonsters.circleDistance">circleDistance() (in module seamonsters)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.Dashboard.clearEvents">clearEvents() (seamonsters.Dashboard method)</a>
+</li>
+      <li><a href="seamonsters.html#seamonsters.StateMachine.currentState">currentState() (seamonsters.StateMachine method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -175,8 +183,6 @@
         <li><a href="seamonsters.html#seamonsters.DriveInterface.drive">(seamonsters.DriveInterface method)</a>
 </li>
         <li><a href="seamonsters.html#seamonsters.DynamicPIDDrive.drive">(seamonsters.DynamicPIDDrive method)</a>
-</li>
-        <li><a href="seamonsters.html#seamonsters.FieldOrientedDrive.drive">(seamonsters.FieldOrientedDrive method)</a>
 </li>
         <li><a href="seamonsters.html#seamonsters.MecanumWheel.drive">(seamonsters.MecanumWheel method)</a>
 </li>
@@ -217,12 +223,10 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="seamonsters.html#seamonsters.FieldOrientedDrive">FieldOrientedDrive (class in seamonsters)</a>
+      <li><a href="seamonsters.html#seamonsters.PathFollower.followPathData">followPathData() (seamonsters.PathFollower method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="seamonsters.html#seamonsters.PathFollower.followPathData">followPathData() (seamonsters.PathFollower method)</a>
-</li>
       <li><a href="seamonsters.html#seamonsters.forever">forever() (in module seamonsters)</a>
 </li>
   </ul></td>
@@ -281,6 +285,8 @@
         <li><a href="seamonsters.html#seamonsters.Wheel.getRealDirection">(seamonsters.Wheel method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.AngledWheel.getRealPosition">getRealPosition() (seamonsters.AngledWheel method)</a>
 
       <ul>
@@ -293,8 +299,6 @@
         <li><a href="seamonsters.html#seamonsters.Wheel.getRealPosition">(seamonsters.Wheel method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.AngledWheel.getRealVelocity">getRealVelocity() (seamonsters.AngledWheel method)</a>
 
       <ul>
@@ -310,8 +314,6 @@
       <li><a href="seamonsters.html#seamonsters.Gamepad.getRMagnitude">getRMagnitude() (seamonsters.Gamepad method)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.SuperHolonomicDrive.getRobotMovement">getRobotMovement() (seamonsters.SuperHolonomicDrive method)</a>
-</li>
-      <li><a href="seamonsters.html#seamonsters.FieldOrientedDrive.getRobotOffset">getRobotOffset() (seamonsters.FieldOrientedDrive method)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.SuperHolonomicDrive.getRobotPositionOffset">getRobotPositionOffset() (seamonsters.SuperHolonomicDrive method)</a>
 </li>
@@ -406,6 +408,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="seamonsters.html#seamonsters.PathFollower.NAVX_LAG">NAVX_LAG (seamonsters.PathFollower attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -419,11 +429,15 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.parallel">parallel() (in module seamonsters)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.ParallelSignal">ParallelSignal (class in seamonsters)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.PathFollower">PathFollower (class in seamonsters)</a>
+</li>
+      <li><a href="seamonsters.html#seamonsters.StateMachine.pop">pop() (seamonsters.StateMachine method)</a>
+</li>
+      <li><a href="seamonsters.html#seamonsters.StateMachine.push">push() (seamonsters.StateMachine method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -431,7 +445,7 @@
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="seamonsters.html#seamonsters.Dashboard.queuedEvent">queuedEvent() (seamonsters.Dashboard method)</a>
+      <li><a href="seamonsters.html#seamonsters.queuedDashboardEvent">queuedDashboardEvent() (in module seamonsters)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -442,6 +456,8 @@
       <li><a href="seamonsters.html#seamonsters.Gamepad.RB">RB (seamonsters.Gamepad attribute)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.readDataFile">readDataFile() (in module seamonsters)</a>
+</li>
+      <li><a href="seamonsters.html#seamonsters.StateMachine.replace">replace() (seamonsters.StateMachine method)</a>
 </li>
       <li><a href="seamonsters.html#seamonsters.TimingMonitor.reset">reset() (seamonsters.TimingMonitor method)</a>
 </li>
@@ -489,10 +505,14 @@
 </li>
       <li><a href="seamonsters.html#seamonsters.startDashboard">startDashboard() (in module seamonsters)</a>
 </li>
-      <li><a href="seamonsters.html#seamonsters.TimingMonitor.step">step() (seamonsters.TimingMonitor method)</a>
+      <li><a href="seamonsters.html#seamonsters.State">State (class in seamonsters)</a>
+</li>
+      <li><a href="seamonsters.html#seamonsters.StateMachine">StateMachine (class in seamonsters)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="seamonsters.html#seamonsters.TimingMonitor.step">step() (seamonsters.TimingMonitor method)</a>
+</li>
       <li><a href="seamonsters.html#seamonsters.AngledWheel.stop">stop() (seamonsters.AngledWheel method)</a>
 
       <ul>
@@ -549,15 +569,21 @@
 </li>
       <li><a href="seamonsters.html#seamonsters.Gamepad.UP">UP (seamonsters.Gamepad attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.DynamicAxis.update">update() (seamonsters.DynamicAxis method)</a>
 
       <ul>
         <li><a href="seamonsters.html#seamonsters.MultiDrive.update">(seamonsters.MultiDrive method)</a>
 </li>
       </ul></li>
-      <li><a href="seamonsters.html#seamonsters.TimingMonitor.updateGenerator">updateGenerator() (seamonsters.TimingMonitor method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="seamonsters.html#seamonsters.StateMachine.updateGenerator">updateGenerator() (seamonsters.StateMachine method)</a>
+
+      <ul>
+        <li><a href="seamonsters.html#seamonsters.TimingMonitor.updateGenerator">(seamonsters.TimingMonitor method)</a>
+</li>
+      </ul></li>
+      <li><a href="seamonsters.html#seamonsters.PathFollower.updateRobotPosition">updateRobotPosition() (seamonsters.PathFollower method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -604,10 +630,6 @@
 
 <h2 id="Z">Z</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="seamonsters.html#seamonsters.FieldOrientedDrive.zero">zero() (seamonsters.FieldOrientedDrive method)</a>
-</li>
-  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="seamonsters.html#seamonsters.SwerveWheel.zeroSteering">zeroSteering() (seamonsters.SwerveWheel method)</a>
 </li>
@@ -668,7 +690,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -34,21 +35,13 @@
   <h1>Source code for seamonsters.superHolonomicDrive</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">ctre</span>
-<span class="kn">import</span> <span class="nn">seamonsters.drive</span>
+<span class="kn">import</span> <span class="nn">seamonsters</span> <span class="k">as</span> <span class="nn">sea</span>
 
 <span class="n">TWO_PI</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span>
 
 <span class="n">MAX_POSITION_OCCURENCE</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">CHECK_ENCODER_CYCLE</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="c1"># if circle = math.pi*2, returns the smallest angle between two directions</span>
-<span class="c1"># on a circle</span>
-<span class="k">def</span> <span class="nf">_circleDistance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">circle</span><span class="p">):</span>
-    <span class="n">diff</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span>
-    <span class="k">while</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">circle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">diff</span> <span class="o">-=</span> <span class="n">circle</span>
-    <span class="k">while</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">circle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">diff</span> <span class="o">+=</span> <span class="n">circle</span>
-    <span class="k">return</span> <span class="n">diff</span>
+
 
 <span class="k">def</span> <span class="nf">_iteratePairs</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
@@ -354,7 +347,7 @@
 <span class="sd">    rotates using a TalonSRX.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SwerveWheel.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angledWheel</span><span class="p">,</span> <span class="n">steerMotor</span><span class="p">,</span> <span class="n">encoderCountsPerRev</span><span class="p">,</span>
+<div class="viewcode-block" id="SwerveWheel.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angledWheel</span><span class="p">,</span> <span class="n">steerMotor</span><span class="p">,</span> <span class="n">encoderCountsPerRev</span><span class="p">,</span> <span class="n">offsetX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">offsetY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                  <span class="n">reverseSteerMotor</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        ``zeroSteering()`` is called in __init__.</span>
@@ -374,7 +367,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerRev</span> <span class="o">=</span> <span class="n">encoderCountsPerRev</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reverseSteerMotor</span> <span class="o">=</span> <span class="n">reverseSteerMotor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zeroSteering</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_targetDirection</span> <span class="o">=</span> <span class="n">angledWheel</span><span class="o">.</span><span class="n">angle</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_targetDirection</span> <span class="o">=</span> <span class="n">angledWheel</span><span class="o">.</span><span class="n">angle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offsetX</span> <span class="o">=</span> <span class="n">offsetX</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offsetY</span> <span class="o">=</span> <span class="n">offsetY</span></div>
 
 <div class="viewcode-block" id="SwerveWheel.zeroSteering"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.zeroSteering">[docs]</a>    <span class="k">def</span> <span class="nf">zeroSteering</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -402,11 +397,13 @@
 <div class="viewcode-block" id="SwerveWheel.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
         <span class="n">currentAngle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getCurrentSteeringAngle</span><span class="p">()</span>
         <span class="c1"># steering should never rotate more than 90 degrees from any position</span>
-        <span class="n">angleDiff</span> <span class="o">=</span> <span class="n">_circleDistance</span><span class="p">(</span><span class="n">currentAngle</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="n">angleDiff</span> <span class="o">=</span> <span class="n">sea</span><span class="o">.</span><span class="n">circleDistance</span><span class="p">(</span><span class="n">currentAngle</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_targetDirection</span> <span class="o">=</span> <span class="n">currentAngle</span> <span class="o">+</span> <span class="n">angleDiff</span>
         <span class="c1">#print(math.degrees(currentAngle), math.degrees(self._targetDirection))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setSteering</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_targetDirection</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="n">currentAngle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">currentAngle</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">offsetX</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">currentAngle</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">offsetY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">currentAngle</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">offsetX</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">currentAngle</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">offsetY</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SwerveWheel.stop"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -431,7 +428,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">getRealVelocity</span><span class="p">()</span></div>
 
 
-<span class="k">class</span> <span class="nc">SuperHolonomicDrive</span><span class="p">(</span><span class="n">seamonsters</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">DriveInterface</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SuperHolonomicDrive</span><span class="p">:</span>
 
 <div class="viewcode-block" id="SuperHolonomicDrive.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span> <span class="o">=</span> <span class="p">[]</span></div>
@@ -640,7 +637,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -32,8 +33,23 @@
           <div class="body" role="main">
             
   <h1>Source code for seamonsters.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">def</span> <span class="nf">circleDistance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">circle</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the shortest arc length between two points on a circle. Positive if</span>
+<span class="sd">    direction is positive from a to b.</span>
+
+<span class="sd">    :param circle: Total arc length of the circle. Optional, defaults to 2 pi.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span>
+    <span class="k">while</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">circle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">diff</span> <span class="o">-=</span> <span class="n">circle</span>
+    <span class="k">while</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">circle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">diff</span> <span class="o">+=</span> <span class="n">circle</span>
+    <span class="k">return</span> <span class="n">diff</span>
 
 <span class="k">def</span> <span class="nf">setSimulatedDrivetrain</span><span class="p">(</span><span class="n">drivetrain</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sim&#39;</span><span class="p">:</span>
@@ -138,7 +154,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

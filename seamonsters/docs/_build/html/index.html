@@ -13,6 +13,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -56,7 +57,7 @@ and RobotPy’s robot simulator, along with a custom dashboard.</p>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.CasterWheel" title="seamonsters.CasterWheel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.CasterWheel</span></code></a>(x,&nbsp;y)</td>
 <td>Doesn’t drive a motor, only stores its drive parameters and echoes them back for getRealDirection and getRealVelocity.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.Dashboard" title="seamonsters.Dashboard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.Dashboard</span></code></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.Dashboard" title="seamonsters.Dashboard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.Dashboard</span></code></a>(*args[,&nbsp;css])</td>
 <td>Adds some utilities for building robot dashboards to <code class="docutils literal notranslate"><span class="pre">remi.App</span></code>.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.DriveInterface" title="seamonsters.DriveInterface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.DriveInterface</span></code></a></td>
@@ -68,14 +69,14 @@ and RobotPy’s robot simulator, along with a custom dashboard.</p>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.DynamicPIDDrive" title="seamonsters.DynamicPIDDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.DynamicPIDDrive</span></code></a>(interface,&nbsp;…)</td>
 <td>Wraps another drive interface.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.FieldOrientedDrive" title="seamonsters.FieldOrientedDrive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.FieldOrientedDrive</span></code></a>(interface,&nbsp;ahrs)</td>
-<td>Wraps another drive interface, and provides field orientation.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.Gamepad" title="seamonsters.Gamepad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.Gamepad</span></code></a>(port)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.Gamepad" title="seamonsters.Gamepad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.Gamepad</span></code></a>(port)</td>
 <td>An extended Joystick specifically designed for Logitech gamepads.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.GeneratorBot" title="seamonsters.GeneratorBot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.GeneratorBot</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.GeneratorBot" title="seamonsters.GeneratorBot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.GeneratorBot</span></code></a>()</td>
 <td>A robot which runs generators throughout the cycles of autonomous, teleop, and test mode.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.IDLE_STATE</span></code></td>
+<td>An action to run in a StateMachine.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.IterativeRobotInstance" title="seamonsters.IterativeRobotInstance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.IterativeRobotInstance</span></code></a>(robotType)</td>
 <td>Allows an “instance” of an IterativeRobot to be created without connecting to HAL.</td>
@@ -91,6 +92,12 @@ and RobotPy’s robot simulator, along with a custom dashboard.</p>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.PathFollower" title="seamonsters.PathFollower"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.PathFollower</span></code></a>(drive[,&nbsp;ahrs])</td>
 <td>Controls a SuperHolonomicDrive to follow paths on the field.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.State" title="seamonsters.State"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.State</span></code></a>(function)</td>
+<td>An action to run in a StateMachine.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.StateMachine" title="seamonsters.StateMachine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.StateMachine</span></code></a>()</td>
+<td>Implementation of a Pushdown Automaton.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.StopParallelSignal" title="seamonsters.StopParallelSignal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.StopParallelSignal</span></code></a>([value])</td>
 <td>Value to signal that a group of parallel commands should be stopped.</td>
@@ -113,20 +120,26 @@ and RobotPy’s robot simulator, along with a custom dashboard.</p>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.Wheel</span></code></a>(x,&nbsp;y)</td>
 <td>Interface for wheels.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.deadZone" title="seamonsters.deadZone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.deadZone</span></code></a>(value[,&nbsp;deadZone,&nbsp;maxValue])</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.circleDistance" title="seamonsters.circleDistance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.circleDistance</span></code></a>(a,&nbsp;b[,&nbsp;circle])</td>
+<td>Returns the shortest arc length between two points on a circle.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.deadZone" title="seamonsters.deadZone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.deadZone</span></code></a>(value[,&nbsp;deadZone,&nbsp;maxValue])</td>
 <td>Add a dead-zone to the number.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.ensureTrue" title="seamonsters.ensureTrue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.ensureTrue</span></code></a>(iterable,&nbsp;requiredCount)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.ensureTrue" title="seamonsters.ensureTrue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.ensureTrue</span></code></a>(iterable,&nbsp;requiredCount)</td>
 <td>Wait until the iterable yields True for a certain number of consecutive iterations before finishing.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.forever" title="seamonsters.forever"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.forever</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.forever" title="seamonsters.forever"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.forever</span></code></a>()</td>
 <td>Iterate forever.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.hBoxWith" title="seamonsters.hBoxWith"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.hBoxWith</span></code></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.hBoxWith" title="seamonsters.hBoxWith"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.hBoxWith</span></code></a>(*args,&nbsp;**kwargs)</td>
 <td>Construct a REMI HBox with the given keyword arguments, and add all of the given widgets to it.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.parallel" title="seamonsters.parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.parallel</span></code></a>(*iterables)</td>
+<tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.parallel" title="seamonsters.parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.parallel</span></code></a>(*iterables)</td>
 <td>Run a group of iterables in parallel.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.queuedDashboardEvent" title="seamonsters.queuedDashboardEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.queuedDashboardEvent</span></code></a>(eventF)</td>
+<td>Given a function <code class="docutils literal notranslate"><span class="pre">eventF</span></code> which takes any number of arguments, returns a new function which will add <code class="docutils literal notranslate"><span class="pre">eventF</span></code> and given arguments to the Dashboard event queue, to be called later.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.readDataFile" title="seamonsters.readDataFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.readDataFile</span></code></a>(filename)</td>
 <td></td>
@@ -143,7 +156,7 @@ and RobotPy’s robot simulator, along with a custom dashboard.</p>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.startDashboard" title="seamonsters.startDashboard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.startDashboard</span></code></a>(robot,&nbsp;dashboardClass)</td>
 <td>Start the dashboard in a separate thread.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.stopAllWhenDone" title="seamonsters.stopAllWhenDone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.stopAllWhenDone</span></code></a>(iterable[,&nbsp;value])</td>
+<tr class="row-even"><td><a class="reference internal" href="seamonsters.html#seamonsters.stopAllWhenDone" title="seamonsters.stopAllWhenDone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.stopAllWhenDone</span></code></a>(iterable)</td>
 <td>If run in a <code class="docutils literal notranslate"><span class="pre">sea.parallel</span></code> block, when the iterable completes all parallel commands will be stopped.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="seamonsters.html#seamonsters.timeLimit" title="seamonsters.timeLimit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seamonsters.timeLimit</span></code></a>(iterable,&nbsp;time)</td>
@@ -222,7 +235,7 @@ and RobotPy’s robot simulator, along with a custom dashboard.</p>
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

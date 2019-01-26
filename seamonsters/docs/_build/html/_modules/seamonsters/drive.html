@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -133,36 +134,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">previousY</span> <span class="o">=</span> <span class="n">newY</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">previousTurn</span> <span class="o">=</span> <span class="n">newTurn</span>
         <span class="k">return</span> <span class="n">newMagnitude</span><span class="p">,</span> <span class="n">newDirection</span><span class="p">,</span> <span class="n">newTurn</span>
-
-
-<span class="k">class</span> <span class="nc">FieldOrientedDrive</span><span class="p">(</span><span class="n">DriveInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Wraps another drive interface, and provides field orientation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="FieldOrientedDrive.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.FieldOrientedDrive.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">,</span> <span class="n">ahrs</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create the FieldOrientedDrive with another DriveInterface to wrap and a</span>
-<span class="sd">        ``AHRS``. If given, the offset is a value in radians to add to all</span>
-<span class="sd">        direction inputs.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ahrs</span> <span class="o">=</span> <span class="n">ahrs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">origin</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span></div>
-
-<div class="viewcode-block" id="FieldOrientedDrive.zero"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.FieldOrientedDrive.zero">[docs]</a>    <span class="k">def</span> <span class="nf">zero</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">origin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getYawRadians</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="FieldOrientedDrive.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.FieldOrientedDrive.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">):</span>
-        <span class="n">direction</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRobotOffset</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span></div>
-
-    <span class="k">def</span> <span class="nf">_getYawRadians</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ahrs</span><span class="o">.</span><span class="n">getAngle</span><span class="p">())</span>
-
-<div class="viewcode-block" id="FieldOrientedDrive.getRobotOffset"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.FieldOrientedDrive.getRobotOffset">[docs]</a>    <span class="k">def</span> <span class="nf">getRobotOffset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getYawRadians</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span></div>
 
 
 <span class="k">class</span> <span class="nc">DynamicPIDDrive</span><span class="p">(</span><span class="n">DriveInterface</span><span class="p">):</span>
@@ -333,7 +304,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

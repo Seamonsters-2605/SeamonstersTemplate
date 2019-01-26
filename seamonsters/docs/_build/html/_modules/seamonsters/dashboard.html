@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -32,7 +33,8 @@
           <div class="body" role="main">
             
   <h1>Source code for seamonsters.dashboard</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">queue</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">remi</span>
@@ -100,6 +102,20 @@
     <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
 
+<span class="k">def</span> <span class="nf">queuedDashboardEvent</span><span class="p">(</span><span class="n">eventF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a function ``eventF`` which takes any number of arguments,</span>
+<span class="sd">    returns a new function which will add ``eventF`` and given arguments</span>
+<span class="sd">    to the Dashboard event queue, to be called later.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">queueTheEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># self is the robot</span>
+        <span class="k">def</span> <span class="nf">doTheEvent</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Event:&quot;</span><span class="p">,</span> <span class="n">eventF</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="n">eventF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">eventQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">doTheEvent</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">queueTheEvent</span>
+
 <span class="k">class</span> <span class="nc">Dashboard</span><span class="p">(</span><span class="n">remi</span><span class="o">.</span><span class="n">App</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Adds some utilities for building robot dashboards to ``remi.App``.</span>
@@ -108,24 +124,16 @@
 <span class="sd">    ``appCallback`` as arguments, where ``robot`` is the robot object and</span>
 <span class="sd">    ``appCallback`` is a function that should be called with ``self`` as an</span>
 <span class="sd">    argument when ``main`` has completed.</span>
+
+<span class="sd">    :param css: Whether to use a custom css file. Must be located at &#39;res/style.css&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="Dashboard.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Dashboard.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dashboard.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Dashboard.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">css</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Dashboard</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="Dashboard.queuedEvent"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Dashboard.queuedEvent">[docs]</a>    <span class="k">def</span> <span class="nf">queuedEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eventF</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Given a function ``eventF`` which takes any number of arguments,</span>
-<span class="sd">        returns a new function which will add ``eventF`` and given arguments</span>
-<span class="sd">        to the Dashboard event queue, to be called later.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">queueTheEvent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="k">def</span> <span class="nf">doTheEvent</span><span class="p">():</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Event:&quot;</span><span class="p">,</span> <span class="n">eventF</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-                <span class="n">eventF</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">doTheEvent</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">queueTheEvent</span></div>
+        <span class="k">if</span> <span class="n">css</span><span class="p">:</span>
+            <span class="n">res_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;res&#39;</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Dashboard</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">static_file_path</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;res&#39;</span><span class="p">:</span><span class="n">res_path</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Dashboard</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Dashboard.clearEvents"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Dashboard.clearEvents">[docs]</a>    <span class="k">def</span> <span class="nf">clearEvents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -202,7 +210,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

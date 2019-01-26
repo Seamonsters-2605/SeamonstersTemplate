@@ -13,6 +13,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -375,16 +376,24 @@ zero, the wheel will attempt to orient in the given direction</li>
 
 <dl class="class">
 <dt id="seamonsters.Dashboard">
-<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">Dashboard</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.Dashboard" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">Dashboard</code><span class="sig-paren">(</span><em>*args</em>, <em>css=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.Dashboard" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">remi.server.App</span></code></p>
 <p>Adds some utilities for building robot dashboards to <code class="docutils literal notranslate"><span class="pre">remi.App</span></code>.</p>
 <p>A dashboard class must have a <code class="docutils literal notranslate"><span class="pre">main</span></code> function which takes <code class="docutils literal notranslate"><span class="pre">robot</span></code> and
 <code class="docutils literal notranslate"><span class="pre">appCallback</span></code> as arguments, where <code class="docutils literal notranslate"><span class="pre">robot</span></code> is the robot object and
 <code class="docutils literal notranslate"><span class="pre">appCallback</span></code> is a function that should be called with <code class="docutils literal notranslate"><span class="pre">self</span></code> as an
 argument when <code class="docutils literal notranslate"><span class="pre">main</span></code> has completed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>css</strong> – Whether to use a custom css file. Must be located at ‘res/style.css’</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="seamonsters.Dashboard.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#Dashboard.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Dashboard.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>css=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#Dashboard.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Dashboard.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -401,14 +410,6 @@ while the robot was disabled.</p>
 <code class="descname">doEvents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#Dashboard.doEvents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Dashboard.doEvents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute all events in the event queue and clear the queue. This should
 be called continuously during teleop.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.Dashboard.queuedEvent">
-<code class="descname">queuedEvent</code><span class="sig-paren">(</span><em>eventF</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/dashboard.html#Dashboard.queuedEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Dashboard.queuedEvent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a function <code class="docutils literal notranslate"><span class="pre">eventF</span></code> which takes any number of arguments,
-returns a new function which will add <code class="docutils literal notranslate"><span class="pre">eventF</span></code> and given arguments
-to the Dashboard event queue, to be called later.</p>
 </dd></dl>
 
 </dd></dl>
@@ -511,54 +512,6 @@ input magnitude and turn components</p>
 </tbody>
 </table>
 </dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="seamonsters.FieldOrientedDrive">
-<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">FieldOrientedDrive</code><span class="sig-paren">(</span><em>interface</em>, <em>ahrs</em>, <em>offset=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.FieldOrientedDrive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#seamonsters.DriveInterface" title="seamonsters.DriveInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.DriveInterface</span></code></a></p>
-<p>Wraps another drive interface, and provides field orientation.</p>
-<dl class="method">
-<dt id="seamonsters.FieldOrientedDrive.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>interface</em>, <em>ahrs</em>, <em>offset=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#FieldOrientedDrive.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.FieldOrientedDrive.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create the FieldOrientedDrive with another DriveInterface to wrap and a
-<code class="docutils literal notranslate"><span class="pre">AHRS</span></code>. If given, the offset is a value in radians to add to all
-direction inputs.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.FieldOrientedDrive.drive">
-<code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#FieldOrientedDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.FieldOrientedDrive.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>magnitude</strong> – feet per second</li>
-<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
-<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.FieldOrientedDrive.getRobotOffset">
-<code class="descname">getRobotOffset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#FieldOrientedDrive.getRobotOffset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.FieldOrientedDrive.getRobotOffset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.FieldOrientedDrive.zero">
-<code class="descname">zero</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/drive.html#FieldOrientedDrive.zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.FieldOrientedDrive.zero" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -1053,6 +1006,11 @@ trigger an action on the group.</p>
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">PathFollower</code><span class="sig-paren">(</span><em>drive</em>, <em>ahrs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.PathFollower" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Controls a SuperHolonomicDrive to follow paths on the field.</p>
+<dl class="attribute">
+<dt id="seamonsters.PathFollower.NAVX_LAG">
+<code class="descname">NAVX_LAG</code><em class="property"> = 7</em><a class="headerlink" href="#seamonsters.PathFollower.NAVX_LAG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="seamonsters.PathFollower.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>drive</em>, <em>ahrs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1104,11 +1062,84 @@ tuples returned by <code class="docutils literal notranslate"><span class="pre">
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="seamonsters.PathFollower.updateRobotPosition">
+<code class="descname">updateRobotPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.updateRobotPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.updateRobotPosition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="seamonsters.PathFollower.waitForOrientWheelsGenerator">
 <code class="descname">waitForOrientWheelsGenerator</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em>, <em>angleTolerance</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.waitForOrientWheelsGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.waitForOrientWheelsGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Orient wheels to prepare to drive with the given mag/dir/turn, and wait
 until all wheels are within <code class="docutils literal notranslate"><span class="pre">angleTolerance</span></code> radians of their target
 direction.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="seamonsters.State">
+<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">State</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.State" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>An action to run in a StateMachine.</p>
+<dl class="method">
+<dt id="seamonsters.State.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/generators.html#State.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.State.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> – A function with no arguments that returns a generator.
+If the generator returns another State, that State will be pushed
+to the stack. Otherwise the State will be popped when it completes.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="seamonsters.StateMachine">
+<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">StateMachine</code><a class="headerlink" href="#seamonsters.StateMachine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Implementation of a Pushdown Automaton. Has one state always running at a
+time, and keeps track of a stack of states.</p>
+<dl class="method">
+<dt id="seamonsters.StateMachine.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/generators.html#StateMachine.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.StateMachine.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.StateMachine.currentState">
+<code class="descname">currentState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/generators.html#StateMachine.currentState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.StateMachine.currentState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current running state. If the state stack is empty, IDLE_STATE
+is the current state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.StateMachine.pop">
+<code class="descname">pop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/generators.html#StateMachine.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.StateMachine.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel the current running State and pop it. Run the State below it on
+the stack.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.StateMachine.push">
+<code class="descname">push</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/generators.html#StateMachine.push"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.StateMachine.push" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel the current running State and push a new State to the stack.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.StateMachine.replace">
+<code class="descname">replace</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/generators.html#StateMachine.replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.StateMachine.replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel the current running state and replace it with a new one.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="seamonsters.StateMachine.updateGenerator">
+<code class="descname">updateGenerator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/generators.html#StateMachine.updateGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.StateMachine.updateGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator to update the state machine.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1129,7 +1160,7 @@ direction.</p>
 <dl class="class">
 <dt id="seamonsters.SuperHolonomicDrive">
 <em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">SuperHolonomicDrive</code><a class="headerlink" href="#seamonsters.SuperHolonomicDrive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#seamonsters.DriveInterface" title="seamonsters.DriveInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.DriveInterface</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1146,25 +1177,7 @@ direction.</p>
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.drive">
 <code class="descname">drive</code><span class="sig-paren">(</span><em>magnitude</em>, <em>direction</em>, <em>turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.drive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drive the robot. This should be called 50 times per second.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>magnitude</strong> – feet per second</li>
-<li><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</li>
-<li><strong>turn</strong> – radians per second. positive counter-clockwise</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the scale of the actual output speed, as a fraction of the
-input magnitude and turn components</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.getRobotMovement">
@@ -1220,13 +1233,13 @@ is an object that can be stored and passed to a future call of
 
 <dl class="class">
 <dt id="seamonsters.SwerveWheel">
-<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">SwerveWheel</code><span class="sig-paren">(</span><em>angledWheel</em>, <em>steerMotor</em>, <em>encoderCountsPerRev</em>, <em>reverseSteerMotor=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.SwerveWheel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">seamonsters.</code><code class="descname">SwerveWheel</code><span class="sig-paren">(</span><em>angledWheel</em>, <em>steerMotor</em>, <em>encoderCountsPerRev</em>, <em>offsetX=0</em>, <em>offsetY=0</em>, <em>reverseSteerMotor=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.SwerveWheel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.Wheel</span></code></a></p>
 <p>A wheel which can rotate. A SwerveWheel drives using an AngledWheel, and
 rotates using a TalonSRX.</p>
 <dl class="method">
 <dt id="seamonsters.SwerveWheel.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>angledWheel</em>, <em>steerMotor</em>, <em>encoderCountsPerRev</em>, <em>reverseSteerMotor=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>angledWheel</em>, <em>steerMotor</em>, <em>encoderCountsPerRev</em>, <em>offsetX=0</em>, <em>offsetY=0</em>, <em>reverseSteerMotor=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="docutils literal notranslate"><span class="pre">zeroSteering()</span></code> is called in __init__.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1639,6 +1652,21 @@ between 0 and 1 to scale the wheel down to its maximum speed.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="seamonsters.circleDistance">
+<code class="descclassname">seamonsters.</code><code class="descname">circleDistance</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>circle=6.283185307179586</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.circleDistance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the shortest arc length between two points on a circle. Positive if
+direction is positive from a to b.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>circle</strong> – Total arc length of the circle. Optional, defaults to 2 pi.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="seamonsters.deadZone">
 <code class="descclassname">seamonsters.</code><code class="descname">deadZone</code><span class="sig-paren">(</span><em>value</em>, <em>deadZone=0.1</em>, <em>maxValue=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.deadZone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a dead-zone to the number. Any input from <code class="docutils literal notranslate"><span class="pre">deadZone</span></code> to <code class="docutils literal notranslate"><span class="pre">maxValue</span></code>
@@ -1687,6 +1715,14 @@ given widgets to it.</p>
 <code class="descclassname">seamonsters.</code><code class="descname">parallel</code><span class="sig-paren">(</span><em>*iterables</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.parallel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run a group of iterables in parallel. Ends when none are left running.</p>
 <p>An iterable can yield or return a ParallelSignal to trigger an action.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="seamonsters.queuedDashboardEvent">
+<code class="descclassname">seamonsters.</code><code class="descname">queuedDashboardEvent</code><span class="sig-paren">(</span><em>eventF</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.queuedDashboardEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a function <code class="docutils literal notranslate"><span class="pre">eventF</span></code> which takes any number of arguments,
+returns a new function which will add <code class="docutils literal notranslate"><span class="pre">eventF</span></code> and given arguments
+to the Dashboard event queue, to be called later.</p>
 </dd></dl>
 
 <dl class="function">
@@ -1743,7 +1779,7 @@ when the dashboard has started.</li>
 
 <dl class="function">
 <dt id="seamonsters.stopAllWhenDone">
-<code class="descclassname">seamonsters.</code><code class="descname">stopAllWhenDone</code><span class="sig-paren">(</span><em>iterable</em>, <em>value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.stopAllWhenDone" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">seamonsters.</code><code class="descname">stopAllWhenDone</code><span class="sig-paren">(</span><em>iterable</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.stopAllWhenDone" title="Permalink to this definition">¶</a></dt>
 <dd><p>If run in a <code class="docutils literal notranslate"><span class="pre">sea.parallel</span></code> block, when the iterable completes all
 parallel commands will be stopped.</p>
 </dd></dl>
@@ -1865,7 +1901,7 @@ given widgets to it.</p>
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
