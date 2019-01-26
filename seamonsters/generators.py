@@ -142,7 +142,7 @@ class StateMachine:
 
     def __init__(self):
         self.stateStack = []
-        self._cancelState = None
+        self._cancelState = False
 
     def currentState(self):
         """
@@ -158,32 +158,35 @@ class StateMachine:
         Generator to update the state machine.
         """
         while True:
-            ret = yield from parallel(
-                stopAllWhenDone(self.currentState().function()),
-                stopAllWhenDone(self._watchForCancelGenerator())
-            )
-            if isinstance(ret, State):
-                self.stateStack.append(ret)
-            else:
-                if len(self.stateStack) != 0:
-                    self.stateStack.pop()
+            self._cancelState = False
+            yield from parallel(
+                self._runCurrentState(), self._watchForCancelGenerator())
+
+    def _runCurrentState(self):
+        ret = yield from self.currentState().function()
+        if isinstance(ret, State):
+            self.stateStack.append(ret)
+        else:
+            self.stateStack.pop()
+        return StopParallelSignal()
 
     def push(self, state):
         """
         Cancel the current running State and push a new State to the stack.
         """
-        self._cancelState = state
+        self.stateStack.append(state)
+        self._cancelState = True
 
     def pop(self):
         """
         Cancel the current running State and pop it. Run the State below it on
         the stack.
         """
+        if len(self.stateStack) != 0:
+            self.stateStack.pop()
         self._cancelState = True
 
     def _watchForCancelGenerator(self):
         while not self._cancelState:
             yield
-        state = self._cancelState
-        self._cancelState = None
-        return state
+        return StopParallelSignal()
