@@ -1,6 +1,5 @@
 __author__ = "seamonsters"
 
-import types
 import itertools
 
 class ParallelSignal:
@@ -112,9 +111,79 @@ def returnValue(iterable, value):
     yield from iterable
     return value
 
-def stopAllWhenDone(iterable, value=None):
+def stopAllWhenDone(iterable):
     """
     If run in a ``sea.parallel`` block, when the iterable completes all
     parallel commands will be stopped.
     """
-    return returnValue(iterable, StopParallelSignal(value))
+    value = yield from iterable
+    return StopParallelSignal(value)
+
+class State:
+    """
+    An action to run in a StateMachine.
+    """
+
+    def __init__(self, function):
+        """
+        :param function: A function with no arguments that returns a generator.
+            If the generator returns another State, that State will be pushed
+            to the stack. Otherwise the State will be popped when it completes.
+        """
+        self.function = function
+
+IDLE_STATE = State(forever)
+
+class StateMachine:
+    """
+    Implementation of a Pushdown Automaton. Has one state always running at a
+    time, and keeps track of a stack of states.
+    """
+
+    def __init__(self):
+        self.stateStack = []
+        self._cancelState = None
+
+    def currentState(self):
+        """
+        Get the current running state. If the state stack is empty, IDLE_STATE
+        is the current state.
+        """
+        if len(self.stateStack) == 0:
+            return IDLE_STATE
+        return self.stateStack[-1]
+
+    def updateGenerator(self):
+        """
+        Generator to update the state machine.
+        """
+        while True:
+            ret = yield from parallel(
+                stopAllWhenDone(self.currentState().function()),
+                stopAllWhenDone(self._watchForCancelGenerator())
+            )
+            if isinstance(ret, State):
+                self.stateStack.append(ret)
+            else:
+                if len(self.stateStack) != 0:
+                    self.stateStack.pop()
+
+    def push(self, state):
+        """
+        Cancel the current running State and push a new State to the stack.
+        """
+        self._cancelState = state
+
+    def pop(self, state):
+        """
+        Cancel the current running State and pop it. Run the State below it on
+        the stack.
+        """
+        self._cancelState = True
+
+    def _watchForCancelGenerator(self):
+        while not self._cancelState:
+            yield
+        state = self._cancelState
+        self._cancelState = None
+        return state
