@@ -95,7 +95,10 @@ class Dashboard(remi.App):
     def __init__(self, *args, css=False, **kwargs):
         self.eventQueue = queue.Queue()
         if css:
-            res_path = os.path.join(os.getcwd(), 'res')
+            if sys.argv[1] == 'run': # running on robot
+                res_path = "/home/lvuser/py/res"
+            else:
+                res_path = os.path.join(os.getcwd(), 'res')
             super(Dashboard, self).__init__(*args, static_file_path={'res':res_path}, **kwargs)
         else:
             super(Dashboard,self).__init__(*args, **kwargs)
