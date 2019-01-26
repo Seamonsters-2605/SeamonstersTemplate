@@ -174,7 +174,7 @@ class StateMachine:
         """
         self._cancelState = state
 
-    def pop(self, state):
+    def pop(self):
         """
         Cancel the current running State and pop it. Run the State below it on
         the stack.
