@@ -70,64 +70,6 @@ class AccelerationFilterDrive:
         return newMagnitude, newDirection, newTurn
 
 
-class DynamicPIDDrive:
-    """
-    Wraps another drive interface. Based on the driving magnitude and turn
-    speed, the PID's of a set of talons are changed. PID's are given as a tuple
-    of (p, i, d, f). For speeds below ``slowPIDScale``, ``slowPID`` is used.
-    For speeds above ``fastPIDScale``, ``fastPID`` is used. For speeds in
-    between, the P/I/D/F values are interpolated.
-    """
-
-    def __init__(self, interface, wheelTalons, slowPID, slowPIDScale,
-                 fastPID, fastPIDScale, pidLookBackRange=10):
-        super().__init__()
-        self.interface = interface
-        self.talons = wheelTalons
-        self.slowPID = slowPID
-        self.slowPIDScale = slowPIDScale
-        self.fastPID = fastPID
-        self.fastPIDScale = fastPIDScale
-
-        self.currentPID = None
-        self.driveScales = [0.0 for i in range(0, pidLookBackRange)]
-
-    def drive(self, magnitude, direction, turn):
-        driveScale = max(abs(magnitude), abs(turn * 2))
-        self.driveScales.append(driveScale)
-        self.driveScales.pop(0)
-        self._setPID(self._lerpPID(max(self.driveScales)))
-
-        return self.interface.drive(magnitude, direction, turn)
-
-    def _setPID(self, pid):
-        if pid == self.currentPID:
-            return
-        self.currentPID = pid
-        for talon in self.talons:
-            talon.config_kP(0, pid[0], 0)
-            talon.config_kI(0, pid[1], 0)
-            talon.config_kD(0, pid[2], 0)
-            talon.config_kF(0, pid[3], 0)
-
-    def _lerpPID(self, magnitude):
-        if magnitude <= self.slowPIDScale:
-            return self.slowPID
-        elif magnitude >= self.fastPIDScale:
-            return self.fastPID
-        else:
-            # 0 - 1
-            scale = (magnitude - self.slowPIDScale) / \
-                    (self.fastPIDScale - self.slowPIDScale)
-            pidList = []
-            for i in range(0, 4):
-                slowValue = self.slowPID[i]
-                fastValue = self.fastPID[i]
-                value = (fastValue - slowValue) * scale + slowValue
-                pidList.append(value)
-            return tuple(pidList)
-
-
 class MultiDrive:
     """
     Wraps another DriveInterface, and allows ``drive()`` to be called multiple
