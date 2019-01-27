@@ -406,6 +406,15 @@ class SuperHolonomicDrive:
         self.wheels.append(wheel)
 
     def drive(self, magnitude, direction, turn):
+        """
+        Drive the robot. This should be called 50 times per second.
+
+        :param magnitude: feet per second
+        :param direction: radians. 0 is right, positive counter-clockwise
+        :param turn: radians per second. positive counter-clockwise
+        :return: the scale of the actual output speed, as a fraction of the
+            input magnitude and turn components
+        """
         moveX = math.cos(direction) * magnitude
         moveY = math.sin(direction) * magnitude
 

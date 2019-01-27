@@ -4,38 +4,7 @@ import ctre
 import math
 
 
-class DriveInterface:
-    """
-    A generic interface for driving a robot.
-    """
-
-    def drive(self, magnitude, direction, turn):
-        """
-        Drive the robot. This should be called 50 times per second.
-
-        :param magnitude: feet per second
-        :param direction: radians. 0 is right, positive counter-clockwise
-        :param turn: radians per second. positive counter-clockwise
-        :return: the scale of the actual output speed, as a fraction of the
-            input magnitude and turn components
-        """
-        return 1.0
-
-
-class TestDriveInterface(DriveInterface):
-    """
-    A DriveInterface which does nothing but log the magnitude/direction/turn
-    values it receives.
-    """
-
-    def drive(self, magnitude, direction, turn):
-        print("Drive mag", magnitude,
-              "dir", math.degrees(direction),
-              "turn", math.degrees(turn))
-        return 1.0
-
-
-class AccelerationFilterDrive(DriveInterface):
+class AccelerationFilterDrive:
     """
     Wraps another drive interface, and provides acceleration filtering.
     """
@@ -101,7 +70,7 @@ class AccelerationFilterDrive(DriveInterface):
         return newMagnitude, newDirection, newTurn
 
 
-class DynamicPIDDrive(DriveInterface):
+class DynamicPIDDrive:
     """
     Wraps another drive interface. Based on the driving magnitude and turn
     speed, the PID's of a set of talons are changed. PID's are given as a tuple
@@ -159,7 +128,7 @@ class DynamicPIDDrive(DriveInterface):
             return tuple(pidList)
 
 
-class MultiDrive(DriveInterface):
+class MultiDrive:
     """
     Wraps another DriveInterface, and allows ``drive()`` to be called multiple
     times in a loop. The values for all of these calls are averaged together,
