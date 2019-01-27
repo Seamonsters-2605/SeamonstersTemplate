@@ -1,5 +1,5 @@
 import math
-import seamonsters.generators
+import seamonsters as sea
 
 class PathFollower:
     """
@@ -123,14 +123,14 @@ class PathFollower:
             dist, dir = self._robotVectorToPoint(x, y)
             aDiff = angle - self.robotAngle
 
-            atPosition = targetMag == 0 or dist < targetMag / 50
+            atPosition = targetMag == 0 or dist < targetMag / sea.ITERATIONS_PER_SECOND
             if atPosition:
-                mag = dist * 50
+                mag = dist * sea.ITERATIONS_PER_SECOND
             else:
                 mag = targetMag
-            atAngle = targetAVel == 0 or abs(aDiff) < abs(targetAVel / 50)
+            atAngle = targetAVel == 0 or abs(aDiff) < abs(targetAVel / sea.ITERATIONS_PER_SECOND)
             if atAngle:
-                aVel = aDiff * 50
+                aVel = aDiff * sea.ITERATIONS_PER_SECOND
             else:
                 aVel = abs(targetAVel)
                 if aDiff < 0:
@@ -163,9 +163,9 @@ class PathFollower:
         for point in data[1:]:
             t, x, y, angle = self._readDataLine(point)
             if lastX == x and lastY == y and lastAngle == angle:
-                yield from seamonsters.generators.wait(int((t - lastTime) * 50))
+                yield from sea.wait(int((t - lastTime) * sea.ITERATIONS_PER_SECOND))
             else:
-                yield from seamonsters.generators.untilTrue(
+                yield from sea.untilTrue(
                     self.driveToPointGenerator(x, y, math.radians(angle),
                         t - lastTime, wheelAngleTolerance))
             lastTime = t

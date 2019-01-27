@@ -2,6 +2,8 @@ import math
 import sys
 import time
 
+ITERATIONS_PER_SECOND = 50.0
+
 def circleDistance(a, b, circle=math.pi*2):
     """
     Returns the shortest arc length between two points on a circle. Positive if
@@ -52,7 +54,7 @@ class TimingMonitor:
     
     def step(self):
         self._count += 1
-        if self._count % 50 == 0:
+        if self._count % ITERATIONS_PER_SECOND == 0:
             t = time.time()
             self.realTimeRatio = (t - self._lastTime)
             self._lastTime = t

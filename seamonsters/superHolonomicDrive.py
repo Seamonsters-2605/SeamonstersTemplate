@@ -107,7 +107,7 @@ class CasterWheel(Wheel):
     def drive(self, magnitude, direction):
         self._storedMagnitude = magnitude
         self._storedDirection = direction
-        self._distance += magnitude / 50
+        self._distance += magnitude / sea.ITERATIONS_PER_SECOND
     
     def stop(self):
         self._storedMagnitude = 0
@@ -227,7 +227,7 @@ class AngledWheel(Wheel):
         encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot
         # always incremented, even if not in position mode
         # used by getTargetPosition
-        self._positionTarget += encoderCountsPerSecond / 50.0
+        self._positionTarget += encoderCountsPerSecond / sea.ITERATIONS_PER_SECOND
 
         if self.driveMode == ctre.ControlMode.Disabled:
             if self._motorState != self.driveMode:

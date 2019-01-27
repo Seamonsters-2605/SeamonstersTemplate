@@ -2,6 +2,7 @@ __author__ = "seamonsters"
 
 import ctre
 import math
+import seamonsters as sea
 
 
 class AccelerationFilter:
@@ -14,8 +15,8 @@ class AccelerationFilter:
         :param linearAccel: Linear acceleration, in feet per second per second
         :param angularAccel: Angular acceleration, in radians per second per second
         """
-        self.linearAccelPerFrame = linearAccel / 50
-        self.angularAccelPerFrame = angularAccel / 50
+        self.linearAccelPerFrame = linearAccel / sea.ITERATIONS_PER_SECOND
+        self.angularAccelPerFrame = angularAccel / sea.ITERATIONS_PER_SECOND
         self.previousX = 0.0
         self.previousY = 0.0
         self.previousTurn = 0.0
