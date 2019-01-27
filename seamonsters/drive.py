@@ -4,70 +4,59 @@ import ctre
 import math
 
 
-class AccelerationFilterDrive:
+class AccelerationFilter:
     """
-    Wraps another drive interface, and provides acceleration filtering.
+    Calculates acceleration filtering for drive inputs (magnitude, direction, turn).
     """
 
-    def __init__(self, interface, accelerationRate=.08):
+    def __init__(self, linearAccel, angularAccel):
         """
-        ``interface`` is the DriveInterface to provide acceleration filtering
-        for. ``accelerationRate`` defaults to .08 (0 to full speed in .25
-        seconds).
+        :param linearAccel: Linear acceleration, in feet per second per second
+        :param angularAccel: Angular acceleration, in radians per second per second
         """
-        self.interface = interface
-
-        self.accelerationRate = accelerationRate
+        self.linearAccelPerFrame = linearAccel / 50
+        self.angularAccelPerFrame = angularAccel / 50
         self.previousX = 0.0
         self.previousY = 0.0
         self.previousTurn = 0.0
 
-    def drive(self, magnitude, direction, turn):
-        magnitude, direction, turn = \
-            self._accelerationFilter(magnitude, direction, turn)
-        return self.interface.drive(magnitude, direction, turn)
-
-    def getFilteredMagnitude(self):
-        return math.sqrt(self.previousX ** 2 + self.previousY ** 2)
-
-    def getFilteredDirection(self):
-        return math.atan2(self.previousY, self.previousX)
-
-    def getFilteredTurn(self):
-        return self.previousTurn
-
-    # returns an tuple of: (magnitude, direction, turn)
-    def _accelerationFilter(self, magnitude, direction, turn):
-        if abs(self.previousTurn - turn) <= self.accelerationRate:
-            newTurn = turn
+    def filter(self, magnitude, direction, turn):
+        """
+        :param magnitude: linear velocity in feet per second
+        :param direction: linear direction in radians
+        :param turn: angular velocity in radians per second
+        :return: tuple of filtered magnitude, direction, turn
+        """
+        if abs(self.previousTurn - turn) <= self.angularAccelPerFrame:
+            filteredTurn = turn
         else:
             if turn > self.previousTurn:
-                newTurn = self.previousTurn + self.accelerationRate
+                filteredTurn = self.previousTurn + self.angularAccelPerFrame
             else:
-                newTurn = self.previousTurn - self.accelerationRate
+                filteredTurn = self.previousTurn - self.angularAccelPerFrame
 
         x = magnitude * math.cos(direction)
         y = magnitude * math.sin(direction)
-        distanceToNew = math.sqrt((x - self.previousX) ** 2
-                                + (y - self.previousY) ** 2)
+        distanceFromPrev = math.sqrt((x - self.previousX) ** 2
+                                   + (y - self.previousY) ** 2)
 
-        if distanceToNew <= self.accelerationRate:
-            newX = x
-            newY = y
-            newMagnitude = magnitude
-            newDirection = direction
+        if distanceFromPrev <= self.linearAccelPerFrame:
+            filteredX = x
+            filteredY = y
+            filteredMag = magnitude
+            filteredDir = direction
         else:
-            newX = self.previousX \
-                + (x - self.previousX) * self.accelerationRate / distanceToNew
-            newY = self.previousY \
-                + (y - self.previousY) * self.accelerationRate / distanceToNew
-            newMagnitude = math.sqrt(newX ** 2 + newY ** 2)
-            newDirection = math.atan2(newY, newX)
+            filteredX = self.previousX \
+                + (x - self.previousX) * self.linearAccelPerFrame / distanceFromPrev
+            filteredY = self.previousY \
+                + (y - self.previousY) * self.linearAccelPerFrame / distanceFromPrev
+            filteredMag = math.sqrt(filteredX ** 2 + filteredY ** 2)
+            filteredDir = math.atan2(filteredY, filteredX)
 
-        self.previousX = newX
-        self.previousY = newY
-        self.previousTurn = newTurn
-        return newMagnitude, newDirection, newTurn
+        self.previousX = filteredX
+        self.previousY = filteredY
+        self.previousTurn = filteredTurn
+        return filteredMag, filteredDir, filteredTurn
 
 
 class MultiDrive:
@@ -119,6 +108,9 @@ class MultiDrive:
 
 if __name__ == "__main__":
     # test acceleration filter drive
-    filterDrive = AccelerationFilterDrive(TestDriveInterface())
-    for i in range(0, 20):
-        filterDrive.drive(1.0, 1.0, 1.0)
+    accelFilter = AccelerationFilter(2.0, 2.0)
+    for i in range(0, 25):
+        print(accelFilter.filter(1.0, math.radians(45), 1.0))
+    print("--------")
+    for i in range(0, 25):
+        print(accelFilter.filter(1.0, math.radians(90), 1.0))
