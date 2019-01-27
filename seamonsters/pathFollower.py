@@ -7,7 +7,7 @@ class PathFollower:
     """
 
     NAVX_LAG = 7 # frames
-    NAVX_ERROR_CORRECTION = 1 # out of 1
+    NAVX_ERROR_CORRECTION = 0.1 # out of 1
 
     def __init__(self, drive, ahrs=None):
         """
