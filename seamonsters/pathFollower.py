@@ -7,6 +7,7 @@ class PathFollower:
     """
 
     NAVX_LAG = 7 # frames
+    NAVX_ERROR_CORRECTION = 1 # out of 1
 
     def __init__(self, drive, ahrs=None):
         """
@@ -75,7 +76,7 @@ class PathFollower:
             laggedAngle = self._robotAngleHistory.pop(0)
             if self.ahrs is not None:
                 navxAngle = self._getAHRSAngle()
-                error = navxAngle - laggedAngle
+                error = (navxAngle - laggedAngle) * PathFollower.NAVX_ERROR_CORRECTION
                 self.robotAngle += error
                 for i in range(0, len(self._robotAngleHistory)):
                     self._robotAngleHistory[i] += error
