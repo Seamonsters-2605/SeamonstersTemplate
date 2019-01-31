@@ -170,6 +170,13 @@ class StateMachine:
             self.stateStack.pop()
         return StopParallelSignal()
 
+    def clear(self):
+        """
+        Cancel the current state and clear the stack.
+        """
+        self.stateStack.clear()
+        self._cancelState = True
+
     def push(self, state):
         """
         Cancel the current running State and push a new State to the stack.
@@ -192,6 +199,25 @@ class StateMachine:
         """
         self.pop()
         self.push(state)
+
+    def runUntilStopped(self, state):
+        """
+        Push a state and wait until the state is either cancelled by pushing
+        or popping, or it exits normally.
+        """
+        self.push(state)
+        while self.currentState() == state:
+            yield
+
+    def runUntilPopped(self, state):
+        """
+        Push a state and wait until the state is popped from the stack.
+        """
+        self.push(state)
+        stackLen = len(self.stateStack)
+        while len(self.stateStack) >= stackLen:
+            yield
+
 
     def _watchForCancelGenerator(self):
         while not self._cancelState:
