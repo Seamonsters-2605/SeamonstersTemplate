@@ -139,12 +139,8 @@ class PathFollower:
                     aVel = -aVel
 
             self.drive.drive(mag, dir, aVel)
-            try:
-                yield (atPosition or dist <= robotPositionTolerance) \
-                    and (atAngle or abs(aDiff) <= robotAngleTolerance)
-            except GeneratorExit:
-                self.drive.drive(0, 0, 0)
-                return
+            yield (atPosition or dist <= robotPositionTolerance) \
+                and (atAngle or abs(aDiff) <= robotAngleTolerance)
 
     # return magnitude, direction
     def _robotVectorToPoint(self, x, y):
