@@ -141,6 +141,8 @@ class PhysicsEngine:
 
         self._drivePositionState = None
 
+        ctre.TalonSRX._use_notifier = False # speed up position mode in simulator by a lot
+
     # special function called by pyfrc to update the robot state
     def update_sim(self, hal_data, time, elapsed):
         global simulatedDrivetrain
