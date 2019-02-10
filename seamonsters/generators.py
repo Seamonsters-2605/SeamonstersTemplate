@@ -160,7 +160,7 @@ class StateMachine:
         while True:
             self._cancelState = False
             yield from parallel(
-                self._runCurrentState(), self._watchForCancelGenerator())
+                self._watchForCancelGenerator(), self._runCurrentState())
 
     def _runCurrentState(self):
         ret = yield from self.currentState().function()
