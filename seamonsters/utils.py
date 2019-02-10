@@ -18,6 +18,13 @@ def circleDistance(a, b, circle=math.pi*2):
         diff += circle
     return diff
 
+def feedbackLoopScale(value, scale, exponent=1, maxValue=None):
+    negative = (value < 0) ^ (scale < 0) # true if only one is negative
+    value = abs(value) ** exponent * abs(scale)
+    if maxValue is not None:
+        value = min(value, maxValue)
+    return -value if negative else value
+
 def setSimulatedDrivetrain(drivetrain):
     if sys.argv[1] == 'sim':
         import physics
