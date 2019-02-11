@@ -46,24 +46,15 @@ class PathFollower:
     def _getAHRSAngle(self):
         return -math.radians(self.ahrs.getAngle()) - self._ahrsOrigin
 
-    def waitForOrientWheelsGenerator(self, magnitude, direction, turn,
-            angleTolerance):
+    def waitForOrientWheelsGenerator(self, magnitude, direction, turn):
         """
-        Orient wheels to prepare to drive with the given mag/dir/turn, and wait
-        until all wheels are within ``angleTolerance`` radians of their target
-        direction.
+        Orient wheels to prepare to drive with the given mag/dir/turn.
         """
         if magnitude == 0 and turn == 0:
             return
-        done = False
-        while not done:
-            done = True
+        for _ in range(0, 10):
             self.drive.orientWheels(magnitude, direction, turn)
             yield
-            for wheel in self.drive.wheels:
-                if abs(wheel.getTargetDirection() - wheel.getRealDirection()) \
-                        > angleTolerance:
-                    done = False
 
     def updateRobotPosition(self):
         moveDist, moveDir, moveTurn, self._drivePositionState = \
@@ -84,7 +75,7 @@ class PathFollower:
         self.robotX += math.cos(moveDir + self.robotAngle) * moveDist
         self.robotY += math.sin(moveDir + self.robotAngle) * moveDist
 
-    def driveToPointGenerator(self, x, y, angle, time, wheelAngleTolerance,
+    def driveToPointGenerator(self, x, y, angle, time,
             robotPositionTolerance=0, robotAngleTolerance=0):
         """
         A generator to drive to a location on the field while simultaneously
@@ -102,8 +93,7 @@ class PathFollower:
         aDiff = angle - self.robotAngle
         # actual velocities don't matter for orientWheels as long as the ratios
         # are correct
-        yield from self.waitForOrientWheelsGenerator(dist, moveDir, aDiff,
-            wheelAngleTolerance)
+        yield from self.waitForOrientWheelsGenerator(dist, moveDir, aDiff)
         for wheel in self.drive.wheels:
             wheel.resetPosition()
 
@@ -152,7 +142,7 @@ class PathFollower:
     def _readDataLine(self, line):
         return (float(n) for n in line)
 
-    def followPathData(self, data, wheelAngleTolerance):
+    def followPathData(self, data):
         """
         Follow path data read from a file. ``data`` should be a list of line
         tuples returned by ``sea.readDataFile``.
@@ -166,7 +156,7 @@ class PathFollower:
             else:
                 yield from sea.untilTrue(
                     self.driveToPointGenerator(x, y, math.radians(angle),
-                        t - lastTime, wheelAngleTolerance))
+                        t - lastTime))
             lastTime = t
             lastX = x
             lastY = y
