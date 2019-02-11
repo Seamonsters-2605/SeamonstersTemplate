@@ -420,6 +420,8 @@ class SuperHolonomicDrive:
 
     def __init__(self):
         self.wheels = []
+        self.autoDisableTime = sea.ITERATIONS_PER_SECOND # 1 second
+        self._disableCounter = 0
 
     def addWheel(self, wheel):
         """
@@ -432,12 +434,23 @@ class SuperHolonomicDrive:
         """
         Drive the robot. This should be called 50 times per second.
 
+        If drive is called with a magnitude/turn of 0 for more than
+        ``autoDisableTime`` iterations, all wheels will be disabled.
+
         :param magnitude: feet per second
         :param direction: radians. 0 is right, positive counter-clockwise
         :param turn: radians per second. positive counter-clockwise
         :return: the scale of the actual output speed, as a fraction of the
             input magnitude and turn components
         """
+        if magnitude == 0 and turn == 0:
+            self._disableCounter += 1
+        else:
+            self._disableCounter = 0
+        if self._disableCounter > self.autoDisableTime:
+            self.disable()
+            return 1.0
+
         moveX = math.cos(direction) * magnitude
         moveY = math.sin(direction) * magnitude
 
@@ -481,6 +494,8 @@ class SuperHolonomicDrive:
         """
         Disable all motors. Calling drive() will enable them again.
         """
+        # calling drive(0,x,0) after this will keep motors disabled
+        self._disableCounter = self.autoDisableTime + 1
         for wheel in self.wheels:
             wheel.disable()
 
