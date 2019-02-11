@@ -54,6 +54,11 @@ class Wheel:
         Stop driving.
         """
 
+    def disable(self):
+        """
+        Disable motors. Calling drive() will enable them again.
+        """
+
     def resetPosition(self):
         pass
 
@@ -253,8 +258,13 @@ class AngledWheel(Wheel):
     def stop(self):
         self.drive(0, 0)
 
+    def disable(self):
+        if self._motorState != ctre.ControlMode.Disabled:
+            self.motor.disable()
+            self._motorState = ctre.ControlMode.Disabled
+
     def resetPosition(self):
-        self._motorState = ctre.ControlMode.Disabled
+        self._motorState = None
     
     def _sensorPositionToDistance(self, pos):
         if self.reverse:
@@ -374,6 +384,9 @@ class SwerveWheel(Wheel):
     def stop(self):
         self.angledWheel.stop()
 
+    def disable(self):
+        self.angledWheel.disable()
+
     def resetPosition(self):
         self.angledWheel.resetPosition()
 
@@ -453,6 +466,13 @@ class SuperHolonomicDrive:
             if wheelVectorX != 0 and wheelVectorY != 0:
                 wheelDir = math.atan2(wheelVectorY, wheelVectorX)
                 wheel.drive(0, wheelDir)
+
+    def disable(self):
+        """
+        Disable all motors. Calling drive() will enable them again.
+        """
+        for wheel in self.wheels:
+            wheel.disable()
 
     def _calcWheelVector(self, wheel, moveX, moveY, turn):
         return moveX - wheel.y * turn, moveY + wheel.x * turn
