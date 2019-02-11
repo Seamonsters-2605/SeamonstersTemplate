@@ -1,6 +1,7 @@
 import math
 import ctre
 import seamonsters as sea
+import time
 
 TWO_PI = math.pi * 2
 
@@ -183,6 +184,7 @@ class AngledWheel(Wheel):
         self.reverse = reverse
 
         self.driveMode = ctre.ControlMode.PercentOutput
+        self.realTime = False
         self.encoderWorking = True
 
         self._motorState = None
@@ -190,6 +192,7 @@ class AngledWheel(Wheel):
         self._encoderCheckCount = 0
         self._oldPosition = 0
         self._positionOccurence = 0
+        self._prevTime = time.time()
 
     def limitMagnitude(self, magnitude, direction):
         # TODO: check position error in this function instead, and factor it
@@ -224,15 +227,22 @@ class AngledWheel(Wheel):
         magnitude *= math.cos(direction - self.angle)
         if self.reverse:
             magnitude = -magnitude
-        
+
         if self.driveMode == ctre.ControlMode.Position \
                 and self._motorState != self.driveMode:
             self._positionTarget = self.motor.getSelectedSensorPosition(0)
 
+        curTime = time.time()
+        if self.realTime and self._motorState == self.driveMode:
+            tDiff = curTime - self._prevTime
+        else:
+            tDiff = 1 / sea.ITERATIONS_PER_SECOND
+        self._prevTime = curTime
+
         encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot
         # always incremented, even if not in position mode
         # used by getTargetPosition
-        self._positionTarget += encoderCountsPerSecond / sea.ITERATIONS_PER_SECOND
+        self._positionTarget += encoderCountsPerSecond * tDiff
 
         if self.driveMode == ctre.ControlMode.Disabled:
             if self._motorState != self.driveMode:
