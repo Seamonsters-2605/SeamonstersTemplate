@@ -107,7 +107,12 @@ class PathFollower:
             targetMag = dist / time
             targetAVel = aDiff / time
 
+        accel = 0
         while True:
+            accel += 0.1
+            if accel > 1:
+                accel = 1
+
             self.updateRobotPosition()
 
             dist, dir = self._robotVectorToPoint(x, y)
@@ -128,7 +133,7 @@ class PathFollower:
                 if aDiff < 0:
                     aVel = -aVel
 
-            self.drive.drive(mag, dir, aVel)
+            self.drive.drive(mag * accel, dir, aVel * accel)
             yield (atPosition or dist <= robotPositionTolerance) \
                 and (atAngle or abs(aDiff) <= robotAngleTolerance)
 
