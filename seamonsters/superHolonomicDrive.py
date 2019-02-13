@@ -358,12 +358,16 @@ class SwerveWheel(Wheel):
         self._targetDirection = angledWheel.angle
         self._disabled = False
 
-    def zeroSteering(self):
+    def zeroSteering(self, currentAngle=0):
         """
-        Reset the origin (rotation of wheel when facing right) to the current
-        position of the steer motor.
+        Reset the origin (rotation of wheel when facing right) so that the
+        current position of the steer motor is ``currentAngle`` (defaults 0).
         """
         self._steerOrigin = self.steerMotor.getSelectedSensorPosition(0)
+        offset = currentAngle * self.encoderCountsPerRev / TWO_PI
+        if self.reverseSteerMotor:
+            offset = -offset
+        self._steerOrigin -= offset
 
     def limitMagnitude(self, magnitude, direction):
         return self.angledWheel.limitMagnitude(magnitude, direction)
