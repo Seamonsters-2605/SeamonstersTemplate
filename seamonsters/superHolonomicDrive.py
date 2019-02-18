@@ -440,6 +440,9 @@ class SuperHolonomicDrive:
         """
         self.wheels.append(wheel)
 
+    def undisable(self):
+        self._disableCounter = 0
+
     def drive(self, magnitude, direction, turn):
         """
         Drive the robot. This should be called 50 times per second.
@@ -490,6 +493,7 @@ class SuperHolonomicDrive:
         """
         Orient the wheels as if the robot was driving, but don't move.
         """
+        self._disableCounter = 0
         moveX = math.cos(direction) * magnitude
         moveY = math.sin(direction) * magnitude
 
