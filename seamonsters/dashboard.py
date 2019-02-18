@@ -77,7 +77,7 @@ def queuedDashboardEvent(eventF):
         # self is the robot
         def doTheEvent():
             print("Event:", eventF.__name__)
-            eventF(self, *args, **kwargs)
+            return eventF(self, *args, **kwargs)
         self.app.eventQueue.put(doTheEvent)
     return queueTheEvent
 
@@ -117,6 +117,10 @@ class Dashboard(remi.App):
         Execute all events in the event queue and clear the queue. This should
         be called continuously during teleop.
         """
+        value = None
         while not self.eventQueue.empty():
             event = self.eventQueue.get()
-            event()
+            v = event()
+            if value is None:
+                value = v
+        return value
