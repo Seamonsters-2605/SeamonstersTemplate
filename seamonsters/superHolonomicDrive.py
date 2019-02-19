@@ -184,6 +184,7 @@ class AngledWheel(Wheel):
         self.reverse = reverse
 
         self.driveMode = ctre.ControlMode.PercentOutput
+        self.disabled = False
         self.realTime = False
         self.encoderWorking = True
 
@@ -244,7 +245,7 @@ class AngledWheel(Wheel):
         # used by getTargetPosition
         self._positionTarget += encoderCountsPerSecond * tDiff
 
-        if self.driveMode == ctre.ControlMode.Disabled:
+        if self.driveMode == ctre.ControlMode.Disabled or self.disabled:
             if self._motorState != self.driveMode:
                 self.motor.disable()
         elif self.driveMode == ctre.ControlMode.PercentOutput:
