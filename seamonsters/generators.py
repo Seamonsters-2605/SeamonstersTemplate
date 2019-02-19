@@ -87,20 +87,42 @@ def untilTrue(iterable):
     """
     return itertools.takewhile(lambda x: not x, iterable)
 
+def _ensureBool(iterable, requiredCount, b):
+    try:
+        count = 0
+        while True:
+            try:
+                value = next(iterable)
+            except StopIteration as e:
+                return e.value
+            yield value
+            if value == b:
+                count += 1
+            else:
+                count = 0
+            if count >= requiredCount:
+                return b
+    finally:
+        iterable.close()
+
 def ensureTrue(iterable, requiredCount):
     """
     Wait until the iterable yields True for a certain number of consecutive
     iterations before finishing.
+
+    :return: the return value of the iterable if it exits early, True otherwise
     """
-    count = 0
-    for x in iterable:
-        if x:
-            count += 1
-        else:
-            count = 0
-        if count > requiredCount:
-            break
-        yield
+    return (yield from _ensureBool(iterable, requiredCount, True))
+
+def ensureFalse(iterable, requiredCount):
+    """
+    Wait until the iterable yields False for a certain number of consecutive
+    iterations before finishing.
+
+    :return: the return value of the iterable if it exits early, False
+        otherwise (note difference from ``ensureTrue``)
+    """
+    return (yield from _ensureBool(iterable, requiredCount, False))
 
 def returnValue(iterable, value):
     """
