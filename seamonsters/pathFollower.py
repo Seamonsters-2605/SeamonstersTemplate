@@ -36,12 +36,13 @@ class PathFollower:
     def setPosition(self, x, y, angle):
         self.robotX = x
         self.robotY = y
-        self.robotAngle = angle
-        if self.ahrs is not None:
-            self._ahrsOrigin = 0
-            self._ahrsOrigin = self._getAHRSAngle() - angle
+        if angle is not None:
+            self.robotAngle = angle
+            if self.ahrs is not None:
+                self._ahrsOrigin = 0
+                self._ahrsOrigin = self._getAHRSAngle() - angle
+            self._robotAngleHistory.clear()
         self._drivePositionState = None
-        self._robotAngleHistory.clear()
 
     def _getAHRSAngle(self):
         return -math.radians(self.ahrs.getAngle()) - self._ahrsOrigin
