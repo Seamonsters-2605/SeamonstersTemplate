@@ -124,3 +124,22 @@ class Dashboard(remi.App):
             if value is None:
                 value = v
         return value
+
+
+class ToggleButtonGroup:
+
+    def __init__(self):
+        self.buttons = []
+
+    def addButton(self, button, key=None):
+        if key is None:
+            key = button
+        button.key = key
+        self.buttons.append(button)
+
+    def highlight(self, key):
+        for button in self.buttons:
+            if button.key == key:
+                button.style["background"] = "blue"
+            else:
+                button.style["background"] = "rgb(21, 182, 21)"
