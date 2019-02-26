@@ -146,13 +146,24 @@ class State:
     An action to run in a StateMachine.
     """
 
-    def __init__(self, function):
+    def __init__(self, function, subMachine=None):
         """
         :param function: A function with no arguments that returns a generator.
             If the generator returns another State, that State will be pushed
             to the stack. Otherwise the State will be popped when it completes.
+        :param subMachine: Optional, another StateMachine to run in parallel
+            with this State. Allows States to have nested sub-States.
         """
         self.function = function
+        self.subMachine = subMachine
+
+    def runState(self):
+        if self.subMachine is None:
+            yield from self.function()
+        else:
+            yield from parallel(
+                stopAllWhenDone(self.function()),
+                self.subMachine.updateGenerator())
 
 IDLE_STATE = State(forever)
 
@@ -185,7 +196,7 @@ class StateMachine:
                 self._watchForCancelGenerator(), self._runCurrentState())
 
     def _runCurrentState(self):
-        ret = yield from self.currentState().function()
+        ret = yield from self.currentState().runState()
         if isinstance(ret, State):
             self.stateStack.append(ret)
         else:
