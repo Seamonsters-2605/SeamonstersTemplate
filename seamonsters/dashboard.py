@@ -5,6 +5,7 @@ import threading
 import remi
 import remi.gui as gui
 import socket
+import time
 
 DASHBOARD_PORT = 5805
 
@@ -42,7 +43,7 @@ def startDashboard(robot, dashboardClass):
     robot.app = None
 
     def appCallback(app):
-        print("Dashboard started")
+        print("Dashboard initialized")
         robot.app = app
 
     def startDashboardThread(robot, appCallback):
@@ -58,8 +59,14 @@ def startDashboard(robot, dashboardClass):
         elif sys.argv[1] == 'depoly':
             pass
         elif sys.argv[1] == 'run': # run on robot
-            remi.start(dashboardClass, start_browser=False,
-                address='10.26.5.2', port=DASHBOARD_PORT, userdata=(robot, appCallback,))
+            while True:
+                try:
+                    remi.start(dashboardClass, start_browser=False,
+                        address='10.26.5.2', port=DASHBOARD_PORT, userdata=(robot, appCallback,))
+                    break
+                except:
+                    print("Dashboard couldn't start, trying again in 5 seconds")
+                    time.sleep(5.0)
 
     thread = threading.Thread(target=startDashboardThread,
                                 args=(robot, appCallback))
