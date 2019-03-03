@@ -3,6 +3,7 @@ __author__ = "seamonsters"
 import traceback
 import hal
 from wpilib.robotbase import RobotBase
+from wpilib import RobotController
 
 class GeneratorBot(RobotBase):
     """
@@ -11,13 +12,22 @@ class GeneratorBot(RobotBase):
     with the rate that data is received from Driver Station.
     """
 
+    period = 0.02
+
     def __init__(self):
         RobotBase.__init__(self)
         self.iterator = None
         self.earlyStop = False
 
         hal.report(hal.UsageReporting.kResourceType_Framework,
-                   hal.UsageReporting.kFramework_Iterative)
+                   hal.UsageReporting.kFramework_Timed)
+
+        self._expirationTime = 0
+        self._notifier = hal.initializeNotifier()
+
+    def free(self): # called by python
+        hal.stopNotifier(self._notifier)
+        hal.cleanNotifier(self._notifier)
 
     def startCompetition(self):
         self.robotInit()
@@ -25,7 +35,20 @@ class GeneratorBot(RobotBase):
         # Tell the DS that the robot is ready to be enabled
         hal.observeUserProgramStarting()
 
+        self._expirationTime = RobotController.getFPGATime() * 1e-6 + self.period
+        self._updateAlarm()
+
         while True:
+            if hal.waitForNotifierAlarm(self._notifier) == 0:
+                if self.iterator is not None:
+                    self.iterator.close()
+                    self.iterator = None
+                print("Robot Break!")
+                break
+
+            self._expirationTime += self.period
+            self._updateAlarm()
+
             # Wait for new data to arrive
             self.ds.waitForData()
             if self.isDisabled():
@@ -67,6 +90,10 @@ class GeneratorBot(RobotBase):
                         traceback.print_exc()
                         self.iterator = None
                         self.earlyStop = True
+
+    def _updateAlarm(self) -> None:
+        """Update the alarm hardware to reflect the next alarm."""
+        hal.updateNotifierAlarm(self._notifier, int(self._expirationTime * 1e6))
 
     def robotInit(self):
         """
