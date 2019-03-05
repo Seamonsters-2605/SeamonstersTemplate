@@ -28,6 +28,7 @@ class Wheel:
         """
         self.x = float(x)
         self.y = float(y)
+        self.faults = [] # list of strings describing errors
 
     def limitMagnitude(self, magnitude, direction):
         """
@@ -186,7 +187,6 @@ class AngledWheel(Wheel):
         self.driveMode = ctre.ControlMode.PercentOutput
         self.disabled = False
         self.realTime = False
-        self.encoderWorking = True
 
         self._motorState = None
         self._positionTarget = 0
@@ -211,17 +211,17 @@ class AngledWheel(Wheel):
             self._positionOccurence += 1
         else:
             self._positionOccurence = 0
-            self.encoderWorking = True
             self._oldPosition = newPosition
 
         if self._positionOccurence >= MAX_POSITION_OCCURENCE:
-            self.encoderWorking = False
+            self.faults.append("Encoder not moving")
+            self._positionOccurence = 0
 
         if self.driveMode == ctre.ControlMode.Position:
             # TODO: this is arbitrary
             maxError = self.maxVoltageVelocity * self.encoderCountsPerFoot / 2
             if abs(newPosition - self._positionTarget) > maxError:
-                print("Incremental position error!", self.motor.getDeviceID())
+                self.faults.append("Can't reach target")
                 self._positionTarget = newPosition
 
     def drive(self, magnitude, direction):
@@ -281,7 +281,6 @@ class AngledWheel(Wheel):
 
     def resetPosition(self):
         self._motorState = None
-        self.encoderWorking = True
     
     def _sensorPositionToDistance(self, pos):
         if self.reverse:
