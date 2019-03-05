@@ -225,6 +225,10 @@ class AngledWheel(Wheel):
                 self._positionTarget = newPosition
 
     def drive(self, magnitude, direction):
+        if self.disabled:
+            self.disable()
+            return
+
         magnitude *= math.cos(direction - self.angle)
         if self.reverse:
             magnitude = -magnitude
@@ -246,9 +250,8 @@ class AngledWheel(Wheel):
         # used by getTargetPosition
         self._positionTarget += encoderCountsPerSecond * tDiff
 
-        if self.driveMode == ctre.ControlMode.Disabled or self.disabled:
+        if self.driveMode == ctre.ControlMode.Disabled:
             if self._motorState != self.driveMode:
-                # TODO: calls every cycle if self.disabled set but not drive mode
                 self.motor.disable()
         elif self.driveMode == ctre.ControlMode.PercentOutput:
             self.motor.set(self.driveMode, magnitude / self.maxVoltageVelocity)
@@ -262,7 +265,6 @@ class AngledWheel(Wheel):
         self._encoderCheckCount += 1
         # TODO: document constant
         if abs(encoderCountsPerSecond) > 400 \
-                and not self.disabled \
                 and not self.driveMode == ctre.ControlMode.Disabled:
             if self._encoderCheckCount % CHECK_ENCODER_CYCLE == 0:
                 # getSelectedSensorPosition is slow so only check a few times
