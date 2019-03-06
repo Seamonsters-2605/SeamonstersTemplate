@@ -28,7 +28,10 @@ class Wheel:
         """
         self.x = float(x)
         self.y = float(y)
-        self.faults = [] # list of strings describing errors
+        # if True, all calls to drive() or stop() will disable
+        self.disabled = False
+        # list of strings describing errors
+        self.faults = []
 
     def limitMagnitude(self, magnitude, direction):
         """
@@ -50,11 +53,25 @@ class Wheel:
             zero, the wheel will attempt to orient in the given direction
         :param direction: radians. 0 is right, positive counter-clockwise
         """
-    
+        if self.disabled:
+            self.disable()
+        else:
+            self._drive(magnitude, direction)
+
+    def _drive(self, magnitude, direction):
+        pass
+
     def stop(self):
         """
         Stop driving.
         """
+        if self.disabled:
+            self.disable()
+        else:
+            self._stop()
+
+    def _stop(self):
+        pass
 
     def disable(self):
         """
@@ -111,12 +128,12 @@ class CasterWheel(Wheel):
         self._storedDirection = 0
         self._distance = 0
 
-    def drive(self, magnitude, direction):
+    def _drive(self, magnitude, direction):
         self._storedMagnitude = magnitude
         self._storedDirection = direction
         self._distance += magnitude / sea.ITERATIONS_PER_SECOND
     
-    def stop(self):
+    def _stop(self):
         self._storedMagnitude = 0
 
     def getRealPosition(self):
@@ -149,13 +166,17 @@ class TestWheel(CasterWheel):
         super().__init__(x, y)
         self.name = name
 
-    def drive(self, magnitude, direction):
-        super().drive(magnitude, direction)
+    def _drive(self, magnitude, direction):
+        super()._drive(magnitude, direction)
         print(self.name, "Mag:", magnitude, "Dir:", math.degrees(direction))
 
-    def stop(self):
-        super().stop()
+    def _stop(self):
+        super()._stop()
         print(self.name, "stop")
+
+    def disable(self):
+        super().disable()
+        print(self.name, "disable")
 
 
 class AngledWheel(Wheel):
@@ -185,7 +206,6 @@ class AngledWheel(Wheel):
         self.reverse = reverse
 
         self.driveMode = ctre.ControlMode.PercentOutput
-        self.disabled = False
         self.realTime = False
 
         self._motorState = None
@@ -224,11 +244,7 @@ class AngledWheel(Wheel):
                 self.faults.append("Can't reach target")
                 self._positionTarget = newPosition
 
-    def drive(self, magnitude, direction):
-        if self.disabled:
-            self.disable()
-            return
-
+    def _drive(self, magnitude, direction):
         magnitude *= math.cos(direction - self.angle)
         if self.reverse:
             magnitude = -magnitude
@@ -273,7 +289,7 @@ class AngledWheel(Wheel):
         else:
             self._positionOccurence = 0
 
-    def stop(self):
+    def _stop(self):
         self.drive(0, 0)
 
     def disable(self):
@@ -321,8 +337,8 @@ class MecanumWheel(AngledWheel):
     def limitMagnitude(self, magnitude, direction):
         return super().limitMagnitude(magnitude * MecanumWheel.SQRT_2, direction)
 
-    def drive(self, magnitude, direction):
-        return super().drive(magnitude * MecanumWheel.SQRT_2, direction)
+    def _drive(self, magnitude, direction):
+        return super()._drive(magnitude * MecanumWheel.SQRT_2, direction)
 
     def getRealPosition(self):
         return super().getRealPosition() / MecanumWheel.SQRT_2
@@ -364,7 +380,7 @@ class SwerveWheel(Wheel):
 
         self.zeroSteering()
         self._targetDirection = angledWheel.angle
-        self._disabled = False
+        self._motorDisabled = False
 
     def zeroSteering(self, currentAngle=0):
         """
@@ -392,9 +408,9 @@ class SwerveWheel(Wheel):
         if self.reverseSteerMotor:
             pos = -pos
         self.steerMotor.set(ctre.ControlMode.Position, pos + self._steerOrigin)
-        self._disabled = False
+        self._motorDisabled = False
 
-    def drive(self, magnitude, direction):
+    def _drive(self, magnitude, direction):
         currentAngle = self._getCurrentSteeringAngle()
         # steering should never rotate more than 90 degrees from any position
         angleDiff = sea.circleDistance(currentAngle, direction, math.pi)
@@ -406,14 +422,14 @@ class SwerveWheel(Wheel):
         self.angledWheel.y = self.y + math.sin(currentAngle) * self.offsetX + math.cos(currentAngle) * self.offsetY
         self.angledWheel.drive(magnitude, direction)
 
-    def stop(self):
+    def _stop(self):
         self.angledWheel.stop()
 
     def disable(self):
         self.angledWheel.disable()
-        if not self._disabled:
+        if not self._motorDisabled:
             self.steerMotor.disable()
-            self._disabled = True
+            self._motorDisabled = True
 
     def resetPosition(self):
         self.angledWheel.resetPosition()
