@@ -185,8 +185,8 @@ class AngledWheel(Wheel):
     change on its own. It uses a TalonSRX to drive.
     """
 
-    def __init__(self, motor, x, y, angle, encoderCountsPerFoot,
-                 maxVoltageVelocity, reverse=False):
+    def __init__(self, motor: ctre.WPI_TalonSRX, x, y, angle,
+                 encoderCountsPerFoot, maxVoltageVelocity, reverse=False):
         """
         :param motor: a TalonSRX
         :param x: X position in feet
@@ -356,7 +356,8 @@ class SwerveWheel(Wheel):
     rotates using a TalonSRX.
     """
 
-    def __init__(self, angledWheel, steerMotor, encoderCountsPerRev, offsetX = 0, offsetY = 0,
+    def __init__(self, angledWheel: AngledWheel, steerMotor: ctre.WPI_TalonSRX,
+                 encoderCountsPerRev, offsetX = 0, offsetY = 0,
                  reverseSteerMotor=False):
         """
         ``zeroSteering()`` is called in __init__.
