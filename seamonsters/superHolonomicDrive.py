@@ -7,6 +7,8 @@ TWO_PI = math.pi * 2
 
 MAX_POSITION_OCCURENCE = 10
 CHECK_ENCODER_CYCLE = 10
+MAX_SWERVE_ERROR = math.pi / 2
+CHECK_SWERVE_ENCODER_CYCLE = 50
 
 
 def _iteratePairs(list):
@@ -383,6 +385,7 @@ class SwerveWheel(Wheel):
         self.zeroSteering()
         self._targetDirection = angledWheel.angle
         self._motorDisabled = False
+        self._encoderCheckCount = 0
 
     def zeroSteering(self, currentAngle=0):
         """
@@ -414,7 +417,7 @@ class SwerveWheel(Wheel):
         self.steerMotor.set(ctre.ControlMode.Position, pos + self._steerOrigin)
         self._motorDisabled = False
 
-    def _simulateMotorPosition(self):
+    def _updateMotorPosition(self):
         if self._motorDisabled:
             return
         change = self.rotationVelocity / sea.ITERATIONS_PER_SECOND
@@ -424,9 +427,15 @@ class SwerveWheel(Wheel):
             self._simulatedCurrentDirection -= change
         else:
             self._simulatedCurrentDirection += change
+        
+        self._encoderCheckCount += 1
+        if self._encoderCheckCount % CHECK_SWERVE_ENCODER_CYCLE == 0:
+            curPos = self._getCurrentSteeringAngle()
+            if abs(curPos - self._simulatedCurrentDirection) > MAX_SWERVE_ERROR:
+                self.faults.append("Can't reach target!")
 
     def _drive(self, magnitude, direction):
-        self._simulateMotorPosition()
+        self._updateMotorPosition()
         currentAngle = self._simulatedCurrentDirection
         # steering should never rotate more than 90 degrees from any position
         angleDiff = sea.circleDistance(currentAngle, direction, math.pi)
@@ -439,7 +448,7 @@ class SwerveWheel(Wheel):
         self.angledWheel.drive(magnitude, direction)
 
     def _stop(self):
-        self._simulateMotorPosition()
+        self._updateMotorPosition()
         self.angledWheel.stop()
 
     def disable(self):
