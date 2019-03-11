@@ -357,7 +357,7 @@ class SwerveWheel(Wheel):
     """
 
     def __init__(self, angledWheel: AngledWheel, steerMotor: ctre.WPI_TalonSRX,
-                 encoderCountsPerRev, offsetX = 0, offsetY = 0,
+                 encoderCountsPerRev, rotationVelocity, offsetX = 0, offsetY = 0,
                  reverseSteerMotor=False):
         """
         ``zeroSteering()`` is called in __init__.
@@ -375,6 +375,7 @@ class SwerveWheel(Wheel):
         self.angledWheel = angledWheel
         self.steerMotor = steerMotor
         self.encoderCountsPerRev = encoderCountsPerRev
+        self.rotationVelocity = rotationVelocity
         self.offsetX = offsetX
         self.offsetY = offsetY
         self.reverseSteerMotor = reverseSteerMotor
@@ -389,6 +390,7 @@ class SwerveWheel(Wheel):
         current position of the steer motor is ``currentAngle`` (defaults 0).
         """
         self._steerOrigin = self.steerMotor.getSelectedSensorPosition(0)
+        self._simulatedCurrentDirection = self._steerOrigin
         offset = currentAngle * self.encoderCountsPerRev / TWO_PI
         if self.reverseSteerMotor:
             offset = -offset
@@ -405,25 +407,39 @@ class SwerveWheel(Wheel):
         return offset * TWO_PI / self.encoderCountsPerRev
 
     def _setSteering(self, direction):
+        self._targetDirection = direction
         pos = direction * self.encoderCountsPerRev / TWO_PI
         if self.reverseSteerMotor:
             pos = -pos
         self.steerMotor.set(ctre.ControlMode.Position, pos + self._steerOrigin)
         self._motorDisabled = False
 
+    def _simulateMotorPosition(self):
+        if self._motorDisabled:
+            return
+        change = self.rotationVelocity / sea.ITERATIONS_PER_SECOND
+        if abs(self._simulatedCurrentDirection - self._targetDirection) < change:
+            self._simulatedCurrentDirection = self._targetDirection
+        elif self._simulatedCurrentDirection > self._targetDirection:
+            self._simulatedCurrentDirection -= change
+        else:
+            self._simulatedCurrentDirection += change
+
     def _drive(self, magnitude, direction):
-        currentAngle = self._getCurrentSteeringAngle()
+        self._simulateMotorPosition()
+        currentAngle = self._simulatedCurrentDirection
         # steering should never rotate more than 90 degrees from any position
         angleDiff = sea.circleDistance(currentAngle, direction, math.pi)
-        self._targetDirection = currentAngle + angleDiff
-        #print(math.degrees(currentAngle), math.degrees(self._targetDirection))
-        self._setSteering(self._targetDirection)
+        target = currentAngle + angleDiff
+        #print(math.degrees(currentAngle), math.degrees(target))
+        self._setSteering(target)
         self.angledWheel.angle = currentAngle
         self.angledWheel.x = self.x + math.cos(currentAngle) * self.offsetX - math.sin(currentAngle) * self.offsetY
         self.angledWheel.y = self.y + math.sin(currentAngle) * self.offsetX + math.cos(currentAngle) * self.offsetY
         self.angledWheel.drive(magnitude, direction)
 
     def _stop(self):
+        self._simulateMotorPosition()
         self.angledWheel.stop()
 
     def disable(self):
