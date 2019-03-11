@@ -6,6 +6,7 @@ import remi
 import remi.gui as gui
 import socket
 import time
+import seamonsters as sea
 
 DASHBOARD_PORT = 5805
 
@@ -102,10 +103,7 @@ class Dashboard(remi.App):
     def __init__(self, *args, css=False, **kwargs):
         self.eventQueue = queue.Queue()
         if css:
-            if sys.argv[1] == 'run': # running on robot
-                res_path = "/home/lvuser/py/res"
-            else:
-                res_path = os.path.join(os.getcwd(), 'res')
+            res_path = sea.getRobotPath('res')
             super(Dashboard, self).__init__(*args, static_file_path={'res':res_path}, **kwargs)
         else:
             super(Dashboard,self).__init__(*args, **kwargs)
