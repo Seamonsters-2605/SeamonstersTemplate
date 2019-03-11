@@ -1,8 +1,16 @@
 import math
 import sys
+import os
 import time
 
 ITERATIONS_PER_SECOND = 50.0
+
+def getRobotPath(*paths):
+    if sys.argv[1] == 'run': # running on robot
+        root = "/home/lvuser/py"
+    else:
+        root = os.getcwd()
+    return os.path.join(root, *paths)
 
 def circleDistance(a, b, circle=math.pi*2):
     """
@@ -32,9 +40,7 @@ def setSimulatedDrivetrain(drivetrain):
 
 def readDataFile(filename):
     lines = [ ]
-    if sys.argv[1] == 'run':
-        # running on robot
-        filename = "/home/lvuser/py/" + filename
+    filename = getRobotPath(filename)
     with open(filename, 'r') as f:
         for line in f.readlines():
             values = line.split()
