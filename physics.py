@@ -84,6 +84,10 @@ class PhysicsEngine:
     def __init__(self, physicsController):
         self.physicsController = physicsController
 
+        def configFactoryDefault(self, timeoutMs=0):
+            pass
+        ctre.WPI_TalonSRX.configFactoryDefault = configFactoryDefault
+
         # NavX simulation
         self.ahrs = None
         def createAHRSSim():
