@@ -5,10 +5,14 @@ import time
 
 TWO_PI = math.pi * 2
 
+# for AngledWheel
+CHECK_DRIVE_ENCODER_CYCLE = 10 # cycles
+MAX_DRIVE_ERROR = 6.0 # feet
 MAX_POSITION_OCCURENCE = 10
-CHECK_ENCODER_CYCLE = 10
-MAX_SWERVE_ERROR = math.pi / 2
-CHECK_SWERVE_ENCODER_CYCLE = 50
+
+# for SwerveWheel
+CHECK_SWERVE_ENCODER_CYCLE = 50 # cycles
+MAX_SWERVE_ERROR = 2 * math.pi / 3 # radians
 
 
 def _iteratePairs(list):
@@ -241,7 +245,7 @@ class AngledWheel(Wheel):
 
         if self.driveMode == ctre.ControlMode.Position:
             # TODO: this is arbitrary
-            maxError = self.maxVoltageVelocity * self.encoderCountsPerFoot / 2
+            maxError = self.encoderCountsPerFoot * MAX_DRIVE_ERROR
             if abs(newPosition - self._positionTarget) > maxError:
                 self.faults.append("Can't reach target")
                 self._positionTarget = newPosition
@@ -284,7 +288,7 @@ class AngledWheel(Wheel):
         # TODO: document constant
         if abs(encoderCountsPerSecond) > 400 \
                 and not self.driveMode == ctre.ControlMode.Disabled:
-            if self._encoderCheckCount % CHECK_ENCODER_CYCLE == 0:
+            if self._encoderCheckCount % CHECK_DRIVE_ENCODER_CYCLE == 0:
                 # getSelectedSensorPosition is slow so only check a few times
                 # per second
                 self._encoderCheck()
