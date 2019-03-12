@@ -393,11 +393,11 @@ class SwerveWheel(Wheel):
         current position of the steer motor is ``currentAngle`` (defaults 0).
         """
         self._steerOrigin = self.steerMotor.getSelectedSensorPosition(0)
-        self._simulatedCurrentDirection = self._steerOrigin
         offset = currentAngle * self.encoderCountsPerRev / TWO_PI
         if self.reverseSteerMotor:
             offset = -offset
         self._steerOrigin -= offset
+        self._simulatedCurrentDirection = self._getCurrentSteeringAngle()
 
     def limitMagnitude(self, magnitude, direction):
         return self.angledWheel.limitMagnitude(magnitude, direction)
@@ -458,6 +458,7 @@ class SwerveWheel(Wheel):
             self._motorDisabled = True
 
     def resetPosition(self):
+        self._simulatedCurrentDirection = self._getCurrentSteeringAngle()
         self.angledWheel.resetPosition()
 
     def getRealPosition(self):
