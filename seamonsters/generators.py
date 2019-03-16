@@ -1,6 +1,9 @@
 __author__ = "seamonsters"
 
 import itertools
+import logging
+
+logger = logging.getLogger("seamonsters")
 
 class ParallelSignal:
     """
@@ -47,6 +50,11 @@ def parallel(*iterables):
                     result = next(iter)
                 except StopIteration as e:
                     result = e.value
+                    toRemove.append(iter)
+                except BaseException as e:
+                    logger.exception("A parallel action crashed",
+                        exc_info=e)
+                    result = None
                     toRemove.append(iter)
                 if isinstance(result, ParallelSignal):
                     if isinstance(result, StopParallelSignal):
