@@ -231,8 +231,13 @@ class AngledWheel(Wheel):
 
     def _encoderCheck(self):
         newPosition = self.motor.getSelectedSensorPosition(0)
-        #print(newPosition)
-        #print(self.oldPosition)
+        err = self.motor.getLastError()
+        if err == ctre.ErrorCode.CAN_MSG_STALE:
+            print("Stale CAN frame so we won't check for errors :(",
+                self.motor.getDeviceID()) 
+            self.motor.setLastError(ctre.ErrorCode.OK)
+            return
+
         if abs(newPosition - self._oldPosition) <= 1:
             self._positionOccurence += 1
         else:
