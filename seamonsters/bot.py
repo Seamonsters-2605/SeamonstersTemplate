@@ -4,6 +4,7 @@ import traceback
 import hal
 from wpilib.robotbase import RobotBase
 from wpilib import RobotController
+import logging
 
 class GeneratorBot(RobotBase):
     """
@@ -13,6 +14,7 @@ class GeneratorBot(RobotBase):
     """
 
     period = 0.02
+    logger = logging.getLogger("robot")
 
     def __init__(self):
         RobotBase.__init__(self)
@@ -43,7 +45,7 @@ class GeneratorBot(RobotBase):
                 if self.iterator is not None:
                     self.iterator.close()
                     self.iterator = None
-                print("Robot Break!")
+                self.logger.error("Robot Break!")
                 break
 
             self._expirationTime += self.period
@@ -66,9 +68,12 @@ class GeneratorBot(RobotBase):
                             self.iterator = self.autonomous()
                         else:
                             self.iterator = self.teleop()
-                    except:
-                        print("Exception while starting sequence!")
-                        traceback.print_exc()
+                        if self.iterator is None:
+                            self.logger.error("Robot function is not a generator!")
+                    except BaseException as e:
+                        self.logger.exception(
+                            "Exception while starting sequence!",
+                            exc_info=e)
                         self.earlyStop = True
 
                 if self.isTest():
@@ -82,12 +87,12 @@ class GeneratorBot(RobotBase):
                     try:
                         next(self.iterator)
                     except StopIteration:
-                        print("Robot done.")
+                        self.logger.info("Robot done.")
                         self.iterator = None
                         self.earlyStop = True
-                    except:
-                        print("Exception in robot code!")
-                        traceback.print_exc()
+                    except BaseException as e:
+                        self.logger.exception(
+                            "Exception in robot code!", exc_info=e)
                         self.iterator = None
                         self.earlyStop = True
 
@@ -99,27 +104,27 @@ class GeneratorBot(RobotBase):
         """
         Override this for robot initialization. This should NOT be a generator.
         """
-        print("No robotInit!")
+        self.logger.info("No robotInit!")
 
     def teleop(self):
         """
         Override this to make a generator for teleop
         """
-        print("No teleop!")
+        self.logger.info("No teleop!")
         yield
 
     def autonomous(self):
         """
         Override this to make a generator for autonomous
         """
-        print("No autonomous!")
+        self.logger.info("No autonomous!")
         yield
 
     def test(self):
         """
         Override this to make a generator for test mode
         """
-        print("No test!")
+        self.logger.info("No test!")
         yield
 
 
