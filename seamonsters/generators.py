@@ -72,7 +72,7 @@ def wait(time):
     """
     Wait for a certain number of iterations.
     """
-    for _ in range(time):
+    for _ in range(int(time)):
         yield
 
 def forever():
