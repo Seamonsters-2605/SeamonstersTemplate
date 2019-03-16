@@ -388,7 +388,7 @@ class SwerveWheel(Wheel):
 
         self.zeroSteering()
         self._targetDirection = angledWheel.angle
-        self._motorDisabled = False
+        self._motorDisabled = True
         self._encoderCheckCount = 0
 
     def zeroSteering(self, currentAngle=0):
@@ -418,8 +418,10 @@ class SwerveWheel(Wheel):
         pos = direction * self.encoderCountsPerRev / TWO_PI
         if self.reverseSteerMotor:
             pos = -pos
+        if self._motorDisabled:
+            self.steerMotor.setNeutralMode(ctre.NeutralMode.Brake)
+            self._motorDisabled = False
         self.steerMotor.set(ctre.ControlMode.Position, pos + self._steerOrigin)
-        self._motorDisabled = False
 
     def _updateMotorPosition(self):
         if self._motorDisabled:
@@ -459,6 +461,7 @@ class SwerveWheel(Wheel):
         self.angledWheel.disable()
         if not self._motorDisabled:
             self.steerMotor.disable()
+            self.steerMotor.setNeutralMode(ctre.NeutralMode.Coast)
             self._motorDisabled = True
 
     def resetPosition(self):
