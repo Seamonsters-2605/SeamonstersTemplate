@@ -6,9 +6,12 @@ import remi
 import remi.gui as gui
 import socket
 import time
+import logging
 import seamonsters as sea
 
 DASHBOARD_PORT = 5805
+
+logger = logging.getLogger("seamonsters")
 
 def hBoxWith(*args, **kwargs):
     """
@@ -44,7 +47,7 @@ def startDashboard(robot, dashboardClass):
     robot.app = None
 
     def appCallback(app):
-        print("Dashboard initialized")
+        logger.info("Dashboard initialized")
         robot.app = app
 
     def startDashboardThread(robot, appCallback):
@@ -66,7 +69,7 @@ def startDashboard(robot, dashboardClass):
                         address='10.26.5.2', port=DASHBOARD_PORT, userdata=(robot, appCallback,))
                     break
                 except:
-                    print("Dashboard couldn't start, trying again in 5 seconds")
+                    logger.warning("Dashboard couldn't start, trying again in 5 seconds")
                     time.sleep(5.0)
 
     thread = threading.Thread(target=startDashboardThread,
@@ -84,7 +87,7 @@ def queuedDashboardEvent(eventF):
     def queueTheEvent(self, *args, **kwargs):
         # self is the robot
         def doTheEvent():
-            print("Event:", eventF.__name__)
+            logger.info("Event: " + eventF.__name__)
             return eventF(self, *args, **kwargs)
         self.app.eventQueue.put(doTheEvent)
     return queueTheEvent
