@@ -1,6 +1,11 @@
 # Seamonsters Robot Code Template
 
-Template for robot code.
+Template for robot code. Features include:
+
+- Coroutine-based robot commands to replace the wpilib Command framework. [Read more!](https://seamonsters-2605.github.io/docs/seamonsters-generators/)
+- A universal drivetrain controller that can be configured for any type/configuration of wheels
+- Robot position tracking and path following
+- Integrates with [REMI](https://github.com/dddomodossola/remi/) for building web-based dashboards
 
 ## Directory Structure
 
