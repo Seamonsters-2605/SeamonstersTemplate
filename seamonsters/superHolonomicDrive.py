@@ -238,7 +238,7 @@ class AngledWheel(Wheel):
         # position to get the error but affect nothing
         if err == rev.CANError.kTimeout:
             print("Stale CAN frame so we won't check for errors :(",
-                self.motor.getDeviceId())
+                self.motor._deviceID)
             return
         elif err != rev.CANError.kOK:
             print("Spark max error", self.motor.getDeviceId())
@@ -297,7 +297,7 @@ class AngledWheel(Wheel):
         if abs(encoderCountsPerSecond) > 400 \
                 and not self.driveMode == DISABLED:
             if self._encoderCheckCount % CHECK_DRIVE_ENCODER_CYCLE == 0:
-                # getEncoder().getPosition is slow so only check a few times
+                # getSelectedSensorPosition is slow so only check a few times
                 # per second
                 self._encoderCheck()
         else:
@@ -321,7 +321,7 @@ class AngledWheel(Wheel):
 
     def getRealPosition(self):
         return self._sensorPositionToDistance(
-            self.motor.getEncoder().getPosition())
+            self.motor.getSelectedSensorPosition(0))
 
     def getTargetPosition(self):
         return self._sensorPositionToDistance(self._positionTarget)
@@ -333,7 +333,7 @@ class AngledWheel(Wheel):
         return self.angle
 
     def getRealVelocity(self):
-        sensorVel = self.motor.getEncoder().getVelocity()
+        sensorVel = self.motor.getSelectedSensorVelocity(0)
         if self.reverse:
             sensorVel = -sensorVel
         return sensorVel * 10.0 / self.encoderCountsPerFoot
@@ -404,7 +404,7 @@ class SwerveWheel(Wheel):
         Reset the origin (rotation of wheel when facing right) so that the
         current position of the steer motor is ``currentAngle`` (defaults 0).
         """
-        self._steerOrigin = self.steerMotor.getEncoder().getPosition()
+        self._steerOrigin = self.steerMotor.getSelectedSensorPosition(0)
         offset = currentAngle * self.encoderCountsPerRev / TWO_PI
         if self.reverseSteerMotor:
             offset = -offset
@@ -415,7 +415,7 @@ class SwerveWheel(Wheel):
         return self.angledWheel.limitMagnitude(magnitude, direction)
 
     def _getCurrentSteeringAngle(self):
-        offset = self.steerMotor.getEncoder().getPosition() \
+        offset = self.steerMotor.getSelectedSensorPosition(0) \
                  - self._steerOrigin
         if self.reverseSteerMotor:
             offset = -offset
