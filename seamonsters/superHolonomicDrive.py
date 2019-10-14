@@ -584,11 +584,11 @@ class SuperHolonomicDrive:
                 wheelLimitScales.append(self.wheels[wheelNum].limitMagnitude(wheelMag, wheelDir))
 
                 minWheelScale = min(wheelLimitScales)
-                if wheelMagnitudes[i] == 0:
+                if wheelMagnitudes[0] == 0:
                     self.wheels[wheelNum].stop()
                 else:
-                    self.wheels[wheelNum].drive(wheelMagnitudes[i] * minWheelScale,
-                                        wheelDirections[i])
+                    self.wheels[wheelNum].drive(wheelMagnitudes[0] * minWheelScale,
+                        wheelDirections[0])
                 return minWheelScale
             except:
                 print("Wheel " + str(wheelNum) + " not in list of wheels")
