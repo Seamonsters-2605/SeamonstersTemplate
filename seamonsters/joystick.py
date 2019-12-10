@@ -2,6 +2,18 @@ import wpilib
 
 __author__ = "seamonsters"
 
+class TFlightHotasX:
+    """
+    Constants for the Thrustmaster T-Flight Hotas X joystick.
+    """
+
+    AXIS_X = 0
+    AXIS_Y = 1
+    AXIS_THROTTLE = 2
+    AXIS_TWIST = 3
+    AXIS_LEVER = 4
+
+
 def deadZone(value, deadZone=0.1, maxValue=1.0):
     """
     Add a dead-zone to the number. Any input from ``deadZone`` to ``maxValue``

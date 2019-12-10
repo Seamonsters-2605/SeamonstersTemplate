@@ -2,212 +2,99 @@ __author__ = "seamonsters"
 
 import ctre
 import math
+import seamonsters as sea
 
 
-class DriveInterface:
+class AccelerationFilter:
     """
-    A generic interface for driving a robot.
+    Calculates acceleration filtering for drive inputs (magnitude, direction, turn).
     """
 
-    def drive(self, magnitude, direction, turn):
+    def __init__(self, linearAccel, angularAccel):
         """
-        Drive the robot. This should be called 50 times per second.
-
-        :param magnitude: feet per second
-        :param direction: radians. 0 is right, positive counter-clockwise
-        :param turn: radians per second. positive counter-clockwise
-        :return: the scale of the actual output speed, as a fraction of the
-            input magnitude and turn components
+        :param linearAccel: Linear acceleration, in feet per second per second
+        :param angularAccel: Angular acceleration, in radians per second per second
         """
-        return 1.0
-
-
-class TestDriveInterface(DriveInterface):
-    """
-    A DriveInterface which does nothing but log the magnitude/direction/turn
-    values it receives.
-    """
-
-    def drive(self, magnitude, direction, turn):
-        print("Drive mag", magnitude,
-              "dir", math.degrees(direction),
-              "turn", math.degrees(turn))
-        return 1.0
-
-
-class AccelerationFilterDrive(DriveInterface):
-    """
-    Wraps another drive interface, and provides acceleration filtering.
-    """
-
-    def __init__(self, interface, accelerationRate=.08):
-        """
-        ``interface`` is the DriveInterface to provide acceleration filtering
-        for. ``accelerationRate`` defaults to .08 (0 to full speed in .25
-        seconds).
-        """
-        self.interface = interface
-
-        self.accelerationRate = accelerationRate
+        self.linearAccelPerFrame = linearAccel / sea.ITERATIONS_PER_SECOND
+        self.angularAccelPerFrame = angularAccel / sea.ITERATIONS_PER_SECOND
         self.previousX = 0.0
         self.previousY = 0.0
         self.previousTurn = 0.0
 
-    def drive(self, magnitude, direction, turn):
-        magnitude, direction, turn = \
-            self._accelerationFilter(magnitude, direction, turn)
-        return self.interface.drive(magnitude, direction, turn)
-
-    def getFilteredMagnitude(self):
-        return math.sqrt(self.previousX ** 2 + self.previousY ** 2)
-
-    def getFilteredDirection(self):
-        return math.atan2(self.previousY, self.previousX)
-
-    def getFilteredTurn(self):
-        return self.previousTurn
-
-    # returns an tuple of: (magnitude, direction, turn)
-    def _accelerationFilter(self, magnitude, direction, turn):
-        if abs(self.previousTurn - turn) <= self.accelerationRate:
-            newTurn = turn
+    def filter(self, magnitude, direction, turn):
+        """
+        :param magnitude: linear velocity in feet per second
+        :param direction: linear direction in radians
+        :param turn: angular velocity in radians per second
+        :return: tuple of filtered magnitude, direction, turn
+        """
+        if abs(self.previousTurn - turn) <= self.angularAccelPerFrame:
+            filteredTurn = turn
         else:
             if turn > self.previousTurn:
-                newTurn = self.previousTurn + self.accelerationRate
+                filteredTurn = self.previousTurn + self.angularAccelPerFrame
             else:
-                newTurn = self.previousTurn - self.accelerationRate
+                filteredTurn = self.previousTurn - self.angularAccelPerFrame
 
         x = magnitude * math.cos(direction)
         y = magnitude * math.sin(direction)
-        distanceToNew = math.sqrt((x - self.previousX) ** 2
-                                + (y - self.previousY) ** 2)
+        distanceFromPrev = math.sqrt((x - self.previousX) ** 2
+                                   + (y - self.previousY) ** 2)
 
-        if distanceToNew <= self.accelerationRate:
-            newX = x
-            newY = y
-            newMagnitude = magnitude
-            newDirection = direction
+        if distanceFromPrev <= self.linearAccelPerFrame:
+            filteredX = x
+            filteredY = y
+            filteredMag = magnitude
+            filteredDir = direction
         else:
-            newX = self.previousX \
-                + (x - self.previousX) * self.accelerationRate / distanceToNew
-            newY = self.previousY \
-                + (y - self.previousY) * self.accelerationRate / distanceToNew
-            newMagnitude = math.sqrt(newX ** 2 + newY ** 2)
-            newDirection = math.atan2(newY, newX)
+            filteredX = self.previousX \
+                + (x - self.previousX) * self.linearAccelPerFrame / distanceFromPrev
+            filteredY = self.previousY \
+                + (y - self.previousY) * self.linearAccelPerFrame / distanceFromPrev
+            filteredMag = math.sqrt(filteredX ** 2 + filteredY ** 2)
+            filteredDir = math.atan2(filteredY, filteredX)
 
-        self.previousX = newX
-        self.previousY = newY
-        self.previousTurn = newTurn
-        return newMagnitude, newDirection, newTurn
+        self.previousX = filteredX
+        self.previousY = filteredY
+        self.previousTurn = filteredTurn
+        return filteredMag, filteredDir, filteredTurn
 
 
-class DynamicPIDDrive(DriveInterface):
+class MultiDrive:
     """
-    Wraps another drive interface. Based on the driving magnitude and turn
-    speed, the PID's of a set of talons are changed. PID's are given as a tuple
-    of (p, i, d, f). For speeds below ``slowPIDScale``, ``slowPID`` is used.
-    For speeds above ``fastPIDScale``, ``fastPID`` is used. For speeds in
-    between, the P/I/D/F values are interpolated.
+    Wraps a SuperHolonomicDrive, and allows ``drive()`` to be called multiple
+    times in a loop. The values for all of these calls are added together,
+    and sent to the SuperHolonomicDrive when ``update()`` is called.
     """
 
-    def __init__(self, interface, wheelTalons, slowPID, slowPIDScale,
-                 fastPID, fastPIDScale, pidLookBackRange=10):
+    def __init__(self, superDrive):
         super().__init__()
-        self.interface = interface
-        self.talons = wheelTalons
-        self.slowPID = slowPID
-        self.slowPIDScale = slowPIDScale
-        self.fastPID = fastPID
-        self.fastPIDScale = fastPIDScale
-
-        self.currentPID = None
-        self.driveScales = [0.0 for i in range(0, pidLookBackRange)]
-
-    def drive(self, magnitude, direction, turn):
-        driveScale = max(abs(magnitude), abs(turn * 2))
-        self.driveScales.append(driveScale)
-        self.driveScales.pop(0)
-        self._setPID(self._lerpPID(max(self.driveScales)))
-
-        return self.interface.drive(magnitude, direction, turn)
-
-    def _setPID(self, pid):
-        if pid == self.currentPID:
-            return
-        self.currentPID = pid
-        for talon in self.talons:
-            talon.config_kP(0, pid[0], 0)
-            talon.config_kI(0, pid[1], 0)
-            talon.config_kD(0, pid[2], 0)
-            talon.config_kF(0, pid[3], 0)
-
-    def _lerpPID(self, magnitude):
-        if magnitude <= self.slowPIDScale:
-            return self.slowPID
-        elif magnitude >= self.fastPIDScale:
-            return self.fastPID
-        else:
-            # 0 - 1
-            scale = (magnitude - self.slowPIDScale) / \
-                    (self.fastPIDScale - self.slowPIDScale)
-            pidList = []
-            for i in range(0, 4):
-                slowValue = self.slowPID[i]
-                fastValue = self.fastPID[i]
-                value = (fastValue - slowValue) * scale + slowValue
-                pidList.append(value)
-            return tuple(pidList)
-
-
-class MultiDrive(DriveInterface):
-    """
-    Wraps another DriveInterface, and allows ``drive()`` to be called multiple
-    times in a loop. The values for all of these calls are averaged together,
-    and sent to the wrapped interface when ``update()`` is called.
-    """
-
-    def __init__(self, interface):
-        super().__init__()
-        self.interface = interface
+        self.superDrive = superDrive
         self._reset()
 
     def _reset(self):
         self.totalX = 0
         self.totalY = 0
         self.totalTurn = 0
-        self.numDriveCalls = 0
-        self.numTurnCalls = 0
 
     def drive(self, magnitude, direction, turn):
         self.totalX += magnitude * math.cos(direction)
         self.totalY += magnitude * math.sin(direction)
         self.totalTurn += turn
 
-        if magnitude != 0:
-            self.numDriveCalls += 1
-        if turn != 0:
-            self.numTurnCalls += 1
-
     def update(self):
-        if self.numDriveCalls == 0:
-            x = 0
-            y = 0
-        else:
-            x = float(self.totalX) / float(self.numDriveCalls)
-            y = float(self.totalY) / float(self.numDriveCalls)
-        if self.numTurnCalls == 0:
-            turn = 0
-        else:
-            turn = float(self.totalTurn) / float(self.numTurnCalls)
-        magnitude = math.sqrt(x ** 2 + y ** 2)
-        direction = math.atan2(y, x)
-        scale = self.interface.drive(magnitude, direction, turn)
+        magnitude = math.sqrt(self.totalX ** 2 + self.totalY ** 2)
+        direction = math.atan2(self.totalY, self.totalX)
+        scale = self.superDrive.drive(magnitude, direction, self.totalTurn)
         self._reset()
         return scale
 
 
 if __name__ == "__main__":
     # test acceleration filter drive
-    filterDrive = AccelerationFilterDrive(TestDriveInterface())
-    for i in range(0, 20):
-        filterDrive.drive(1.0, 1.0, 1.0)
+    accelFilter = AccelerationFilter(2.0, 2.0)
+    for i in range(0, 25):
+        print(accelFilter.filter(1.0, math.radians(45), 1.0))
+    print("--------")
+    for i in range(0, 25):
+        print(accelFilter.filter(1.0, math.radians(90), 1.0))

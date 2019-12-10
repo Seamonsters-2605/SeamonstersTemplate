@@ -3,6 +3,8 @@ __author__ = "seamonsters"
 import traceback
 import hal
 from wpilib.robotbase import RobotBase
+from wpilib import RobotController
+import logging
 
 class GeneratorBot(RobotBase):
     """
@@ -11,13 +13,23 @@ class GeneratorBot(RobotBase):
     with the rate that data is received from Driver Station.
     """
 
+    period = 0.02
+    logger = logging.getLogger("robot")
+
     def __init__(self):
         RobotBase.__init__(self)
         self.iterator = None
         self.earlyStop = False
 
         hal.report(hal.UsageReporting.kResourceType_Framework,
-                   hal.UsageReporting.kFramework_Iterative)
+                   hal.UsageReporting.kFramework_Timed)
+
+        self._expirationTime = 0
+        self._notifier = hal.initializeNotifier()
+
+    def free(self): # called by python
+        hal.stopNotifier(self._notifier)
+        hal.cleanNotifier(self._notifier)
 
     def startCompetition(self):
         self.robotInit()
@@ -25,7 +37,20 @@ class GeneratorBot(RobotBase):
         # Tell the DS that the robot is ready to be enabled
         hal.observeUserProgramStarting()
 
+        self._expirationTime = RobotController.getFPGATime() * 1e-6 + self.period
+        self._updateAlarm()
+
         while True:
+            if hal.waitForNotifierAlarm(self._notifier) == 0:
+                if self.iterator is not None:
+                    self.iterator.close()
+                    self.iterator = None
+                self.logger.error("Robot Break!")
+                break
+
+            self._expirationTime += self.period
+            self._updateAlarm()
+
             # Wait for new data to arrive
             self.ds.waitForData()
             if self.isDisabled():
@@ -43,9 +68,12 @@ class GeneratorBot(RobotBase):
                             self.iterator = self.autonomous()
                         else:
                             self.iterator = self.teleop()
-                    except:
-                        print("Exception while starting sequence!")
-                        traceback.print_exc()
+                        if self.iterator is None:
+                            self.logger.error("Robot function is not a generator!")
+                    except BaseException as e:
+                        self.logger.exception(
+                            "Exception while starting sequence!",
+                            exc_info=e)
                         self.earlyStop = True
 
                 if self.isTest():
@@ -59,40 +87,44 @@ class GeneratorBot(RobotBase):
                     try:
                         next(self.iterator)
                     except StopIteration:
-                        print("Robot done.")
+                        self.logger.info("Robot done.")
                         self.iterator = None
                         self.earlyStop = True
-                    except:
-                        print("Exception in robot code!")
-                        traceback.print_exc()
+                    except BaseException as e:
+                        self.logger.exception(
+                            "Exception in robot code!", exc_info=e)
                         self.iterator = None
                         self.earlyStop = True
+
+    def _updateAlarm(self) -> None:
+        """Update the alarm hardware to reflect the next alarm."""
+        hal.updateNotifierAlarm(self._notifier, int(self._expirationTime * 1e6))
 
     def robotInit(self):
         """
         Override this for robot initialization. This should NOT be a generator.
         """
-        print("No robotInit!")
+        self.logger.info("No robotInit!")
 
     def teleop(self):
         """
         Override this to make a generator for teleop
         """
-        print("No teleop!")
+        self.logger.info("No teleop!")
         yield
 
     def autonomous(self):
         """
         Override this to make a generator for autonomous
         """
-        print("No autonomous!")
+        self.logger.info("No autonomous!")
         yield
 
     def test(self):
         """
         Override this to make a generator for test mode
         """
-        print("No test!")
+        self.logger.info("No test!")
         yield
 
 

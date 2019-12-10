@@ -1,5 +1,5 @@
 import math
-import seamonsters.generators
+import seamonsters as sea
 
 class PathFollower:
     """
@@ -7,6 +7,7 @@ class PathFollower:
     """
 
     NAVX_LAG = 7 # frames
+    NAVX_ERROR_CORRECTION = 0.1 # out of 1
 
     def __init__(self, drive, ahrs=None):
         """
@@ -35,34 +36,26 @@ class PathFollower:
     def setPosition(self, x, y, angle):
         self.robotX = x
         self.robotY = y
-        self.robotAngle = angle
-        if self.ahrs is not None:
-            self._ahrsOrigin = 0
-            self._ahrsOrigin = self._getAHRSAngle() - angle
+        if angle is not None:
+            self.robotAngle = angle
+            if self.ahrs is not None:
+                self._ahrsOrigin = 0
+                self._ahrsOrigin = self._getAHRSAngle() - angle
+            self._robotAngleHistory.clear()
         self._drivePositionState = None
-        self._robotAngleHistory.clear()
 
     def _getAHRSAngle(self):
         return -math.radians(self.ahrs.getAngle()) - self._ahrsOrigin
 
-    def waitForOrientWheelsGenerator(self, magnitude, direction, turn,
-            angleTolerance):
+    def waitForOrientWheelsGenerator(self, magnitude, direction, turn):
         """
-        Orient wheels to prepare to drive with the given mag/dir/turn, and wait
-        until all wheels are within ``angleTolerance`` radians of their target
-        direction.
+        Orient wheels to prepare to drive with the given mag/dir/turn.
         """
         if magnitude == 0 and turn == 0:
             return
-        done = False
-        while not done:
-            done = True
+        for _ in range(0, 10):
             self.drive.orientWheels(magnitude, direction, turn)
             yield
-            for wheel in self.drive.wheels:
-                if abs(wheel.getTargetDirection() - wheel.getRealDirection()) \
-                        > angleTolerance:
-                    done = False
 
     def updateRobotPosition(self):
         moveDist, moveDir, moveTurn, self._drivePositionState = \
@@ -75,7 +68,7 @@ class PathFollower:
             laggedAngle = self._robotAngleHistory.pop(0)
             if self.ahrs is not None:
                 navxAngle = self._getAHRSAngle()
-                error = navxAngle - laggedAngle
+                error = (navxAngle - laggedAngle) * PathFollower.NAVX_ERROR_CORRECTION
                 self.robotAngle += error
                 for i in range(0, len(self._robotAngleHistory)):
                     self._robotAngleHistory[i] += error
@@ -83,14 +76,14 @@ class PathFollower:
         self.robotX += math.cos(moveDir + self.robotAngle) * moveDist
         self.robotY += math.sin(moveDir + self.robotAngle) * moveDist
 
-    def driveToPointGenerator(self, x, y, angle, time, wheelAngleTolerance):
+    def driveToPointGenerator(self, x, y, angle, time,
+            robotPositionTolerance=0, robotAngleTolerance=0):
         """
         A generator to drive to a location on the field while simultaneously
         pointing the robot in a new direction. This will attempt to move the
         robot at a velocity so it reaches the target position angle in ``time``
         seconds. This generator never exits, but yields ``True`` or ``False``
-        if the robot is close enough to reach its position/angle in the next
-        cycle.
+        if the robot is close enough to its target position, within tolerance.
 
         If ``time`` is zero, the robot will attempt to move to the position as
         fast as possible.
@@ -101,8 +94,7 @@ class PathFollower:
         aDiff = angle - self.robotAngle
         # actual velocities don't matter for orientWheels as long as the ratios
         # are correct
-        yield from self.waitForOrientWheelsGenerator(dist, moveDir, aDiff,
-            wheelAngleTolerance)
+        yield from self.waitForOrientWheelsGenerator(dist, moveDir, aDiff)
         for wheel in self.drive.wheels:
             wheel.resetPosition()
 
@@ -116,31 +108,35 @@ class PathFollower:
             targetMag = dist / time
             targetAVel = aDiff / time
 
+        accel = 0
         while True:
+            accel += 0.1
+            if accel > 1:
+                accel = 1
+
             self.updateRobotPosition()
 
             dist, dir = self._robotVectorToPoint(x, y)
             aDiff = angle - self.robotAngle
 
-            atPosition = targetMag == 0 or dist < targetMag / 50
+            # is the robot close enough to the target position to reach it in
+            # the next iteration?
+            atPosition = targetMag == 0 or dist < targetMag / sea.ITERATIONS_PER_SECOND
             if atPosition:
-                mag = dist * 50
+                mag = dist * sea.ITERATIONS_PER_SECOND
             else:
                 mag = targetMag
-            atAngle = targetAVel == 0 or abs(aDiff) < abs(targetAVel / 50)
+            atAngle = targetAVel == 0 or abs(aDiff) < abs(targetAVel / sea.ITERATIONS_PER_SECOND)
             if atAngle:
-                aVel = aDiff * 50
+                aVel = aDiff * sea.ITERATIONS_PER_SECOND
             else:
                 aVel = abs(targetAVel)
                 if aDiff < 0:
                     aVel = -aVel
 
-            self.drive.drive(mag, dir, aVel)
-            try:
-                yield atPosition and atAngle
-            except GeneratorExit:
-                self.drive.drive(0, 0, 0)
-                return
+            self.drive.drive(mag * accel, dir, aVel * accel)
+            yield (atPosition or dist <= robotPositionTolerance) \
+                and (atAngle or abs(aDiff) <= robotAngleTolerance)
 
     # return magnitude, direction
     def _robotVectorToPoint(self, x, y):
@@ -152,7 +148,7 @@ class PathFollower:
     def _readDataLine(self, line):
         return (float(n) for n in line)
 
-    def followPathData(self, data, wheelAngleTolerance):
+    def followPathData(self, data):
         """
         Follow path data read from a file. ``data`` should be a list of line
         tuples returned by ``sea.readDataFile``.
@@ -162,11 +158,11 @@ class PathFollower:
         for point in data[1:]:
             t, x, y, angle = self._readDataLine(point)
             if lastX == x and lastY == y and lastAngle == angle:
-                yield from seamonsters.generators.wait(int((t - lastTime) * 50))
+                yield from sea.wait(int((t - lastTime) * sea.ITERATIONS_PER_SECOND))
             else:
-                yield from seamonsters.generators.untilTrue(
+                yield from sea.untilTrue(
                     self.driveToPointGenerator(x, y, math.radians(angle),
-                        t - lastTime, wheelAngleTolerance))
+                        t - lastTime))
             lastTime = t
             lastX = x
             lastY = y
