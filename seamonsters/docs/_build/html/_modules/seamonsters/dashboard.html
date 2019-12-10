@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>seamonsters.dashboard &#8212; seamonsters 0 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -40,8 +38,13 @@
 <span class="kn">import</span> <span class="nn">remi</span>
 <span class="kn">import</span> <span class="nn">remi.gui</span> <span class="k">as</span> <span class="nn">gui</span>
 <span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">seamonsters</span> <span class="k">as</span> <span class="nn">sea</span>
 
 <span class="n">DASHBOARD_PORT</span> <span class="o">=</span> <span class="mi">5805</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;seamonsters&quot;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">hBoxWith</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -77,24 +80,30 @@
     <span class="n">robot</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">appCallback</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dashboard started&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Dashboard initialized&quot;</span><span class="p">)</span>
         <span class="n">robot</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
 
     <span class="k">def</span> <span class="nf">startDashboardThread</span><span class="p">(</span><span class="n">robot</span><span class="p">,</span> <span class="n">appCallback</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sim&#39;</span><span class="p">:</span>
-            <span class="c1"># doesn&#39;t work with 127.0.0.1 or localhost on school laptops</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">address</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">())</span>
-            <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">gaierror</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;darwin&#39;</span><span class="p">:</span> <span class="c1"># macOS</span>
                 <span class="c1"># issue with macOS Sierra and later</span>
                 <span class="n">address</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># doesn&#39;t work with 127.0.0.1 or localhost on school laptops</span>
+                <span class="n">address</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">())</span>
             <span class="n">remi</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">dashboardClass</span><span class="p">,</span> <span class="n">start_browser</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">DASHBOARD_PORT</span><span class="p">,</span> <span class="n">userdata</span><span class="o">=</span><span class="p">(</span><span class="n">robot</span><span class="p">,</span> <span class="n">appCallback</span><span class="p">,))</span>
         <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;depoly&#39;</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;run&#39;</span><span class="p">:</span> <span class="c1"># run on robot</span>
-            <span class="n">remi</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">dashboardClass</span><span class="p">,</span> <span class="n">start_browser</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">address</span><span class="o">=</span><span class="s1">&#39;10.26.5.2&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">DASHBOARD_PORT</span><span class="p">,</span> <span class="n">userdata</span><span class="o">=</span><span class="p">(</span><span class="n">robot</span><span class="p">,</span> <span class="n">appCallback</span><span class="p">,))</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">remi</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">dashboardClass</span><span class="p">,</span> <span class="n">start_browser</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">address</span><span class="o">=</span><span class="s1">&#39;10.26.5.2&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">DASHBOARD_PORT</span><span class="p">,</span> <span class="n">userdata</span><span class="o">=</span><span class="p">(</span><span class="n">robot</span><span class="p">,</span> <span class="n">appCallback</span><span class="p">,))</span>
+                    <span class="k">break</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Dashboard couldn&#39;t start, trying again in 5 seconds&quot;</span><span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
 
     <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">startDashboardThread</span><span class="p">,</span>
                                 <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">robot</span><span class="p">,</span> <span class="n">appCallback</span><span class="p">))</span>
@@ -111,8 +120,8 @@
     <span class="k">def</span> <span class="nf">queueTheEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># self is the robot</span>
         <span class="k">def</span> <span class="nf">doTheEvent</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Event:&quot;</span><span class="p">,</span> <span class="n">eventF</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-            <span class="n">eventF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Event: &quot;</span> <span class="o">+</span> <span class="n">eventF</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">eventF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">eventQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">doTheEvent</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">queueTheEvent</span>
 
@@ -127,10 +136,10 @@
 
 <span class="sd">    :param css: Whether to use a custom css file. Must be located at &#39;res/style.css&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Dashboard.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Dashboard.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">css</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Dashboard.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.Dashboard.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">css</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">css</span><span class="p">:</span>
-            <span class="n">res_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;res&#39;</span><span class="p">)</span>
+            <span class="n">res_path</span> <span class="o">=</span> <span class="n">sea</span><span class="o">.</span><span class="n">getRobotPath</span><span class="p">(</span><span class="s1">&#39;res&#39;</span><span class="p">)</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">Dashboard</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">static_file_path</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;res&#39;</span><span class="p">:</span><span class="n">res_path</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">Dashboard</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -149,9 +158,32 @@
 <span class="sd">        Execute all events in the event queue and clear the queue. This should</span>
 <span class="sd">        be called continuously during teleop.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
             <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventQueue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-            <span class="n">event</span><span class="p">()</span></div>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">event</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+<span class="k">class</span> <span class="nc">ToggleButtonGroup</span><span class="p">:</span>
+
+<div class="viewcode-block" id="ToggleButtonGroup.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.ToggleButtonGroup.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttons</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="ToggleButtonGroup.addButton"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.ToggleButtonGroup.addButton">[docs]</a>    <span class="k">def</span> <span class="nf">addButton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">button</span> <span class="o">=</span> <span class="n">gui</span><span class="o">.</span><span class="n">Button</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">button</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">button</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ToggleButtonGroup.highlight"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.ToggleButtonGroup.highlight">[docs]</a>    <span class="k">def</span> <span class="nf">highlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">buttons</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">button</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">button</span><span class="o">.</span><span class="n">style</span><span class="p">[</span><span class="s2">&quot;background&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;rgb(21, 130, 21)&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">button</span><span class="o">.</span><span class="n">style</span><span class="p">[</span><span class="s2">&quot;background&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;rgb(21, 182, 21)&quot;</span></div>
 </pre></div>
 
           </div>
@@ -183,13 +215,11 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -210,7 +240,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

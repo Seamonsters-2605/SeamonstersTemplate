@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>seamonsters.bot &#8212; seamonsters 0 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -37,7 +35,9 @@
 
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">hal</span>
-<span class="kn">from</span> <span class="nn">wpilib.robotbase</span> <span class="k">import</span> <span class="n">RobotBase</span>
+<span class="kn">from</span> <span class="nn">wpilib.robotbase</span> <span class="kn">import</span> <span class="n">RobotBase</span>
+<span class="kn">from</span> <span class="nn">wpilib</span> <span class="kn">import</span> <span class="n">RobotController</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="k">class</span> <span class="nc">GeneratorBot</span><span class="p">(</span><span class="n">RobotBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -46,13 +46,23 @@
 <span class="sd">    with the rate that data is received from Driver Station.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="GeneratorBot.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">period</span> <span class="o">=</span> <span class="mf">0.02</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;robot&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GeneratorBot.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">RobotBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">earlyStop</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">hal</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">hal</span><span class="o">.</span><span class="n">UsageReporting</span><span class="o">.</span><span class="n">kResourceType_Framework</span><span class="p">,</span>
-                   <span class="n">hal</span><span class="o">.</span><span class="n">UsageReporting</span><span class="o">.</span><span class="n">kFramework_Iterative</span><span class="p">)</span></div>
+                   <span class="n">hal</span><span class="o">.</span><span class="n">UsageReporting</span><span class="o">.</span><span class="n">kFramework_Timed</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expirationTime</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notifier</span> <span class="o">=</span> <span class="n">hal</span><span class="o">.</span><span class="n">initializeNotifier</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="GeneratorBot.free"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.free">[docs]</a>    <span class="k">def</span> <span class="nf">free</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1"># called by python</span>
+        <span class="n">hal</span><span class="o">.</span><span class="n">stopNotifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notifier</span><span class="p">)</span>
+        <span class="n">hal</span><span class="o">.</span><span class="n">cleanNotifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notifier</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GeneratorBot.startCompetition"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.startCompetition">[docs]</a>    <span class="k">def</span> <span class="nf">startCompetition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">robotInit</span><span class="p">()</span>
@@ -60,7 +70,20 @@
         <span class="c1"># Tell the DS that the robot is ready to be enabled</span>
         <span class="n">hal</span><span class="o">.</span><span class="n">observeUserProgramStarting</span><span class="p">()</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expirationTime</span> <span class="o">=</span> <span class="n">RobotController</span><span class="o">.</span><span class="n">getFPGATime</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1e-6</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_updateAlarm</span><span class="p">()</span>
+
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hal</span><span class="o">.</span><span class="n">waitForNotifierAlarm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notifier</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Robot Break!&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_expirationTime</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_updateAlarm</span><span class="p">()</span>
+
             <span class="c1"># Wait for new data to arrive</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">waitForData</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isDisabled</span><span class="p">():</span>
@@ -78,9 +101,12 @@
                             <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autonomous</span><span class="p">()</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">teleop</span><span class="p">()</span>
-                    <span class="k">except</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception while starting sequence!&quot;</span><span class="p">)</span>
-                        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Robot function is not a generator!&quot;</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                            <span class="s2">&quot;Exception while starting sequence!&quot;</span><span class="p">,</span>
+                            <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">earlyStop</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTest</span><span class="p">():</span>
@@ -94,40 +120,44 @@
                     <span class="k">try</span><span class="p">:</span>
                         <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Robot done.&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Robot done.&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="kc">None</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">earlyStop</span> <span class="o">=</span> <span class="kc">True</span>
-                    <span class="k">except</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception in robot code!&quot;</span><span class="p">)</span>
-                        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                            <span class="s2">&quot;Exception in robot code!&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="kc">None</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">earlyStop</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+    <span class="k">def</span> <span class="nf">_updateAlarm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update the alarm hardware to reflect the next alarm.&quot;&quot;&quot;</span>
+        <span class="n">hal</span><span class="o">.</span><span class="n">updateNotifierAlarm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notifier</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expirationTime</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">))</span>
 
 <div class="viewcode-block" id="GeneratorBot.robotInit"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.robotInit">[docs]</a>    <span class="k">def</span> <span class="nf">robotInit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Override this for robot initialization. This should NOT be a generator.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No robotInit!&quot;</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No robotInit!&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GeneratorBot.teleop"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.teleop">[docs]</a>    <span class="k">def</span> <span class="nf">teleop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Override this to make a generator for teleop</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No teleop!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No teleop!&quot;</span><span class="p">)</span>
         <span class="k">yield</span></div>
 
 <div class="viewcode-block" id="GeneratorBot.autonomous"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.autonomous">[docs]</a>    <span class="k">def</span> <span class="nf">autonomous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Override this to make a generator for autonomous</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No autonomous!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No autonomous!&quot;</span><span class="p">)</span>
         <span class="k">yield</span></div>
 
 <div class="viewcode-block" id="GeneratorBot.test"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Override this to make a generator for test mode</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No test!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No test!&quot;</span><span class="p">)</span>
         <span class="k">yield</span></div>
 
 
@@ -137,7 +167,7 @@
 <span class="sd">    to HAL. Allows running teleop/autonomous sequences as a Generator.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="IterativeRobotInstance.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.IterativeRobotInstance.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">robotType</span><span class="p">):</span>
+<div class="viewcode-block" id="IterativeRobotInstance.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.IterativeRobotInstance.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">robotType</span><span class="p">):</span>
         <span class="c1"># https://stackoverflow.com/a/19476841</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">robotObject</span> <span class="o">=</span> <span class="n">robotType</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">robotType</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">robotType</span> <span class="o">=</span> <span class="n">robotType</span>
@@ -192,13 +222,11 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -219,7 +247,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
