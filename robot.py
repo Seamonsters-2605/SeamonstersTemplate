@@ -1,26 +1,27 @@
 import seamonsters as sea 
 import wpilib
-import ctre
+import rev
 import math
 
 class PracticeBot(sea.GeneratorBot):
 
     def robotInit(self):
-        leftTalon = ctre.WPI_TalonSRX(0)
-        rightTalon = ctre.WPI_TalonSRX(1)
+        leftSpark = rev.CANSparkMax(1, rev.MotorType.kBrushless)
+        rightSpark = rev.CANSparkMax(2, rev.MotorType.kBrushless)
 
-        for talon in [leftTalon, rightTalon]:
-            talon.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
-        
-        leftWheel = sea.AngledWheel(leftTalon, -1, 0, math.pi/2, 31291.1352, 16)
-        rightWheel = sea.AngledWheel(rightTalon, 1, 0, math.pi/2, 31291.1352, 16)
+        for spark in [leftSpark, rightSpark]:
+            spark.restoreFactoryDefaults()
+            spark.setIdleMode(rev.IdleMode.kBrake)
+
+        leftWheel = sea.AngledWheel(leftSpark, -1, 0, math.pi/2, 1, 16)
+        rightWheel = sea.AngledWheel(rightSpark, 1, 0, math.pi/2, 1, 16)
 
         self.drivetrain = sea.SuperHolonomicDrive()
         self.drivetrain.addWheel(leftWheel)
         self.drivetrain.addWheel(rightWheel)
 
         for wheel in self.drivetrain.wheels:
-            wheel.driveMode = ctre.ControlMode.PercentOutput
+            wheel.driveMode = rev.ControlType.kVelocity
 
         sea.setSimulatedDrivetrain(self.drivetrain)
 
