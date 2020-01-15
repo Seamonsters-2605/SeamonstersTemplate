@@ -1,5 +1,5 @@
 import math
-import ctre
+import rev
 import seamonsters as sea
 import time
 
@@ -14,6 +14,8 @@ MAX_POSITION_OCCURENCE = 10
 CHECK_SWERVE_ENCODER_CYCLE = 50 # cycles
 MAX_SWERVE_ERROR = 2 * math.pi / 3 # radians
 
+# for spark max
+DISABLED = 7
 
 def _iteratePairs(list):
     for i in range(0, len(list) - 1):
@@ -51,7 +53,7 @@ class Wheel:
         """
         return 1.0
 
-    def drive(self, magnitude, direction):
+    def drive(self, magnitude, direction, motorNum=None):
         """
         Spin the wheel. This should be called 50 times per second.
 
@@ -62,9 +64,9 @@ class Wheel:
         if self.disabled:
             self.disable()
         else:
-            self._drive(magnitude, direction)
+            self._drive(magnitude, direction, motorNum)
 
-    def _drive(self, magnitude, direction):
+    def _drive(self, magnitude, direction, motorNum=None):
         pass
 
     def stop(self):
@@ -188,30 +190,34 @@ class TestWheel(CasterWheel):
 class AngledWheel(Wheel):
     """
     An AngledWheel is a wheel oriented in a fixed direction, which it can't
-    change on its own. It uses a TalonSRX to drive.
+    change on its own. It uses a SparkMax to drive.
     """
 
-    def __init__(self, motor: ctre.WPI_TalonSRX, x, y, angle,
-                 encoderCountsPerFoot, maxVoltageVelocity, reverse=False):
+    def __init__(self, motor: rev.CANSparkMax, x, y, angle, circumference,
+                maxVoltageVelocity, reverse=False):
         """
-        :param motor: a TalonSRX
+        :param motors: a SparkMax
         :param x: X position in feet
         :param y: Y position in feet
         :param angle: radians, direction of force. 0 is right, positive
             counter-clockwise
-        :param encoderCountsPerFoot: number of encoder counts to travel 1 foot
+        :param circumference: wheel circumference in feet
         :param maxVoltageVelocity: velocity at 100% in voltage mode, in feet
             per second
         :param reverse: boolean, optional
         """
         super().__init__(x, y)
-        self.motor = motor
+        self.motors = [motor]
+        self.motorControllers = [motor.getPIDController()]
         self.angle = angle
-        self.encoderCountsPerFoot = encoderCountsPerFoot
+        self.circumference = circumference
+        self.gearRatio = 1
+        self.encoderCountsPerFoot = 1
         self.maxVoltageVelocity = maxVoltageVelocity
         self.reverse = reverse
+        self.wheelPosition = 0
 
-        self.driveMode = ctre.ControlMode.PercentOutput
+        self.driveMode = rev.ControlType.kVoltage
         self.realTime = False
 
         self._motorState = None
@@ -220,6 +226,16 @@ class AngledWheel(Wheel):
         self._oldPosition = 0
         self._positionOccurence = 0
         self._prevTime = time.time()
+    
+    # for wheels with gearboxes, so all motors can be driven at the same speed
+    def addMotor(self, motor: rev.CANSparkMax):
+        self.motors.append(motor)
+        self.motorControllers.append(rev._impl.CANPIDController(motor))
+
+    # for switching between break and coast mode for the motors
+    def setIdleMode(self, mode):
+        for motor in self.motors:
+            motor.setIdleMode(mode)
 
     def limitMagnitude(self, magnitude, direction):
         # TODO: check position error in this function instead, and factor it
@@ -230,84 +246,93 @@ class AngledWheel(Wheel):
         return 1.0
 
     def _encoderCheck(self):
-        newPosition = self.motor.getSelectedSensorPosition(0)
-        err = self.motor.getLastError()
-        if err == ctre.ErrorCode.RxTimeout:
-            print("Stale CAN frame so we won't check for errors :(",
-                self.motor.getDeviceID())
-            return
-        elif err != ctre.ErrorCode.OK:
-            print("Talon error", self.motor.getDeviceID(), err)
+        for motor in self.motors:
+            newPosition = motor.getEncoder().getPosition()
+            err = motor.setEncPosition(motor.getEncoder().getPosition())
+            # setEncPosition() returns a CANError so we set it to the current
+            # position to get the error but affect nothing
+            if err == rev.CANError.kTimeout:
+                print("Stale CAN frame so we won't check for errors :(",
+                    motor.getDeviceId())
+                return
+            elif err != rev.CANError.kOK:
+                print("Spark max error", motor.getDeviceId())
 
-        if abs(newPosition - self._oldPosition) <= 1:
-            self._positionOccurence += 1
-        else:
-            self._positionOccurence = 0
-            self._oldPosition = newPosition
+            if abs(newPosition - self._oldPosition) <= 1:
+                self._positionOccurence += 1
+            else:
+                self._positionOccurence = 0
+                self._oldPosition = newPosition
 
-        if self._positionOccurence >= MAX_POSITION_OCCURENCE:
-            self.faults.append("Encoder not moving")
-            self._positionOccurence = 0
+            if self._positionOccurence >= MAX_POSITION_OCCURENCE:
+                self.faults.append("Encoder not moving")
+                self._positionOccurence = 0
 
-        if self.driveMode == ctre.ControlMode.Position:
-            # TODO: this is arbitrary
-            maxError = self.encoderCountsPerFoot * MAX_DRIVE_ERROR
-            if abs(newPosition - self._positionTarget) > maxError:
-                self.faults.append("Can't reach target")
-                self._positionTarget = newPosition
+            if self.driveMode == rev.ControlType.kPosition:
+                # TODO: this is arbitrary
+                maxError = self.encoderCountsPerFoot * MAX_DRIVE_ERROR
+                if abs(newPosition - self._positionTarget) > maxError:
+                    self.faults.append("Can't reach target")
+                    self._positionTarget = newPosition
 
-    def _drive(self, magnitude, direction):
-        magnitude *= math.cos(direction - self.angle)
-        if self.reverse:
-            magnitude = -magnitude
+    def _drive(self, inputMagnitude, direction, motorNum=None):
+        motorsToDrive = range(0, len(self.motors))
+        if motorNum is not None: # for driving individual motors
+            motorsToDrive = [motorNum]
 
-        if self.driveMode == ctre.ControlMode.Position \
-                and self._motorState != self.driveMode:
-            self._positionTarget = self.motor.getSelectedSensorPosition(0)
-            self._encoderCheckCount = 0
+        for motor in motorsToDrive:
+            magnitude = inputMagnitude * math.cos(direction - self.angle)
+            if self.reverse: 
+                magnitude = -magnitude
 
-        curTime = time.time()
-        if self.realTime and self._motorState == self.driveMode:
-            tDiff = curTime - self._prevTime
-        else:
-            tDiff = 1 / sea.ITERATIONS_PER_SECOND
-        self._prevTime = curTime
+            if self.driveMode == rev.ControlType.kPosition \
+                    and self._motorState != self.driveMode:
+                self._positionTarget = self.motors[motor].getEncoder().getPosition()
+                self._encoderCheckCount = 0
 
-        encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot
-        # always incremented, even if not in position mode
-        # used by getTargetPosition
-        self._positionTarget += encoderCountsPerSecond * tDiff
+            curTime = time.time()
+            if self.realTime and self._motorState == self.driveMode:
+                tDiff = curTime - self._prevTime
+            else:
+                tDiff = 1 / sea.ITERATIONS_PER_SECOND
+            self._prevTime = curTime
 
-        if self.driveMode == ctre.ControlMode.Disabled:
-            if self._motorState != self.driveMode:
-                self.motor.disable()
-        elif self.driveMode == ctre.ControlMode.PercentOutput:
-            self.motor.set(self.driveMode, magnitude / self.maxVoltageVelocity)
-        elif self.driveMode == ctre.ControlMode.Velocity:
-            self.motor.set(self.driveMode, encoderCountsPerSecond / 10.0)
-        elif self.driveMode == ctre.ControlMode.Position:
-            self.motor.set(self.driveMode, self._positionTarget)
+            encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot * 60
+            # always incremented, even if not in position mode
+            # used by getTargetPosition
+            self._positionTarget += encoderCountsPerSecond * tDiff
 
-        self._motorState = self.driveMode
+            if self.driveMode == DISABLED:
+                if self._motorState != self.driveMode:
+                    self.motors[motor].disable()
+            elif self.driveMode == rev.ControlType.kVelocity:
+                self.motorControllers[motor].setReference(encoderCountsPerSecond, self.driveMode)
+            elif self.driveMode == rev.ControlType.kPosition:
+                self.motorControllers[motor].setReference(self._positionTarget, self.driveMode)
+            elif self.driveMode == rev.ControlType.kVoltage:
+                self.motorControllers[motor].setReference(magnitude * 12, self.driveMode)# the 12 is for 12 volts
 
-        self._encoderCheckCount += 1
-        # TODO: document constant
-        if abs(encoderCountsPerSecond) > 400 \
-                and not self.driveMode == ctre.ControlMode.Disabled:
-            if self._encoderCheckCount % CHECK_DRIVE_ENCODER_CYCLE == 0:
-                # getSelectedSensorPosition is slow so only check a few times
-                # per second
-                self._encoderCheck()
-        else:
-            self._positionOccurence = 0
+            self._motorState = self.driveMode
+
+            self._encoderCheckCount += 1
+            # TODO: document constant
+            if abs(encoderCountsPerSecond) > 400 \
+                    and not self.driveMode == DISABLED:
+                if self._encoderCheckCount % CHECK_DRIVE_ENCODER_CYCLE == 0:
+                    # getEncoder().getPosition is slow so only check a few times
+                    # per second
+                    self._encoderCheck()
+            else:
+                self._positionOccurence = 0
 
     def _stop(self):
         self.drive(0, 0)
 
     def disable(self):
-        if self._motorState != ctre.ControlMode.Disabled:
-            self.motor.disable()
-            self._motorState = ctre.ControlMode.Disabled
+        if self._motorState != DISABLED:
+            for motor in self.motors:
+                motor.disable()
+            self._motorState = DISABLED
 
     def resetPosition(self):
         self._motorState = None
@@ -318,8 +343,26 @@ class AngledWheel(Wheel):
         return pos / self.encoderCountsPerFoot
 
     def getRealPosition(self):
-        return self._sensorPositionToDistance(
-            self.motor.getSelectedSensorPosition(0))
+        return self._getRealPosition() + self.wheelPosition
+
+    def _getRealPosition(self):
+        encPos = 0
+        for motor in self.motors:
+            try:
+                encPos += motor.getEncoder().getPosition()
+            except AssertionError:
+                pass
+        encPos /= len(self.motors)
+        return self._sensorPositionToDistance(encPos)
+
+    def changeGear(self, gearRatio):
+        self.wheelPosition += self._getRealPosition()
+
+        for i in range(len(self.motors)):
+            self.motors[i].getEncoder().setPosition(0.0)
+
+        self.gearRatio = gearRatio
+        self.encoderCountsPerFoot = 1 / (self.gearRatio * self.circumference)
 
     def getTargetPosition(self):
         return self._sensorPositionToDistance(self._positionTarget)
@@ -331,10 +374,13 @@ class AngledWheel(Wheel):
         return self.angle
 
     def getRealVelocity(self):
-        sensorVel = self.motor.getSelectedSensorVelocity(0)
+        sensorVel = 0
+        for motor in self.motors:
+            sensorVel += motor.getEncoder().getVelocity()
+        sensorVel /= len(self.motors)
         if self.reverse:
             sensorVel = -sensorVel
-        return sensorVel * 10.0 / self.encoderCountsPerFoot
+        return sensorVel / self.encoderCountsPerFoot
 
 
 class MecanumWheel(AngledWheel):
@@ -365,10 +411,10 @@ class MecanumWheel(AngledWheel):
 class SwerveWheel(Wheel):
     """
     A wheel which can rotate. A SwerveWheel drives using an AngledWheel, and
-    rotates using a TalonSRX.
+    rotates using a SparkMax.
     """
 
-    def __init__(self, angledWheel: AngledWheel, steerMotor: ctre.WPI_TalonSRX,
+    def __init__(self, angledWheel: AngledWheel, steerMotor: rev.CANSparkMax,
                  encoderCountsPerRev, rotationVelocity, offsetX = 0, offsetY = 0,
                  reverseSteerMotor=False):
         """
@@ -377,7 +423,7 @@ class SwerveWheel(Wheel):
         :param angledWheel: an AngledWheel for driving. Its angle will be
             updated as the swerve wheel rotates. The SwerveWheel will borrow its
             X/Y position when it's initialized.
-        :param steerMotor: a TalonSRX for rotating the swerve wheel. It should
+        :param steerMotor: a SparkMax for rotating the swerve wheel. It should
             have a feedback sensor set for position mode.
         :param encoderCountsPerRev: number of encoder counts in a full rotation
             of the steer motor
@@ -402,7 +448,7 @@ class SwerveWheel(Wheel):
         Reset the origin (rotation of wheel when facing right) so that the
         current position of the steer motor is ``currentAngle`` (defaults 0).
         """
-        self._steerOrigin = self.steerMotor.getSelectedSensorPosition(0)
+        self._steerOrigin = self.steerMotor.getEncoder().getPosition()
         offset = currentAngle * self.encoderCountsPerRev / TWO_PI
         if self.reverseSteerMotor:
             offset = -offset
@@ -413,7 +459,7 @@ class SwerveWheel(Wheel):
         return self.angledWheel.limitMagnitude(magnitude, direction)
 
     def _getCurrentSteeringAngle(self):
-        offset = self.steerMotor.getSelectedSensorPosition(0) \
+        offset = self.steerMotor.getEncoder().getPosition() \
                  - self._steerOrigin
         if self.reverseSteerMotor:
             offset = -offset
@@ -425,9 +471,9 @@ class SwerveWheel(Wheel):
         if self.reverseSteerMotor:
             pos = -pos
         if self._motorDisabled:
-            self.steerMotor.setNeutralMode(ctre.NeutralMode.Brake)
+            self.steerMotor.setIdleMode(rev.IdleMode.kBrake)
             self._motorDisabled = False
-        self.steerMotor.set(ctre.ControlMode.Position, pos + self._steerOrigin)
+        self.steerMotor.setEncPosition(pos + self._steerOrigin)
 
     def _updateMotorPosition(self):
         if self._motorDisabled:
@@ -467,7 +513,7 @@ class SwerveWheel(Wheel):
         self.angledWheel.disable()
         if not self._motorDisabled:
             self.steerMotor.disable()
-            self.steerMotor.setNeutralMode(ctre.NeutralMode.Coast)
+            self.steerMotor.setIdleMode(rev.IdleMode.kCoast)
             self._motorDisabled = True
 
     def resetPosition(self):
@@ -507,7 +553,7 @@ class SuperHolonomicDrive:
     def undisable(self):
         self._disableCounter = 0
 
-    def drive(self, magnitude, direction, turn):
+    def drive(self, magnitude, direction, turn, wheelNum=None, motorNum=None):
         """
         Drive the robot. This should be called 50 times per second.
 
@@ -517,6 +563,8 @@ class SuperHolonomicDrive:
         :param magnitude: feet per second
         :param direction: radians. 0 is right, positive counter-clockwise
         :param turn: radians per second. positive counter-clockwise
+        :param wheelNum: optional int argument to drive a single wheel
+        :param motorNum: optional int argument to drive a single motor
         :return: the scale of the actual output speed, as a fraction of the
             input magnitude and turn components
         """
@@ -535,23 +583,39 @@ class SuperHolonomicDrive:
         wheelDirections = []
         wheelLimitScales = []
 
-        for wheel in self.wheels:
-            wheelVectorX, wheelVectorY = self._calcWheelVector(
-                wheel, moveX, moveY, turn)
-            wheelMag = math.sqrt(wheelVectorX ** 2.0 + wheelVectorY ** 2.0)
-            wheelDir = math.atan2(wheelVectorY, wheelVectorX)
-            wheelMagnitudes.append(wheelMag)
-            wheelDirections.append(wheelDir)
-            wheelLimitScales.append(wheel.limitMagnitude(wheelMag, wheelDir))
+        if wheelNum is None:
+            for wheel in self.wheels:
+                wheelVectorX, wheelVectorY = self._calcWheelVector(
+                    wheel, moveX, moveY, turn)
+                wheelMag = math.sqrt(wheelVectorX ** 2.0 + wheelVectorY ** 2.0)
+                wheelDir = math.atan2(wheelVectorY, wheelVectorX)
+                wheelMagnitudes.append(wheelMag)
+                wheelDirections.append(wheelDir)
+                wheelLimitScales.append(wheel.limitMagnitude(wheelMag, wheelDir))
 
-        minWheelScale = min(wheelLimitScales)
-        for i in range(len(self.wheels)):
-            if wheelMagnitudes[i] == 0:
-                self.wheels[i].stop()
-            else:
-                self.wheels[i].drive(wheelMagnitudes[i] * minWheelScale,
-                                    wheelDirections[i])
-        return minWheelScale
+            minWheelScale = min(wheelLimitScales)
+            for i in range(len(self.wheels)):
+                if wheelMagnitudes[i] == 0:
+                    self.wheels[i].stop()
+                else:
+                        self.wheels[i].drive(wheelMagnitudes[i] * minWheelScale,
+                            wheelDirections[i], motorNum)
+            return minWheelScale
+        else:
+            try:
+                wheelVectorX, wheelVectorY = self._calcWheelVector(
+                    self.wheels[wheelNum], moveX, moveY, turn)
+                wheelMag = math.sqrt(wheelVectorX ** 2.0 + wheelVectorY ** 2.0)
+                wheelDir = math.atan2(wheelVectorY, wheelVectorX)
+
+                wheelScale = self.wheels[wheelNum].limitMagnitude(wheelMag, wheelDir)
+                if wheelMag == 0:
+                    self.wheels[wheelNum].stop()
+                else:
+                    self.wheels[wheelNum].drive(wheelMag * wheelScale, wheelDir, motorNum)
+                return wheelScale
+            except:
+                print("Wheel " + str(wheelNum) + " not in list of wheels")
     
     def orientWheels(self, magnitude, direction, turn):
         """
@@ -579,6 +643,12 @@ class SuperHolonomicDrive:
 
     def _calcWheelVector(self, wheel, moveX, moveY, turn):
         return moveX - wheel.y * turn, moveY + wheel.x * turn
+
+    def resetWheelPositions(self):
+        for i in range(len(self.wheels)):
+            self.wheels[i].wheelPosition = 0
+            for k in range(len(self.wheels[i].motors)):
+                self.wheels[i].motors[k].getEncoder().setPosition(0)
 
     def getRobotMovement(self):
         """
