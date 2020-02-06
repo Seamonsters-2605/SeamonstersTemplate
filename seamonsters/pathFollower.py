@@ -1,4 +1,4 @@
-import math
+import math, sys
 import seamonsters as sea
 
 class PathFollower:
@@ -67,11 +67,12 @@ class PathFollower:
         self.robotX += math.cos(moveDir + self.robotAngle) * moveDist
         self.robotY += math.sin(moveDir + self.robotAngle) * moveDist
 
-    def driveToPointGenerator(self, x, y, speed=1, robotPositionTolerance=0, robotAngleTolerance=0):
+    def driveToPointGenerator(self, x, y, finalAngle=None, speed=1, robotPositionTolerance=0, robotAngleTolerance=0):
         """
         A generator to drive to a location on the field while simultaneously
         pointing the robot in a new direction. This will attempt to move the
-        robot so it reaches the target position at a given speed
+        robot so it reaches the target position at a given speed and ends by 
+        rotating to the inputted angle.
         This generator never exits, but yields ``True`` or ``False``
         if the robot is close enough to its target position, within tolerance.
         """
@@ -84,6 +85,13 @@ class PathFollower:
         if abs(aDiff) < math.radians(1): # TODO
             aDiff = 0
 
+        # if the robot has reached the angle or position
+        hasReachedInitialAngle = False
+        hasReachedPosition = False
+        hasReachedFinalAngle = True
+        if finalAngle is not None:
+            hasReachedFinalAngle = False
+
         accel = 0
         while True:
             accel += 0.1
@@ -93,6 +101,11 @@ class PathFollower:
             self.updateRobotPosition()
 
             dist, aDiff = self._robotVectorToPoint(x, y)
+
+            # when it reaches the initial angle,
+            # work towards the final angle
+            if hasReachedPosition and not hasReachedFinalAngle:
+                aDiff = finalAngle - self.robotAngle
 
             # make robot turn the shorter distance
             # and not always go clockwise
@@ -106,16 +119,32 @@ class PathFollower:
             atPosition = abs(dist) <= robotPositionTolerance
             atAngle = abs(aDiff) <= robotAngleTolerance
 
+            # updates the angle and position reached variables
+            if not hasReachedInitialAngle:
+                hasReachedInitialAngle = atAngle
+            elif not hasReachedPosition:
+                hasReachedPosition = atPosition
+            elif not hasReachedFinalAngle:
+                hasReachedFinalAngle = atAngle
+
             mag = dist * accel * speed
-            aMag = aDiff * accel * speed
+            aMag = -aDiff * accel * speed
+            
+            # the robot is a simultaion
+            if sys.argv[1] == 'sim':
+                aMag *= -1
+
+            # once the robot reaches the initial angle,
+            # it will drive forward until it reaches the 
+            # position and then face the final angle 
 
             # turn to face the target first, then drive forward
-            if atAngle:
-                self.drive.drive(mag, math.pi/2, aMag)
-            else:
+            if not hasReachedInitialAngle or (hasReachedPosition and not hasReachedFinalAngle):
                 self.drive.drive(0, 0, aMag)
+            elif not hasReachedPosition:
+                self.drive.drive(mag, math.pi/2, aMag)
 
-            yield atPosition
+            yield hasReachedPosition and hasReachedFinalAngle
 
     # return magnitude, angle
     def _robotVectorToPoint(self, x, y):
