@@ -7,11 +7,11 @@
     <title>seamonsters &#8212; seamonsters 0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -85,13 +85,13 @@ parallel commands.</p>
 
 <dl class="class">
 <dt id="seamonsters.AngledWheel">
-<em class="property">class </em><code class="sig-prename descclassname">seamonsters.</code><code class="sig-name descname">AngledWheel</code><span class="sig-paren">(</span><em class="sig-param">motor: rev._impl.autogen.sim.CANSparkMax</em>, <em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">angle</em>, <em class="sig-param">circumference</em>, <em class="sig-param">maxVoltageVelocity</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.AngledWheel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">seamonsters.</code><code class="sig-name descname">AngledWheel</code><span class="sig-paren">(</span><em class="sig-param">motor: rev._rev.CANSparkMax</em>, <em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">angle</em>, <em class="sig-param">circumference</em>, <em class="sig-param">maxVoltageVelocity</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.AngledWheel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.Wheel</span></code></a></p>
 <p>An AngledWheel is a wheel oriented in a fixed direction, which it can’t
 change on its own. It uses a SparkMax to drive.</p>
 <dl class="method">
 <dt id="seamonsters.AngledWheel.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">motor: rev._impl.autogen.sim.CANSparkMax</em>, <em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">angle</em>, <em class="sig-param">circumference</em>, <em class="sig-param">maxVoltageVelocity</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">motor: rev._rev.CANSparkMax</em>, <em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">angle</em>, <em class="sig-param">circumference</em>, <em class="sig-param">maxVoltageVelocity</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -111,7 +111,7 @@ per second</p></li>
 
 <dl class="method">
 <dt id="seamonsters.AngledWheel.addMotor">
-<code class="sig-name descname">addMotor</code><span class="sig-paren">(</span><em class="sig-param">motor: rev._impl.autogen.sim.CANSparkMax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.addMotor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.addMotor" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">addMotor</code><span class="sig-paren">(</span><em class="sig-param">motor: rev._rev.CANSparkMax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#AngledWheel.addMotor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.AngledWheel.addMotor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -354,7 +354,7 @@ be called continuously during teleop.</p>
 <dl class="class">
 <dt id="seamonsters.Gamepad">
 <em class="property">class </em><code class="sig-prename descclassname">seamonsters.</code><code class="sig-name descname">Gamepad</code><span class="sig-paren">(</span><em class="sig-param">port</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.Gamepad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wpilib.joystick.Joystick</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wpilib._wpilib.Joystick</span></code></p>
 <p>An extended Joystick specifically designed for Logitech gamepads. It
 adds dead zones and changes positive x to direction 0. The gamepad mode
 switch MUST be at X!</p>
@@ -452,23 +452,26 @@ of these buttons can be checked with
 
 <dl class="method">
 <dt id="seamonsters.Gamepad.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">port</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/gamepad.html#Gamepad.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Gamepad.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">self: wpilib._wpilib.Joystick</em>, <em class="sig-param">port: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/seamonsters/gamepad.html#Gamepad.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Gamepad.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct an instance of a joystick.</p>
 <p>The joystick index is the USB port on the Driver Station.</p>
-<p>This constructor is intended for use by subclasses to configure the
-number of constants for axes and buttons.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>port</strong> – The port on the Driver Station that the joystick is
-plugged into.</p>
+<dd class="field-odd"><p><strong>port</strong> – The port on the Driver Station that the joystick is plugged
+into (0-5).</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.Gamepad.getButtonCount">
-<code class="sig-name descname">getButtonCount</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/gamepad.html#Gamepad.getButtonCount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Gamepad.getButtonCount" title="Permalink to this definition">¶</a></dt>
-<dd><p>For the current HID, return the number of buttons.</p>
+<code class="sig-name descname">getButtonCount</code><span class="sig-paren">(</span><em class="sig-param">self: wpilib.interfaces._interfaces.GenericHID</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/seamonsters/gamepad.html#Gamepad.getButtonCount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Gamepad.getButtonCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of buttons for the HID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the number of buttons on the current HID</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -548,8 +551,11 @@ default; set enableDeadZone to False to disable it.</p>
 
 <dl class="method">
 <dt id="seamonsters.Gamepad.getRawButton">
-<code class="sig-name descname">getRawButton</code><span class="sig-paren">(</span><em class="sig-param">button</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/gamepad.html#Gamepad.getRawButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Gamepad.getRawButton" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getRawButton</code><span class="sig-paren">(</span><em class="sig-param">self: wpilib.interfaces._interfaces.GenericHID</em>, <em class="sig-param">button: int</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/seamonsters/gamepad.html#Gamepad.getRawButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.Gamepad.getRawButton" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the button value (starting at button 1).</p>
+<p>The buttons are returned in a single 16 bit value with one bit representing
+the state of each button. The appropriate button is returned as a boolean
+value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>button</strong> – The button number to be read (starting at 1)</p>
@@ -614,15 +620,14 @@ Return a boolean value.</p>
 <dl class="class">
 <dt id="seamonsters.GeneratorBot">
 <em class="property">class </em><code class="sig-prename descclassname">seamonsters.</code><code class="sig-name descname">GeneratorBot</code><a class="headerlink" href="#seamonsters.GeneratorBot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wpilib.robotbase.RobotBase</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wpilib._wpilib.RobotBaseUser</span></code></p>
 <p>A robot which runs generators throughout the cycles of autonomous, teleop,
 and test mode. The generators are iterated 50 times per second, synchronized
 with the rate that data is received from Driver Station.</p>
 <dl class="method">
 <dt id="seamonsters.GeneratorBot.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/bot.html#GeneratorBot.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.GeneratorBot.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">self: wpilib._wpilib.RobotBaseUser</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/seamonsters/bot.html#GeneratorBot.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.GeneratorBot.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.GeneratorBot.autonomous">
@@ -633,11 +638,7 @@ with the rate that data is received from Driver Station.</p>
 <dl class="method">
 <dt id="seamonsters.GeneratorBot.free">
 <code class="sig-name descname">free</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/bot.html#GeneratorBot.free"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.GeneratorBot.free" title="Permalink to this definition">¶</a></dt>
-<dd><p>Free the resources for a RobotBase class.</p>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 2019.0.0: </span>Use <code class="xref py py-meth docutils literal notranslate"><span class="pre">close()</span></code> instead</p>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="seamonsters.GeneratorBot.logger">
@@ -657,9 +658,8 @@ with the rate that data is received from Driver Station.</p>
 
 <dl class="method">
 <dt id="seamonsters.GeneratorBot.startCompetition">
-<code class="sig-name descname">startCompetition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/bot.html#GeneratorBot.startCompetition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.GeneratorBot.startCompetition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide an alternate “main loop” via startCompetition().</p>
-</dd></dl>
+<code class="sig-name descname">startCompetition</code><span class="sig-paren">(</span><em class="sig-param">self: wpilib._wpilib.RobotBase</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/seamonsters/bot.html#GeneratorBot.startCompetition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.GeneratorBot.startCompetition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="seamonsters.GeneratorBot.teleop">
@@ -704,7 +704,7 @@ continuously.</p>
 
 <dl class="class">
 <dt id="seamonsters.MecanumWheel">
-<em class="property">class </em><code class="sig-prename descclassname">seamonsters.</code><code class="sig-name descname">MecanumWheel</code><span class="sig-paren">(</span><em class="sig-param">motor: rev._impl.autogen.sim.CANSparkMax</em>, <em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">angle</em>, <em class="sig-param">circumference</em>, <em class="sig-param">maxVoltageVelocity</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.MecanumWheel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">seamonsters.</code><code class="sig-name descname">MecanumWheel</code><span class="sig-paren">(</span><em class="sig-param">motor: rev._rev.CANSparkMax</em>, <em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">angle</em>, <em class="sig-param">circumference</em>, <em class="sig-param">maxVoltageVelocity</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.MecanumWheel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.AngledWheel" title="seamonsters.AngledWheel"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.AngledWheel</span></code></a></p>
 <p>An angled Mecanum wheel. The velocity of the wheel is scaled up to
 compensate for the effect of the rollers. For the angle of the wheel, use
@@ -838,22 +838,13 @@ be calculated based on the movement of the motors.</p></li>
 
 <dl class="method">
 <dt id="seamonsters.PathFollower.driveToPointGenerator">
-<code class="sig-name descname">driveToPointGenerator</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">angle</em>, <em class="sig-param">time</em>, <em class="sig-param">robotPositionTolerance=0</em>, <em class="sig-param">robotAngleTolerance=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.driveToPointGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.driveToPointGenerator" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">driveToPointGenerator</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">finalAngle=None</em>, <em class="sig-param">speed=1</em>, <em class="sig-param">robotPositionTolerance=0</em>, <em class="sig-param">robotAngleTolerance=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.driveToPointGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.driveToPointGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>A generator to drive to a location on the field while simultaneously
 pointing the robot in a new direction. This will attempt to move the
-robot at a velocity so it reaches the target position angle in <code class="docutils literal notranslate"><span class="pre">time</span></code>
-seconds. This generator never exits, but yields <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code>
+robot so it reaches the target position at a given speed and ends by 
+rotating to the inputted angle.
+This generator never exits, but yields <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code>
 if the robot is close enough to its target position, within tolerance.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">time</span></code> is zero, the robot will attempt to move to the position as
-fast as possible.</p>
-<p>Position mode is recommended!</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.PathFollower.followPathData">
-<code class="sig-name descname">followPathData</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.followPathData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.followPathData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Follow path data read from a file. <code class="docutils literal notranslate"><span class="pre">data</span></code> should be a list of line
-tuples returned by <code class="docutils literal notranslate"><span class="pre">sea.readDataFile</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -865,12 +856,6 @@ tuples returned by <code class="docutils literal notranslate"><span class="pre">
 <dt id="seamonsters.PathFollower.updateRobotPosition">
 <code class="sig-name descname">updateRobotPosition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.updateRobotPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.updateRobotPosition" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="seamonsters.PathFollower.waitForOrientWheelsGenerator">
-<code class="sig-name descname">waitForOrientWheelsGenerator</code><span class="sig-paren">(</span><em class="sig-param">magnitude</em>, <em class="sig-param">direction</em>, <em class="sig-param">turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/pathFollower.html#PathFollower.waitForOrientWheelsGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.PathFollower.waitForOrientWheelsGenerator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Orient wheels to prepare to drive with the given mag/dir/turn.</p>
-</dd></dl>
 
 </dd></dl>
 
@@ -1005,7 +990,7 @@ or popping, or it exits normally.</p>
 
 <dl class="method">
 <dt id="seamonsters.SuperHolonomicDrive.drive">
-<code class="sig-name descname">drive</code><span class="sig-paren">(</span><em class="sig-param">magnitude</em>, <em class="sig-param">direction</em>, <em class="sig-param">turn</em>, <em class="sig-param">wheelNum=None</em>, <em class="sig-param">motorNum=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.drive" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">drive</code><span class="sig-paren">(</span><em class="sig-param">magnitude</em>, <em class="sig-param">direction</em>, <em class="sig-param">turn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SuperHolonomicDrive.drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SuperHolonomicDrive.drive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Drive the robot. This should be called 50 times per second.</p>
 <p>If drive is called with a magnitude/turn of 0 for more than
 <code class="docutils literal notranslate"><span class="pre">autoDisableTime</span></code> iterations, all wheels will be disabled.</p>
@@ -1015,8 +1000,6 @@ or popping, or it exits normally.</p>
 <li><p><strong>magnitude</strong> – feet per second</p></li>
 <li><p><strong>direction</strong> – radians. 0 is right, positive counter-clockwise</p></li>
 <li><p><strong>turn</strong> – radians per second. positive counter-clockwise</p></li>
-<li><p><strong>wheelNum</strong> – optional int argument to drive a single wheel</p></li>
-<li><p><strong>motorNum</strong> – optional int argument to drive a single motor</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1083,13 +1066,13 @@ is an object that can be stored and passed to a future call of
 
 <dl class="class">
 <dt id="seamonsters.SwerveWheel">
-<em class="property">class </em><code class="sig-prename descclassname">seamonsters.</code><code class="sig-name descname">SwerveWheel</code><span class="sig-paren">(</span><em class="sig-param">angledWheel: seamonsters.AngledWheel</em>, <em class="sig-param">steerMotor: rev._impl.autogen.sim.CANSparkMax</em>, <em class="sig-param">encoderCountsPerRev</em>, <em class="sig-param">rotationVelocity</em>, <em class="sig-param">offsetX=0</em>, <em class="sig-param">offsetY=0</em>, <em class="sig-param">reverseSteerMotor=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.SwerveWheel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">seamonsters.</code><code class="sig-name descname">SwerveWheel</code><span class="sig-paren">(</span><em class="sig-param">angledWheel: seamonsters.AngledWheel</em>, <em class="sig-param">steerMotor: rev._rev.CANSparkMax</em>, <em class="sig-param">encoderCountsPerRev</em>, <em class="sig-param">rotationVelocity</em>, <em class="sig-param">offsetX=0</em>, <em class="sig-param">offsetY=0</em>, <em class="sig-param">reverseSteerMotor=False</em><span class="sig-paren">)</span><a class="headerlink" href="#seamonsters.SwerveWheel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#seamonsters.Wheel" title="seamonsters.Wheel"><code class="xref py py-class docutils literal notranslate"><span class="pre">seamonsters.Wheel</span></code></a></p>
 <p>A wheel which can rotate. A SwerveWheel drives using an AngledWheel, and
 rotates using a SparkMax.</p>
 <dl class="method">
 <dt id="seamonsters.SwerveWheel.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">angledWheel: seamonsters.AngledWheel</em>, <em class="sig-param">steerMotor: rev._impl.autogen.sim.CANSparkMax</em>, <em class="sig-param">encoderCountsPerRev</em>, <em class="sig-param">rotationVelocity</em>, <em class="sig-param">offsetX=0</em>, <em class="sig-param">offsetY=0</em>, <em class="sig-param">reverseSteerMotor=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">angledWheel: seamonsters.AngledWheel</em>, <em class="sig-param">steerMotor: rev._rev.CANSparkMax</em>, <em class="sig-param">encoderCountsPerRev</em>, <em class="sig-param">rotationVelocity</em>, <em class="sig-param">offsetX=0</em>, <em class="sig-param">offsetY=0</em>, <em class="sig-param">reverseSteerMotor=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/seamonsters/superHolonomicDrive.html#SwerveWheel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#seamonsters.SwerveWheel.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><code class="docutils literal notranslate"><span class="pre">zeroSteering()</span></code> is called in __init__.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1673,7 +1656,7 @@ given widgets to it.</p>
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1690,7 +1673,7 @@ given widgets to it.</p>
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -7,11 +7,11 @@
     <title>seamonsters.superHolonomicDrive &#8212; seamonsters 0 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -31,10 +31,8 @@
           <div class="body" role="main">
             
   <h1>Source code for seamonsters.superHolonomicDrive</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">rev</span>
+<span></span><span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">rev</span><span class="o">,</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">seamonsters</span> <span class="k">as</span> <span class="nn">sea</span>
-<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="n">TWO_PI</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span>
 
@@ -255,7 +253,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_encoderCheckCount</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_oldPosition</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_positionOccurence</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prevTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span></div>
@@ -263,7 +260,7 @@
     <span class="c1"># for wheels with gearboxes, so all motors can be driven at the same speed</span>
 <div class="viewcode-block" id="AngledWheel.addMotor"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.AngledWheel.addMotor">[docs]</a>    <span class="k">def</span> <span class="nf">addMotor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">motor</span><span class="p">:</span> <span class="n">rev</span><span class="o">.</span><span class="n">CANSparkMax</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">motors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">motor</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">motorControllers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rev</span><span class="o">.</span><span class="n">_impl</span><span class="o">.</span><span class="n">CANPIDController</span><span class="p">(</span><span class="n">motor</span><span class="p">))</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">motorControllers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">motor</span><span class="o">.</span><span class="n">getPIDController</span><span class="p">())</span></div>
 
     <span class="c1"># for switching between break and coast mode for the motors</span>
 <div class="viewcode-block" id="AngledWheel.setIdleMode"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.AngledWheel.setIdleMode">[docs]</a>    <span class="k">def</span> <span class="nf">setIdleMode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
@@ -278,36 +275,6 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxVoltageVelocity</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">magnitude</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">1.0</span></div>
 
-    <span class="k">def</span> <span class="nf">_encoderCheck</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">motor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">motors</span><span class="p">:</span>
-            <span class="n">newPosition</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">getEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">getPosition</span><span class="p">()</span>
-            <span class="n">err</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">setEncPosition</span><span class="p">(</span><span class="n">motor</span><span class="o">.</span><span class="n">getEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">getPosition</span><span class="p">())</span>
-            <span class="c1"># setEncPosition() returns a CANError so we set it to the current</span>
-            <span class="c1"># position to get the error but affect nothing</span>
-            <span class="k">if</span> <span class="n">err</span> <span class="o">==</span> <span class="n">rev</span><span class="o">.</span><span class="n">CANError</span><span class="o">.</span><span class="n">kTimeout</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Stale CAN frame so we won&#39;t check for errors :(&quot;</span><span class="p">,</span>
-                    <span class="n">motor</span><span class="o">.</span><span class="n">getDeviceId</span><span class="p">())</span>
-                <span class="k">return</span>
-            <span class="k">elif</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">rev</span><span class="o">.</span><span class="n">CANError</span><span class="o">.</span><span class="n">kOK</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Spark max error&quot;</span><span class="p">,</span> <span class="n">motor</span><span class="o">.</span><span class="n">getDeviceId</span><span class="p">())</span>
-
-            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">newPosition</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oldPosition</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_positionOccurence</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_positionOccurence</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_oldPosition</span> <span class="o">=</span> <span class="n">newPosition</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positionOccurence</span> <span class="o">&gt;=</span> <span class="n">MAX_POSITION_OCCURENCE</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">faults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Encoder not moving&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_positionOccurence</span> <span class="o">=</span> <span class="mi">0</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">rev</span><span class="o">.</span><span class="n">ControlType</span><span class="o">.</span><span class="n">kPosition</span><span class="p">:</span>
-                <span class="c1"># TODO: this is arbitrary</span>
-                <span class="n">maxError</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerFoot</span> <span class="o">*</span> <span class="n">MAX_DRIVE_ERROR</span>
-                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">newPosition</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">maxError</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">faults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Can&#39;t reach target&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span> <span class="o">=</span> <span class="n">newPosition</span>
-
     <span class="k">def</span> <span class="nf">_drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputMagnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">motorNum</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">motorsToDrive</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">motors</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">motorNum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># for driving individual motors</span>
@@ -321,7 +288,6 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">rev</span><span class="o">.</span><span class="n">ControlType</span><span class="o">.</span><span class="n">kPosition</span> \
                     <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">motors</span><span class="p">[</span><span class="n">motor</span><span class="p">]</span><span class="o">.</span><span class="n">getEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">getPosition</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_encoderCheckCount</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="n">curTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">realTime</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">:</span>
@@ -330,33 +296,26 @@
                 <span class="n">tDiff</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sea</span><span class="o">.</span><span class="n">ITERATIONS_PER_SECOND</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_prevTime</span> <span class="o">=</span> <span class="n">curTime</span>
 
-            <span class="n">encoderCountsPerSecond</span> <span class="o">=</span> <span class="n">magnitude</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerFoot</span> <span class="o">*</span> <span class="mi">60</span>
+            <span class="n">encoderCountsPerSecond</span> <span class="o">=</span> <span class="n">magnitude</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoderCountsPerFoot</span>
             <span class="c1"># always incremented, even if not in position mode</span>
             <span class="c1"># used by getTargetPosition</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span> <span class="o">+=</span> <span class="n">encoderCountsPerSecond</span> <span class="o">*</span> <span class="n">tDiff</span>
+            <span class="c1"># _positionTarget is close to the actual robot, but are off by a bit</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">DISABLED</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">motors</span><span class="p">[</span><span class="n">motor</span><span class="p">]</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">rev</span><span class="o">.</span><span class="n">ControlType</span><span class="o">.</span><span class="n">kVelocity</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">motorControllers</span><span class="p">[</span><span class="n">motor</span><span class="p">]</span><span class="o">.</span><span class="n">setReference</span><span class="p">(</span><span class="n">encoderCountsPerSecond</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">)</span>
+                <span class="c1"># encoder counts per second * 60 to get the rpm to set the motor</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">motorControllers</span><span class="p">[</span><span class="n">motor</span><span class="p">]</span><span class="o">.</span><span class="n">setReference</span><span class="p">(</span><span class="n">encoderCountsPerSecond</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">)</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">rev</span><span class="o">.</span><span class="n">ControlType</span><span class="o">.</span><span class="n">kPosition</span><span class="p">:</span>
+                <span class="c1"># spin the motor to the target position for the next iteration</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">motorControllers</span><span class="p">[</span><span class="n">motor</span><span class="p">]</span><span class="o">.</span><span class="n">setReference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_positionTarget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">)</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">rev</span><span class="o">.</span><span class="n">ControlType</span><span class="o">.</span><span class="n">kVoltage</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">motorControllers</span><span class="p">[</span><span class="n">motor</span><span class="p">]</span><span class="o">.</span><span class="n">setReference</span><span class="p">(</span><span class="n">magnitude</span> <span class="o">*</span> <span class="mi">12</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">)</span><span class="c1"># the 12 is for 12 volts</span>
+                <span class="c1"># the 12 is for 12 volts</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">motorControllers</span><span class="p">[</span><span class="n">motor</span><span class="p">]</span><span class="o">.</span><span class="n">setReference</span><span class="p">(</span><span class="n">magnitude</span> <span class="o">*</span> <span class="mi">12</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_motorState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">_encoderCheckCount</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="c1"># TODO: document constant</span>
-            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">encoderCountsPerSecond</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">400</span> \
-                    <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">driveMode</span> <span class="o">==</span> <span class="n">DISABLED</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encoderCheckCount</span> <span class="o">%</span> <span class="n">CHECK_DRIVE_ENCODER_CYCLE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="c1"># getEncoder().getPosition is slow so only check a few times</span>
-                    <span class="c1"># per second</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_encoderCheck</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_positionOccurence</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -383,7 +342,7 @@
         <span class="k">for</span> <span class="n">motor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">motors</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">encPos</span> <span class="o">+=</span> <span class="n">motor</span><span class="o">.</span><span class="n">getEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">getPosition</span><span class="p">()</span>
-            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span> <span class="c1"># Breaks in the simulator</span>
                 <span class="k">pass</span>
         <span class="n">encPos</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">motors</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensorPositionToDistance</span><span class="p">(</span><span class="n">encPos</span><span class="p">)</span>
@@ -473,8 +432,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">zeroSteering</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_targetDirection</span> <span class="o">=</span> <span class="n">angledWheel</span><span class="o">.</span><span class="n">angle</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_motorDisabled</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_encoderCheckCount</span> <span class="o">=</span> <span class="mi">0</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_motorDisabled</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="SwerveWheel.zeroSteering"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.zeroSteering">[docs]</a>    <span class="k">def</span> <span class="nf">zeroSteering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">currentAngle</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -504,7 +462,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverseSteerMotor</span><span class="p">:</span>
             <span class="n">pos</span> <span class="o">=</span> <span class="o">-</span><span class="n">pos</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motorDisabled</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span><span class="o">.</span><span class="n">setIdleMode</span><span class="p">(</span><span class="n">rev</span><span class="o">.</span><span class="n">IdleMode</span><span class="o">.</span><span class="n">kBrake</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span><span class="o">.</span><span class="n">setIdleMode</span><span class="p">(</span><span class="n">rev</span><span class="o">.</span><span class="n">CANSparkMax</span><span class="o">.</span><span class="n">IdleMode</span><span class="o">.</span><span class="n">kBrake</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_motorDisabled</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span><span class="o">.</span><span class="n">setEncPosition</span><span class="p">(</span><span class="n">pos</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steerOrigin</span><span class="p">)</span>
 
@@ -518,12 +476,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_simulatedCurrentDirection</span> <span class="o">-=</span> <span class="n">change</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_simulatedCurrentDirection</span> <span class="o">+=</span> <span class="n">change</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">_encoderCheckCount</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encoderCheckCount</span> <span class="o">%</span> <span class="n">CHECK_SWERVE_ENCODER_CYCLE</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">curPos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getCurrentSteeringAngle</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">curPos</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulatedCurrentDirection</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_SWERVE_ERROR</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">faults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Can&#39;t reach target!&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_updateMotorPosition</span><span class="p">()</span>
@@ -546,7 +498,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">angledWheel</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motorDisabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span><span class="o">.</span><span class="n">setIdleMode</span><span class="p">(</span><span class="n">rev</span><span class="o">.</span><span class="n">IdleMode</span><span class="o">.</span><span class="n">kCoast</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">steerMotor</span><span class="o">.</span><span class="n">setIdleMode</span><span class="p">(</span><span class="n">rev</span><span class="o">.</span><span class="n">CANSparkMax</span><span class="o">.</span><span class="n">IdleMode</span><span class="o">.</span><span class="n">kCoast</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_motorDisabled</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="SwerveWheel.resetPosition"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SwerveWheel.resetPosition">[docs]</a>    <span class="k">def</span> <span class="nf">resetPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -586,7 +538,7 @@
 <div class="viewcode-block" id="SuperHolonomicDrive.undisable"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.undisable">[docs]</a>    <span class="k">def</span> <span class="nf">undisable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_disableCounter</span> <span class="o">=</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="SuperHolonomicDrive.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">,</span> <span class="n">wheelNum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">motorNum</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SuperHolonomicDrive.drive"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.drive">[docs]</a>    <span class="k">def</span> <span class="nf">drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Drive the robot. This should be called 50 times per second.</span>
 
@@ -596,8 +548,6 @@
 <span class="sd">        :param magnitude: feet per second</span>
 <span class="sd">        :param direction: radians. 0 is right, positive counter-clockwise</span>
 <span class="sd">        :param turn: radians per second. positive counter-clockwise</span>
-<span class="sd">        :param wheelNum: optional int argument to drive a single wheel</span>
-<span class="sd">        :param motorNum: optional int argument to drive a single motor</span>
 <span class="sd">        :return: the scale of the actual output speed, as a fraction of the</span>
 <span class="sd">            input magnitude and turn components</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -616,40 +566,24 @@
         <span class="n">wheelDirections</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">wheelLimitScales</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">if</span> <span class="n">wheelNum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">wheel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">:</span>
-                <span class="n">wheelVectorX</span><span class="p">,</span> <span class="n">wheelVectorY</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calcWheelVector</span><span class="p">(</span>
-                    <span class="n">wheel</span><span class="p">,</span> <span class="n">moveX</span><span class="p">,</span> <span class="n">moveY</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
-                <span class="n">wheelMag</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">wheelVectorX</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">wheelVectorY</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span>
-                <span class="n">wheelDir</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">wheelVectorY</span><span class="p">,</span> <span class="n">wheelVectorX</span><span class="p">)</span>
-                <span class="n">wheelMagnitudes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheelMag</span><span class="p">)</span>
-                <span class="n">wheelDirections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheelDir</span><span class="p">)</span>
-                <span class="n">wheelLimitScales</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheel</span><span class="o">.</span><span class="n">limitMagnitude</span><span class="p">(</span><span class="n">wheelMag</span><span class="p">,</span> <span class="n">wheelDir</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">wheel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">:</span>
+            <span class="n">wheelVectorX</span><span class="p">,</span> <span class="n">wheelVectorY</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calcWheelVector</span><span class="p">(</span>
+                <span class="n">wheel</span><span class="p">,</span> <span class="n">moveX</span><span class="p">,</span> <span class="n">moveY</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
+            <span class="n">wheelMag</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">wheelVectorX</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">wheelVectorY</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span>
+            <span class="n">wheelDir</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">wheelVectorY</span><span class="p">,</span> <span class="n">wheelVectorX</span><span class="p">)</span>
+            <span class="n">wheelMagnitudes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheelMag</span><span class="p">)</span>
+            <span class="n">wheelDirections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheelDir</span><span class="p">)</span>
+            <span class="n">wheelLimitScales</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheel</span><span class="o">.</span><span class="n">limitMagnitude</span><span class="p">(</span><span class="n">wheelMag</span><span class="p">,</span> <span class="n">wheelDir</span><span class="p">))</span>
 
-            <span class="n">minWheelScale</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">wheelLimitScales</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="n">wheelMagnitudes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-                <span class="k">else</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">wheelMagnitudes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">minWheelScale</span><span class="p">,</span>
-                            <span class="n">wheelDirections</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">motorNum</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">minWheelScale</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">wheelVectorX</span><span class="p">,</span> <span class="n">wheelVectorY</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calcWheelVector</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">[</span><span class="n">wheelNum</span><span class="p">],</span> <span class="n">moveX</span><span class="p">,</span> <span class="n">moveY</span><span class="p">,</span> <span class="n">turn</span><span class="p">)</span>
-                <span class="n">wheelMag</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">wheelVectorX</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">wheelVectorY</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span>
-                <span class="n">wheelDir</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">wheelVectorY</span><span class="p">,</span> <span class="n">wheelVectorX</span><span class="p">)</span>
-
-                <span class="n">wheelScale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">[</span><span class="n">wheelNum</span><span class="p">]</span><span class="o">.</span><span class="n">limitMagnitude</span><span class="p">(</span><span class="n">wheelMag</span><span class="p">,</span> <span class="n">wheelDir</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">wheelMag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">[</span><span class="n">wheelNum</span><span class="p">]</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">[</span><span class="n">wheelNum</span><span class="p">]</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">wheelMag</span> <span class="o">*</span> <span class="n">wheelScale</span><span class="p">,</span> <span class="n">wheelDir</span><span class="p">,</span> <span class="n">motorNum</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">wheelScale</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wheel &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">wheelNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; not in list of wheels&quot;</span><span class="p">)</span></div>
-    
+        <span class="n">minWheelScale</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">wheelLimitScales</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">wheelMagnitudes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">wheels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">drive</span><span class="p">(</span><span class="n">wheelMagnitudes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">minWheelScale</span><span class="p">,</span>
+                        <span class="n">wheelDirections</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">minWheelScale</span></div>
+            
 <div class="viewcode-block" id="SuperHolonomicDrive.orientWheels"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.SuperHolonomicDrive.orientWheels">[docs]</a>    <span class="k">def</span> <span class="nf">orientWheels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">turn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Orient the wheels as if the robot was driving, but don&#39;t move.</span>
@@ -818,7 +752,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -835,7 +769,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

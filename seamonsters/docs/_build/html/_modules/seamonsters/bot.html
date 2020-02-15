@@ -7,11 +7,11 @@
     <title>seamonsters.bot &#8212; seamonsters 0 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -33,13 +33,11 @@
   <h1>Source code for seamonsters.bot</h1><div class="highlight"><pre>
 <span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;seamonsters&quot;</span>
 
-<span class="kn">import</span> <span class="nn">traceback</span>
-<span class="kn">import</span> <span class="nn">hal</span>
-<span class="kn">from</span> <span class="nn">wpilib.robotbase</span> <span class="kn">import</span> <span class="n">RobotBase</span>
+<span class="kn">import</span> <span class="nn">traceback</span><span class="o">,</span> <span class="nn">hal</span><span class="o">,</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">wpilib</span> <span class="kn">import</span> <span class="n">_wpilib</span>
 <span class="kn">from</span> <span class="nn">wpilib</span> <span class="kn">import</span> <span class="n">RobotController</span>
-<span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="k">class</span> <span class="nc">GeneratorBot</span><span class="p">(</span><span class="n">RobotBase</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">GeneratorBot</span><span class="p">(</span><span class="n">_wpilib</span><span class="o">.</span><span class="n">RobotBaseUser</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A robot which runs generators throughout the cycles of autonomous, teleop,</span>
 <span class="sd">    and test mode. The generators are iterated 50 times per second, synchronized</span>
@@ -50,12 +48,12 @@
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;robot&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GeneratorBot.__init__"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">RobotBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">_wpilib</span><span class="o">.</span><span class="n">RobotBaseUser</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">earlyStop</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="n">hal</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">hal</span><span class="o">.</span><span class="n">UsageReporting</span><span class="o">.</span><span class="n">kResourceType_Framework</span><span class="p">,</span>
-                   <span class="n">hal</span><span class="o">.</span><span class="n">UsageReporting</span><span class="o">.</span><span class="n">kFramework_Timed</span><span class="p">)</span>
+        <span class="n">hal</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">hal</span><span class="o">.</span><span class="n">tResourceType</span><span class="o">.</span><span class="n">kResourceType_Framework</span><span class="p">,</span>
+            <span class="n">hal</span><span class="o">.</span><span class="n">tInstances</span><span class="o">.</span><span class="n">kFramework_Timed</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_expirationTime</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_notifier</span> <span class="o">=</span> <span class="n">hal</span><span class="o">.</span><span class="n">initializeNotifier</span><span class="p">()</span></div>
@@ -74,7 +72,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_updateAlarm</span><span class="p">()</span>
 
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">hal</span><span class="o">.</span><span class="n">waitForNotifierAlarm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notifier</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hal</span><span class="o">.</span><span class="n">waitForNotifierAlarm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notifier</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="kc">None</span>
@@ -131,7 +129,7 @@
 
     <span class="k">def</span> <span class="nf">_updateAlarm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Update the alarm hardware to reflect the next alarm.&quot;&quot;&quot;</span>
-        <span class="n">hal</span><span class="o">.</span><span class="n">updateNotifierAlarm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notifier</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expirationTime</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">))</span>
+        <span class="n">hal</span><span class="o">.</span><span class="n">updateNotifierAlarm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notifier</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expirationTime</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">))</span>
 
 <div class="viewcode-block" id="GeneratorBot.robotInit"><a class="viewcode-back" href="../../seamonsters.html#seamonsters.GeneratorBot.robotInit">[docs]</a>    <span class="k">def</span> <span class="nf">robotInit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -230,7 +228,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -247,7 +245,7 @@
       &copy;2016, Sehome Seamonsters.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
