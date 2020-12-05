@@ -1,15 +1,27 @@
-import seamonsters as sea 
-import wpilib
-import rev
 import math
+import rev
+import wpilib
+import seamonsters as sea
+import dashboard
 
-TIME_TO_DRIVE_LONG_SECTION = 78
-TIME_TO_DRIVE_SHORT_SECTION = 43
-TIME_TO_TURN = 18
-
-class PracticeBot(sea.SimulationRobot):
+class PracticeBot(sea.GeneratorBot):
 
     def robotInit(self):
+        #set up drivetrain
+        self.drivetrain = self.initDrivetrain()
+        sea.setSimulatedDrivetrain(self.drivetrain)
+
+        #set up dashboard
+        self.app = None
+        sea.startDashboard(self, dashboard.PracticeDashboard)
+
+    def teleop(self):
+        yield from self.updateDashboardGenerator()
+
+    #creates and returns the drivetrain
+    def initDrivetrain(self):
+        drivetrain = sea.SuperHolonomicDrive()
+
         leftSpark = sea.createSpark(1, rev.MotorType.kBrushless)
         rightSpark = sea.createSpark(2, rev.MotorType.kBrushless)
 
@@ -20,40 +32,32 @@ class PracticeBot(sea.SimulationRobot):
         leftWheel = sea.AngledWheel(leftSpark, -1, 0, math.pi/2, 1, 16)
         rightWheel = sea.AngledWheel(rightSpark, 1, 0, math.pi/2, 1, 16)
 
-        self.drivetrain = sea.SuperHolonomicDrive()
-        self.drivetrain.addWheel(leftWheel)
-        self.drivetrain.addWheel(rightWheel)
+        drivetrain.addWheel(leftWheel)
+        drivetrain.addWheel(rightWheel)
 
-        for wheel in self.drivetrain.wheels:
+        for wheel in drivetrain.wheels:
             wheel.driveMode = rev.ControlType.kVelocity
 
-        sea.setSimulatedDrivetrain(self.drivetrain)
+        return drivetrain
 
-    def autonomous(self):
-        turnList = [1,1,-1,-1,1,1,-1,-1,1,1]
-        driveLong = True
-        for turnDir in turnList:
-            yield from self.driveASection(driveLong)
-            yield from self.turn(turnDir)
-            driveLong = not driveLong
-        yield from self.driveASection(driveLong)
-
+    #does the events called by the dashboard
+    def updateDashboardGenerator(self):
+        if self.app is not None:
+            self.app.clearEvents()
         while True:
-            yield from self.stop()
+            v = None
+            if self.app is not None:
+                v = self.app.doEvents()
+            yield v
+    
+    #dashboard callbacks
+    @sea.queuedDashboardEvent
+    def c_driveForward(self, button):
+        self.drivetrain.drive(4, math.pi/2, 0)
 
-    def turn(self, speed):
-        self.drivetrain.drive(0, math.pi/2, math.radians(150) * speed)
-        yield from sea.wait(TIME_TO_TURN)
-
-    def stop(self):
-        yield self.drivetrain.drive(0,0,0)
-
-    def driveASection(self, long):
-        self.drivetrain.drive(5, math.pi/2, 0)
-        if long:
-            yield from sea.wait(TIME_TO_DRIVE_LONG_SECTION)
-        else:
-            yield from sea.wait(TIME_TO_DRIVE_SHORT_SECTION)
+    @sea.queuedDashboardEvent
+    def c_stop(self, button):
+        self.drivetrain.drive(0,0,0)
 
 if __name__ == "__main__":
     wpilib.run(PracticeBot)
