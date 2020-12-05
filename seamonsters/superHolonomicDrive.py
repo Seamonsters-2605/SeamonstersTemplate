@@ -1,7 +1,5 @@
-import math
-import rev
+import math, rev, time
 import seamonsters as sea
-import time
 
 TWO_PI = math.pi * 2
 
@@ -216,13 +214,13 @@ class AngledWheel(Wheel):
         self.maxVoltageVelocity = maxVoltageVelocity
         self.reverse = reverse
         self.wheelPosition = 0
+        self.wheelVelocity = 0
 
         self.driveMode = rev.ControlType.kVoltage
         self.realTime = False
 
         self._motorState = None
         self._positionTarget = 0
-        self._encoderCheckCount = 0
         self._oldPosition = 0
         self._positionOccurence = 0
         self._prevTime = time.time()
@@ -230,7 +228,7 @@ class AngledWheel(Wheel):
     # for wheels with gearboxes, so all motors can be driven at the same speed
     def addMotor(self, motor: rev.CANSparkMax):
         self.motors.append(motor)
-        self.motorControllers.append(rev._impl.CANPIDController(motor))
+        self.motorControllers.append(motor.getPIDController())
 
     # for switching between break and coast mode for the motors
     def setIdleMode(self, mode):
@@ -245,36 +243,6 @@ class AngledWheel(Wheel):
             return self.maxVoltageVelocity / abs(magnitude)
         return 1.0
 
-    def _encoderCheck(self):
-        for motor in self.motors:
-            newPosition = motor.getEncoder().getPosition()
-            err = motor.setEncPosition(motor.getEncoder().getPosition())
-            # setEncPosition() returns a CANError so we set it to the current
-            # position to get the error but affect nothing
-            if err == rev.CANError.kTimeout:
-                print("Stale CAN frame so we won't check for errors :(",
-                    motor.getDeviceId())
-                return
-            elif err != rev.CANError.kOK:
-                print("Spark max error", motor.getDeviceId())
-
-            if abs(newPosition - self._oldPosition) <= 1:
-                self._positionOccurence += 1
-            else:
-                self._positionOccurence = 0
-                self._oldPosition = newPosition
-
-            if self._positionOccurence >= MAX_POSITION_OCCURENCE:
-                self.faults.append("Encoder not moving")
-                self._positionOccurence = 0
-
-            if self.driveMode == rev.ControlType.kPosition:
-                # TODO: this is arbitrary
-                maxError = self.encoderCountsPerFoot * MAX_DRIVE_ERROR
-                if abs(newPosition - self._positionTarget) > maxError:
-                    self.faults.append("Can't reach target")
-                    self._positionTarget = newPosition
-
     def _drive(self, inputMagnitude, direction, motorNum=None):
         motorsToDrive = range(0, len(self.motors))
         if motorNum is not None: # for driving individual motors
@@ -288,7 +256,6 @@ class AngledWheel(Wheel):
             if self.driveMode == rev.ControlType.kPosition \
                     and self._motorState != self.driveMode:
                 self._positionTarget = self.motors[motor].getEncoder().getPosition()
-                self._encoderCheckCount = 0
 
             curTime = time.time()
             if self.realTime and self._motorState == self.driveMode:
@@ -297,33 +264,26 @@ class AngledWheel(Wheel):
                 tDiff = 1 / sea.ITERATIONS_PER_SECOND
             self._prevTime = curTime
 
-            encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot * 60
+            encoderCountsPerSecond = magnitude * self.encoderCountsPerFoot
             # always incremented, even if not in position mode
             # used by getTargetPosition
             self._positionTarget += encoderCountsPerSecond * tDiff
+            # _positionTarget is close to the actual robot, but are off by a bit
 
             if self.driveMode == DISABLED:
                 if self._motorState != self.driveMode:
                     self.motors[motor].disable()
             elif self.driveMode == rev.ControlType.kVelocity:
-                self.motorControllers[motor].setReference(encoderCountsPerSecond, self.driveMode)
+                # encoder counts per second * 60 to get the rpm to set the motor
+                self.motorControllers[motor].setReference(encoderCountsPerSecond * 60, self.driveMode)
             elif self.driveMode == rev.ControlType.kPosition:
+                # spin the motor to the target position for the next iteration
                 self.motorControllers[motor].setReference(self._positionTarget, self.driveMode)
             elif self.driveMode == rev.ControlType.kVoltage:
-                self.motorControllers[motor].setReference(magnitude * 12, self.driveMode)# the 12 is for 12 volts
+                # the 12 is for 12 volts
+                self.motorControllers[motor].setReference(magnitude * 12, self.driveMode)
 
             self._motorState = self.driveMode
-
-            self._encoderCheckCount += 1
-            # TODO: document constant
-            if abs(encoderCountsPerSecond) > 400 \
-                    and not self.driveMode == DISABLED:
-                if self._encoderCheckCount % CHECK_DRIVE_ENCODER_CYCLE == 0:
-                    # getEncoder().getPosition is slow so only check a few times
-                    # per second
-                    self._encoderCheck()
-            else:
-                self._positionOccurence = 0
 
     def _stop(self):
         self.drive(0, 0)
@@ -342,16 +302,17 @@ class AngledWheel(Wheel):
             pos = -pos
         return pos / self.encoderCountsPerFoot
 
-    def getRealPosition(self):
+    def getRealPosition(self, timestep=None):
         return self._getRealPosition() + self.wheelPosition
 
-    def _getRealPosition(self):
+    def _getRealPosition(self, timestep=None):
         encPos = 0
         for motor in self.motors:
             try:
                 encPos += motor.getEncoder().getPosition()
-            except AssertionError:
-                pass
+            except AssertionError: # Breaks in the simulator
+                # encPos += self.getRealVelocity() * timestep
+                encPos = 0
         encPos /= len(self.motors)
         return self._sensorPositionToDistance(encPos)
 
@@ -441,7 +402,6 @@ class SwerveWheel(Wheel):
         self.zeroSteering()
         self._targetDirection = angledWheel.angle
         self._motorDisabled = True
-        self._encoderCheckCount = 0
 
     def zeroSteering(self, currentAngle=0):
         """
@@ -471,7 +431,7 @@ class SwerveWheel(Wheel):
         if self.reverseSteerMotor:
             pos = -pos
         if self._motorDisabled:
-            self.steerMotor.setIdleMode(rev.IdleMode.kBrake)
+            self.steerMotor.setIdleMode(rev.CANSparkMax.IdleMode.kBrake)
             self._motorDisabled = False
         self.steerMotor.setEncPosition(pos + self._steerOrigin)
 
@@ -485,12 +445,6 @@ class SwerveWheel(Wheel):
             self._simulatedCurrentDirection -= change
         else:
             self._simulatedCurrentDirection += change
-        
-        self._encoderCheckCount += 1
-        if self._encoderCheckCount % CHECK_SWERVE_ENCODER_CYCLE == 0:
-            curPos = self._getCurrentSteeringAngle()
-            if abs(curPos - self._simulatedCurrentDirection) > MAX_SWERVE_ERROR:
-                self.faults.append("Can't reach target!")
 
     def _drive(self, magnitude, direction):
         self._updateMotorPosition()
@@ -513,7 +467,7 @@ class SwerveWheel(Wheel):
         self.angledWheel.disable()
         if not self._motorDisabled:
             self.steerMotor.disable()
-            self.steerMotor.setIdleMode(rev.IdleMode.kCoast)
+            self.steerMotor.setIdleMode(rev.CANSparkMax.IdleMode.kCoast)
             self._motorDisabled = True
 
     def resetPosition(self):
@@ -553,7 +507,7 @@ class SuperHolonomicDrive:
     def undisable(self):
         self._disableCounter = 0
 
-    def drive(self, magnitude, direction, turn, wheelNum=None, motorNum=None):
+    def drive(self, magnitude, direction, turn):
         """
         Drive the robot. This should be called 50 times per second.
 
@@ -563,8 +517,6 @@ class SuperHolonomicDrive:
         :param magnitude: feet per second
         :param direction: radians. 0 is right, positive counter-clockwise
         :param turn: radians per second. positive counter-clockwise
-        :param wheelNum: optional int argument to drive a single wheel
-        :param motorNum: optional int argument to drive a single motor
         :return: the scale of the actual output speed, as a fraction of the
             input magnitude and turn components
         """
@@ -583,40 +535,24 @@ class SuperHolonomicDrive:
         wheelDirections = []
         wheelLimitScales = []
 
-        if wheelNum is None:
-            for wheel in self.wheels:
-                wheelVectorX, wheelVectorY = self._calcWheelVector(
-                    wheel, moveX, moveY, turn)
-                wheelMag = math.sqrt(wheelVectorX ** 2.0 + wheelVectorY ** 2.0)
-                wheelDir = math.atan2(wheelVectorY, wheelVectorX)
-                wheelMagnitudes.append(wheelMag)
-                wheelDirections.append(wheelDir)
-                wheelLimitScales.append(wheel.limitMagnitude(wheelMag, wheelDir))
+        for wheel in self.wheels:
+            wheelVectorX, wheelVectorY = self._calcWheelVector(
+                wheel, moveX, moveY, turn)
+            wheelMag = math.sqrt(wheelVectorX ** 2.0 + wheelVectorY ** 2.0)
+            wheelDir = math.atan2(wheelVectorY, wheelVectorX)
+            wheelMagnitudes.append(wheelMag)
+            wheelDirections.append(wheelDir)
+            wheelLimitScales.append(wheel.limitMagnitude(wheelMag, wheelDir))
 
-            minWheelScale = min(wheelLimitScales)
-            for i in range(len(self.wheels)):
-                if wheelMagnitudes[i] == 0:
-                    self.wheels[i].stop()
-                else:
-                        self.wheels[i].drive(wheelMagnitudes[i] * minWheelScale,
-                            wheelDirections[i], motorNum)
-            return minWheelScale
-        else:
-            try:
-                wheelVectorX, wheelVectorY = self._calcWheelVector(
-                    self.wheels[wheelNum], moveX, moveY, turn)
-                wheelMag = math.sqrt(wheelVectorX ** 2.0 + wheelVectorY ** 2.0)
-                wheelDir = math.atan2(wheelVectorY, wheelVectorX)
-
-                wheelScale = self.wheels[wheelNum].limitMagnitude(wheelMag, wheelDir)
-                if wheelMag == 0:
-                    self.wheels[wheelNum].stop()
-                else:
-                    self.wheels[wheelNum].drive(wheelMag * wheelScale, wheelDir, motorNum)
-                return wheelScale
-            except:
-                print("Wheel " + str(wheelNum) + " not in list of wheels")
-    
+        minWheelScale = min(wheelLimitScales)
+        for i in range(len(self.wheels)):
+            if wheelMagnitudes[i] == 0:
+                self.wheels[i].stop()
+            else:
+                    self.wheels[i].drive(wheelMagnitudes[i] * minWheelScale,
+                        wheelDirections[i])
+        return minWheelScale
+            
     def orientWheels(self, magnitude, direction, turn):
         """
         Orient the wheels as if the robot was driving, but don't move.
@@ -725,7 +661,7 @@ class SuperHolonomicDrive:
         totalY /= pairCount
         totalA /= pairCount
 
-        return math.sqrt(totalX ** 2 + totalY ** 2), math.atan2(totalY, totalX), totalA
+        return math.hypot(totalX, totalY), math.atan2(totalY, totalX), totalA
 
 
 if __name__ == "__main__":

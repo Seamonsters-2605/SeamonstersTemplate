@@ -1,5 +1,13 @@
-import math
+import math, sys
 import seamonsters as sea
+
+class CarpetDirections:
+    NORTH =  0.911
+    EAST = 0.98175
+    SOUTH = 1.011
+    WEST = 0.996944
+
+    values = [NORTH, EAST, SOUTH, WEST]
 
 class PathFollower:
     """
@@ -7,7 +15,7 @@ class PathFollower:
     """
 
     NAVX_LAG = 7 # frames
-    NAVX_ERROR_CORRECTION = 0.1 # out of 1
+    NAVX_ERROR_CORRECTION = 0 # out of 1
 
     def __init__(self, drive, ahrs=None):
         """
@@ -31,6 +39,20 @@ class PathFollower:
         self.robotY = 0
         self.robotAngle = 0
 
+        # the field is 52 feet long
+        # the carpets are 12 feet long
+        # True means the carpet is oriented normally, False is reversed
+        # the boundry is the edge of the carpet 
+        self.carpetOrientations = [
+            # the (-52/2) + x offsets the fact that (0, 0) is in the center
+            # making x the distance the carpet is from the blue alliance station
+            {"orientation" : True, "boundry" : (-52/2) + 12},
+            {"orientation" : True, "boundry" : (-52/2) + 24},
+            {"orientation" : True, "boundry" : (-52/2) + 36},
+            {"orientation" : True, "boundry" : (-52/2) + 48},
+            {"orientation" : True, "boundry" : (-52/2) + 52}
+        ]
+
         self._robotAngleHistory = []
 
     def setPosition(self, x, y, angle):
@@ -47,19 +69,10 @@ class PathFollower:
     def _getAHRSAngle(self):
         return -math.radians(self.ahrs.getAngle()) - self._ahrsOrigin
 
-    def waitForOrientWheelsGenerator(self, magnitude, direction, turn):
-        """
-        Orient wheels to prepare to drive with the given mag/dir/turn.
-        """
-        if magnitude == 0 and turn == 0:
-            return
-        for _ in range(0, 10):
-            self.drive.orientWheels(magnitude, direction, turn)
-            yield
-
     def updateRobotPosition(self):
         moveDist, moveDir, moveTurn, self._drivePositionState = \
-            self.drive.getRobotPositionOffset(self._drivePositionState, target=True)
+            self.drive.getRobotPositionOffset(self._drivePositionState, target=False)
+            # set the target to False because it is more accurate
 
         self.robotAngle += moveTurn
         self._robotAngleHistory.append(self.robotAngle)
@@ -73,28 +86,50 @@ class PathFollower:
                 for i in range(0, len(self._robotAngleHistory)):
                     self._robotAngleHistory[i] += error
 
-        self.robotX += math.cos(moveDir + self.robotAngle) * moveDist
-        self.robotY += math.sin(moveDir + self.robotAngle) * moveDist
+        robotDifX = math.cos(moveDir + self.robotAngle) * moveDist
+        robotDifY = math.sin(moveDir + self.robotAngle) * moveDist
 
-    def driveToPointGenerator(self, x, y, angle, time,
-            robotPositionTolerance=0, robotAngleTolerance=0):
+        # Taking into account the carpet variability:
+
+        carpetOrientation = True # normal
+
+        # determine the current carpet the robot is
+        # on and get the orientation of that carpet
+        for carpet in self.carpetOrientations:
+            if self.robotX > carpet["boundry"]:
+                carpetOrientation = carpet["orientation"]
+                break
+
+        carpetDirectionIndex = 0 if carpetOrientation else 2
+
+        # changes the cardinal directions based on carpet orientation
+        if robotDifY > 0:
+            # NORTH if carpet direction is normal, SOUTH otherwise
+            robotDifY *= CarpetDirections.values[carpetDirectionIndex % len(CarpetDirections.values)]
+        elif robotDifY < 0:
+            # SOUTH if carpet direction is normal, NORTH otherwise
+            robotDifY *= CarpetDirections.values[2 + carpetDirectionIndex % len(CarpetDirections.values)]
+        
+        if robotDifX > 0:
+            # EAST if carpet direction is normal, WEST otherwise
+            robotDifX *= CarpetDirections.values[1 + carpetDirectionIndex % len(CarpetDirections.values)]
+        elif robotDifX < 0:
+            # WEST if carpet direction is normal, EAST otherwise
+            robotDifX *= CarpetDirections.values[3 + carpetDirectionIndex % len(CarpetDirections.values)]
+
+        self.robotY += robotDifY
+        self.robotX += robotDifX
+
+    def driveToPointGenerator(self, x, y, finalAngle=None, speed=1, robotPositionTolerance=0, robotAngleTolerance=0):
         """
         A generator to drive to a location on the field while simultaneously
         pointing the robot in a new direction. This will attempt to move the
-        robot at a velocity so it reaches the target position angle in ``time``
-        seconds. This generator never exits, but yields ``True`` or ``False``
+        robot so it reaches the target position at a given speed and ends by 
+        rotating to the inputted angle.
+        This generator never exits, but yields ``True`` or ``False``
         if the robot is close enough to its target position, within tolerance.
-
-        If ``time`` is zero, the robot will attempt to move to the position as
-        fast as possible.
-
-        Position mode is recommended!
         """
-        dist, moveDir = self._robotVectorToPoint(x, y)
-        aDiff = angle - self.robotAngle
-        # actual velocities don't matter for orientWheels as long as the ratios
-        # are correct
-        yield from self.waitForOrientWheelsGenerator(dist, moveDir, aDiff)
+        dist, aDiff = self._robotVectorToPoint(x, y)
         for wheel in self.drive.wheels:
             wheel.resetPosition()
 
@@ -102,11 +137,16 @@ class PathFollower:
             dist = 0
         if abs(aDiff) < math.radians(1): # TODO
             aDiff = 0
-        targetMag = 0
-        targetAVel = 0
-        if time != 0:
-            targetMag = dist / time
-            targetAVel = aDiff / time
+
+        # if the robot has reached the angle or position
+        hasReachedInitialAngle = False
+        hasReachedPosition = False
+        hasReachedFinalAngle = True
+        if finalAngle is not None:
+            hasReachedFinalAngle = False
+
+        # if the robot should go backwards
+        backwards = False
 
         accel = 0
         while True:
@@ -116,54 +156,71 @@ class PathFollower:
 
             self.updateRobotPosition()
 
-            dist, dir = self._robotVectorToPoint(x, y)
-            aDiff = angle - self.robotAngle
+            dist, aDiff = self._robotVectorToPoint(x, y)
 
-            # is the robot close enough to the target position to reach it in
-            # the next iteration?
-            atPosition = targetMag == 0 or dist < targetMag / sea.ITERATIONS_PER_SECOND
-            if atPosition:
-                mag = dist * sea.ITERATIONS_PER_SECOND
-            else:
-                mag = targetMag
-            atAngle = targetAVel == 0 or abs(aDiff) < abs(targetAVel / sea.ITERATIONS_PER_SECOND)
-            if atAngle:
-                aVel = aDiff * sea.ITERATIONS_PER_SECOND
-            else:
-                aVel = abs(targetAVel)
-                if aDiff < 0:
-                    aVel = -aVel
+            # when it reaches the initial angle,
+            # work towards the final angle
+            if hasReachedPosition and not hasReachedFinalAngle:
+                aDiff = finalAngle - self.robotAngle
 
-            self.drive.drive(mag * accel, dir, aVel * accel)
-            yield (atPosition or dist <= robotPositionTolerance) \
-                and (atAngle or abs(aDiff) <= robotAngleTolerance)
+            # make robot turn the shorter distance
+            # and not always go clockwise
+            aDiff %= math.pi * 2
+            if aDiff > math.pi:
+                aDiff -= math.pi * 2
+            elif aDiff < -math.pi:
+                aDiff += math.pi * 2
 
-    # return magnitude, direction
+            if not hasReachedPosition:
+                # decide if the robot should go 
+                # backwards and adjust the angle
+                if aDiff > math.pi / 2 and not aDiff < math.pi / 2 + math.degrees(5):
+                    aDiff -= math.pi
+                    backwards = True
+                # the additional 5 degrees makes it not go backwards occasionally on accident
+                elif aDiff < -math.pi / 2 and not aDiff > math.pi / 2 - math.degrees(5):
+                    aDiff += math.pi
+                    backwards = True
+
+            # is the robot close enough to call it good?
+            atPosition = abs(dist) <= robotPositionTolerance
+            atAngle = abs(aDiff) <= robotAngleTolerance
+
+            # updates the angle and position reached variables
+            if not hasReachedInitialAngle:
+                hasReachedInitialAngle = atAngle
+            elif not hasReachedPosition:
+                hasReachedPosition = atPosition
+            elif not hasReachedFinalAngle:
+                hasReachedFinalAngle = atAngle
+
+            mag = dist * accel * speed
+            aMag = -aDiff * accel * speed * 2
+            
+            # the robot is a simultaion
+            if sys.argv[1] == 'sim':
+                aMag *= -1
+
+            if backwards:
+                mag *= -1
+
+            # once the robot reaches the initial angle,
+            # it will drive forward until it reaches the 
+            # position and then face the final angle 
+
+            # turn to face the target first, then drive forward
+            if not hasReachedInitialAngle or (hasReachedPosition and not hasReachedFinalAngle):
+                self.drive.drive(0, 0, aMag)
+            elif not hasReachedPosition:
+                if abs(aDiff) > robotAngleTolerance: # so it will correct if the robot is off course
+                    aMag *= 1.5
+                self.drive.drive(mag, math.pi/2, aMag)
+
+            yield hasReachedPosition and hasReachedFinalAngle
+
+    # return magnitude, angle
     def _robotVectorToPoint(self, x, y):
         xDiff = x - self.robotX
         yDiff = y - self.robotY
         return (math.sqrt(xDiff ** 2 + yDiff ** 2),
-                math.atan2(yDiff, xDiff) - self.robotAngle)
-
-    def _readDataLine(self, line):
-        return (float(n) for n in line)
-
-    def followPathData(self, data):
-        """
-        Follow path data read from a file. ``data`` should be a list of line
-        tuples returned by ``sea.readDataFile``.
-        """
-        lastTime, lastX, lastY, lastAngle = self._readDataLine(data[0])
-        self.setPosition(lastX, lastY, math.radians(lastAngle))
-        for point in data[1:]:
-            t, x, y, angle = self._readDataLine(point)
-            if lastX == x and lastY == y and lastAngle == angle:
-                yield from sea.wait(int((t - lastTime) * sea.ITERATIONS_PER_SECOND))
-            else:
-                yield from sea.untilTrue(
-                    self.driveToPointGenerator(x, y, math.radians(angle),
-                        t - lastTime))
-            lastTime = t
-            lastX = x
-            lastY = y
-            lastAngle = angle
+                math.atan2(yDiff, xDiff) - self.robotAngle - math.pi/2)

@@ -1,10 +1,9 @@
 __author__ = "seamonsters"
 
-import traceback
-import hal
-from wpilib.robotbase import RobotBase
+import traceback, hal, logging
+from wpilib import RobotBase
 from wpilib import RobotController
-import logging
+from wpilib import IterativeRobot
 
 class GeneratorBot(RobotBase):
     """
@@ -21,8 +20,8 @@ class GeneratorBot(RobotBase):
         self.iterator = None
         self.earlyStop = False
 
-        hal.report(hal.UsageReporting.kResourceType_Framework,
-                   hal.UsageReporting.kFramework_Timed)
+        hal.report(hal.tResourceType.kResourceType_Framework,
+            hal.tInstances.kFramework_Timed)
 
         self._expirationTime = 0
         self._notifier = hal.initializeNotifier()
@@ -41,7 +40,7 @@ class GeneratorBot(RobotBase):
         self._updateAlarm()
 
         while True:
-            if hal.waitForNotifierAlarm(self._notifier) == 0:
+            if hal.waitForNotifierAlarm(self._notifier[0]) == 0:
                 if self.iterator is not None:
                     self.iterator.close()
                     self.iterator = None
@@ -98,7 +97,7 @@ class GeneratorBot(RobotBase):
 
     def _updateAlarm(self) -> None:
         """Update the alarm hardware to reflect the next alarm."""
-        hal.updateNotifierAlarm(self._notifier, int(self._expirationTime * 1e6))
+        hal.updateNotifierAlarm(self._notifier[0], int(self._expirationTime * 1e6))
 
     def robotInit(self):
         """
@@ -126,6 +125,57 @@ class GeneratorBot(RobotBase):
         """
         self.logger.info("No test!")
         yield
+
+class SimulationRobot(IterativeRobot):
+
+    logger = logging.getLogger("robot")
+
+    def robotInit(self):
+        """
+        Override this for robot initialization. This should NOT be a generator.
+        """
+        self.logger.info("No robotInit!")
+
+    def teleop(self):
+        """
+        Override this to make a generator for teleop
+        """
+        self.logger.info("No teleop!")
+        yield
+
+    def autonomous(self):
+        """
+        Override this to make a generator for autonomous
+        """
+        self.logger.info("No autonomous!")
+        yield
+
+    def test(self):
+        """
+        Override this to make a generator for test mode
+        """
+        self.logger.info("No test!")
+        yield
+
+    def autonomousInit(self):
+        self.autonomousGenerator = self.autonomous()
+
+    def autonomousPeriodic(self):
+        next(self.autonomousGenerator)
+
+    def teleopInit(self):
+        self.teleopGenerator = self.teleop()
+
+    def teleopPeriodic(self):
+        next(self.teleopGenerator)
+
+    def testInit(self):
+       
+        self.testGenerator = self.test()
+
+    def testPeriodic(self):
+        next(self.testGenerator)
+
 
 
 class IterativeRobotInstance:
