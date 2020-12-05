@@ -214,6 +214,7 @@ class AngledWheel(Wheel):
         self.maxVoltageVelocity = maxVoltageVelocity
         self.reverse = reverse
         self.wheelPosition = 0
+        self.wheelVelocity = 0
 
         self.driveMode = rev.ControlType.kVoltage
         self.realTime = False
@@ -301,16 +302,17 @@ class AngledWheel(Wheel):
             pos = -pos
         return pos / self.encoderCountsPerFoot
 
-    def getRealPosition(self):
+    def getRealPosition(self, timestep=None):
         return self._getRealPosition() + self.wheelPosition
 
-    def _getRealPosition(self):
+    def _getRealPosition(self, timestep=None):
         encPos = 0
         for motor in self.motors:
             try:
                 encPos += motor.getEncoder().getPosition()
             except AssertionError: # Breaks in the simulator
-                pass
+                # encPos += self.getRealVelocity() * timestep
+                encPos = 0
         encPos /= len(self.motors)
         return self._sensorPositionToDistance(encPos)
 
@@ -659,7 +661,7 @@ class SuperHolonomicDrive:
         totalY /= pairCount
         totalA /= pairCount
 
-        return math.sqrt(totalX ** 2 + totalY ** 2), math.atan2(totalY, totalX), totalA
+        return math.hypot(totalX, totalY), math.atan2(totalY, totalX), totalA
 
 
 if __name__ == "__main__":
