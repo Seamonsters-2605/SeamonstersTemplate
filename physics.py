@@ -14,7 +14,7 @@ import rev
 import navx
 from networktables import NetworkTables
 
-STARTING_POSITION = [-16, 10]
+STARTING_POSITION = [2.3, 6.1]
 
 simulatedDrivetrain = None
 
@@ -149,8 +149,7 @@ class PhysicsEngine:
         for i in range(len(self.simulatedSparkVelocities)):
             simulatedSparks[i].maxVelocity = self.simulatedSparkVelocities[i]
             
-        x, y = self._fieldToSimulatorCoords(STARTING_POSITION[0], STARTING_POSITION[1])
-        transform = Transform2d.fromFeet(x, y, 0)
+        transform = Transform2d(STARTING_POSITION[0], STARTING_POSITION[1], -math.pi/2)
         self.physicsController.move_robot(transform)
 
         if 'ds' in config:
