@@ -4,7 +4,7 @@ import wpilib
 import seamonsters as sea
 import dashboard
 
-class PracticeBot(sea.GeneratorBot):
+class PracticeBot(sea.SimulationRobot):
 
     def robotInit(self):
         #set up drivetrain
