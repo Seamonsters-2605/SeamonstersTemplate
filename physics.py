@@ -8,8 +8,6 @@ import configparser
 from pyfrc.physics import drivetrains
 from pyfrc.physics.core import PhysicsInterface
 from pyfrc.physics.visionsim import VisionSim
-from hal.simulation import PWMSim
-from hal.simulation import EncoderSim
 import rev
 import navx
 from networktables import NetworkTables
